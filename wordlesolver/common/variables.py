@@ -12,6 +12,7 @@ class Language:
     EN : str
         Represents the English language code ('en').
     """
+
     ES: str = "es"
     EN: str = "en"
 
@@ -27,6 +28,7 @@ class Status:
     color : str
         A string representing the color associated with the status, typically used for UI display in hexadecimal format.
     """
+
     def __init__(self, code: str, color: str):
         self.code: str = code
         self.color: str = color
@@ -54,9 +56,11 @@ class Answer:
     ABSENT : Status
         Represents a letter that is not in the word at all ('2') and is colored gray ('#757575').
     """
+
     CORRECT: Status = Status("0", "43a047")
     MISPLACED: Status = Status("1", "e4a81d")
     ABSENT: Status = Status("2", "757575")
+
 
 def word_code(word: list[Answer]) -> str:
     """
@@ -72,4 +76,5 @@ def word_code(word: list[Answer]) -> str:
     str
         A string composed of the status codes from the Status objects. Each character in the string corresponds to the status code for a letter in the word.
     """
+
     return "".join(map(lambda status: status.code, word))
