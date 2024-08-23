@@ -1,4 +1,5 @@
 from common.variables import Status, Answer
+import pandas as pd
 
 def feedback(secret: str, guess: str) -> list[Status]:
     """
@@ -20,6 +21,7 @@ def feedback(secret: str, guess: str) -> list[Status]:
     list[Status]
         A list of Status objects representing the status of each letter in the guess. The list contains five Status objects, each corresponding to one letter in the guess.
     """
+
     # Initialize the answer with a list of ABSENT Status objects
     answer = [Answer.ABSENT] * 5
 
@@ -36,3 +38,31 @@ def feedback(secret: str, guess: str) -> list[Status]:
             secret = secret.replace(guess[i], "_", 1)
 
     return answer
+
+def possible_words(words: pd.DataFrame, guess: str, answer: list[Status]) -> pd.DataFrame:
+    """
+    Filters the words dataframe to find words that match the given guess and expected feedback.
+
+    Parameters:
+    ----------
+    words : pd.DataFrame
+        DataFrame containing a column 'word' with possible words.
+    guess : str
+        The guessed word to be used for comparison. It should be a 5-letter string.
+    answer : list[Status]
+        List of Status objects representing the expected feedback for the guess.
+
+    Returns:
+    -------
+    pd.DataFrame
+        A DataFrame containing only the words that match the given feedback.
+    """
+
+    # Apply the feedback function and filter based on the expected answer
+    filtered_words = words[
+        words.word.apply(
+            lambda secret: feedback(secret, guess) == answer
+        )
+    ]
+
+    return filtered_words
