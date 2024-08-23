@@ -32,6 +32,9 @@ class Status:
         self.color: str = color
 
     def __repr__(self):
+        return f"Status({self.code})"
+
+    def __str__(self):
         return f"{self.code} : #{self.color}"
 
 
