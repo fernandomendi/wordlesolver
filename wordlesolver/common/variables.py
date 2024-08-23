@@ -57,3 +57,19 @@ class Answer:
     CORRECT: Status = Status("0", "43a047")
     MISPLACED: Status = Status("1", "e4a81d")
     ABSENT: Status = Status("2", "757575")
+
+def word_code(word: list[Answer]) -> str:
+    """
+    Converts a list of Status objects into a corresponding string of status codes.
+
+    Parameters:
+    ----------
+    answer : list[Status]
+        A list of Status objects representing the feedback for each letter in a word.
+
+    Returns:
+    -------
+    str
+        A string composed of the status codes from the Status objects. Each character in the string corresponds to the status code for a letter in the word.
+    """
+    return "".join(map(lambda status: status.code, word))

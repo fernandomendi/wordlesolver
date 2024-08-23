@@ -1,5 +1,7 @@
-from common.variables import Status, Answer
+from common.variables import Status, Answer, word_code
+from math import log2
 import pandas as pd
+
 
 def feedback(secret: str, guess: str) -> list[Status]:
     """
@@ -66,3 +68,59 @@ def possible_words(words: pd.DataFrame, guess: str, answer: list[Status]) -> pd.
     ]
 
     return filtered_words
+
+def entropy(word: str, words: pd.DataFrame) -> float:
+    """
+    Calculates the entropy of a given word based on a set of possible words.
+
+    Entropy is a measure of uncertainty or information content. In this context, it quantifies the uncertainty of the feedback (in terms of correct, misplaced, and absent letters) that the word would generate when guessed against all possible words.
+
+    Parameters:
+    ----------
+    word : str
+        The 5-letter word for which the entropy is being calculated. 
+    words : pd.DataFrame
+        A DataFrame containing a column 'word' with possible words to compare against. Each word in this DataFrame is considered as a potential guess.
+
+    Returns:
+    -------
+    float
+        The entropy value of the given word. Higher entropy indicates greater uncertainty in the feedback distribution, meaning the word could generate a wide variety of feedback patterns against the possible words.
+
+    Process:
+    -------
+    1. For each word in the `words` DataFrame, calculate the feedback pattern (as a `Status` list) when guessing the `word` against each possible word.
+    2. Convert each feedback pattern into a string code using the `word_code` function.
+    3. Count the occurrences of each unique feedback pattern (using a dictionary to store frequencies).
+    4. Calculate the entropy by summing up `-frequency * log2(frequency)` for each unique feedback pattern.
+
+    Example:
+    -------
+    If the possible words are ["apple", "apply", "ample"], and the word being evaluated is "apple",
+    the function will compute the feedback for "apple" against each word in the list, determine 
+    the frequency of each feedback pattern, and then calculate the entropy based on these frequencies.
+    """
+
+    # Dictionary to store the frequency of each unique feedback pattern
+    answer_frequencies: dict = {}
+
+    # Iterate over each word in the DataFrame and calculate feedback
+    for _, row in words.iterrows():
+        guess: str = row["word"]
+        answer: list[Status] = feedback(word, guess)
+        answer_code: str = word_code(answer)
+
+        # Update the frequency count for the current feedback pattern
+        if answer_code not in answer_frequencies.keys():
+            answer_frequencies[answer_code] = 1
+        else:
+            answer_frequencies[answer_code] += 1
+
+    # Calculate entropy based on the frequency distribution of feedback patterns
+    entropy_sum: float = 0
+    words_count: int = len(words) 
+    for _, frequency in answer_frequencies.items():
+        probability = frequency / words_count
+        entropy_sum -= probability * log2(probability)
+
+    return entropy_sum
