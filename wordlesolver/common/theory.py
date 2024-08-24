@@ -101,7 +101,7 @@ def entropy(word: str, words: pd.DataFrame) -> float:
     If the possible words are ["apple", "apply", "ample"], and the word being evaluated is "apple", the function will compute the feedback for "apple" against each word in the list, determine the frequency of each feedback pattern, and then calculate the entropy based on these frequencies.
     """
     # Create a copy of the words DataFrame to work with, avoiding modifications to the original DataFrame.
-    words_aux: pd.DataFrame = words
+    words_aux: pd.DataFrame = words.copy()
     words_count: int = len(words_aux)
 
     # Apply the feedback function to each word in the DataFrame to generate an "answer code".
@@ -147,7 +147,7 @@ def calculate_entropies(all_words: pd.DataFrame, possible_words: pd.DataFrame):
     """
 
     # Create a copy of the all_words DataFrame to work with, avoiding modifications to the original DataFrame.
-    words_aux: pd.DataFrame = all_words
+    words_aux: pd.DataFrame = all_words.copy()
 
     # Calculate entropy for each word in all_words by applying the entropy function.
 
