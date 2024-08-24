@@ -1,4 +1,5 @@
 from math import log2
+from functools import reduce
 import pandas as pd
 
 from common.variables import Status
@@ -99,28 +100,26 @@ def entropy(word: str, words: pd.DataFrame) -> float:
     -------
     If the possible words are ["apple", "apply", "ample"], and the word being evaluated is "apple", the function will compute the feedback for "apple" against each word in the list, determine the frequency of each feedback pattern, and then calculate the entropy based on these frequencies.
     """
+    # Create a copy of the words DataFrame to work with, avoiding modifications to the original DataFrame.
+    words_aux: pd.DataFrame = words
+    words_count: int = len(words_aux)
 
-    # Dictionary to store the frequency of each unique feedback pattern
-    answer_frequencies: dict = {}
+    # Apply the feedback function to each word in the DataFrame to generate an "answer code".
+    words_aux["answer_code"] = words_aux.word.apply(
+        lambda x: "".join(feedback(word, x))
+    )
 
-    # Iterate over each word in the DataFrame and calculate feedback
-    for _, row in words.iterrows():
-        guess: str = row["word"]
-        answer: list[str] = feedback(word, guess)
-        answer_code: str = "".join(answer)
+    # Calculate the frequency of each unique "answer code" in the DataFrame.
+    answer_frequencies = words_aux.answer_code.value_counts()
+    # Convert the frequencies to probabilities by dividing each frequency by the total number of words.
+    answer_probabilities = answer_frequencies / words_count
 
-        # Update the frequency count for the current feedback pattern
-        if answer_code not in answer_frequencies:
-            answer_frequencies[answer_code] = 1
-        else:
-            answer_frequencies[answer_code] += 1
-
-    # Calculate entropy based on the frequency distribution of feedback patterns
-    entropy_sum: float = 0
-    words_count: int = len(words)
-    for _, frequency in answer_frequencies.items():
-        probability = frequency / words_count
-        entropy_sum -= probability * log2(probability)
+    # For each probability, compute `prob * log2(prob)` and accumulate the results. The sum is negated to match the definition of entropy.
+    entropy_sum = -reduce(
+        lambda acc, prob: acc + prob * log2(prob),
+        answer_probabilities,
+        0
+    )
 
     return entropy_sum
 
