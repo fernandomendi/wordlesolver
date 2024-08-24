@@ -1,10 +1,10 @@
 from math import log2
 import pandas as pd
 
-from common.variables import Status, Answer, word_code
+from common.variables import Status
 
 
-def feedback(secret: str, guess: str) -> list[Status]:
+def feedback(secret: str, guess: str) -> list[str]:
     """
     Evaluates a Wordle guess against a secret word and returns a string representing the feedback for each letter in the guess. The feedback is provided as a sequence of status codes, where each code corresponds to the status of a letter in the guess:
     
@@ -21,28 +21,28 @@ def feedback(secret: str, guess: str) -> list[Status]:
 
     Returns:
     -------
-    list[Status]
-        A list of Status objects representing the status of each letter in the guess. The list contains five Status objects, each corresponding to one letter in the guess.
+    list[str]
+        A list of str objects representing the status of each letter in the guess. The list contains five str objects, each corresponding to one letter in the guess.
     """
 
     # Initialize the answer with a list of ABSENT Status objects
-    answer = [Answer.ABSENT] * 5
+    answer = [Status.ABSENT] * 5
 
     # First pass: Identify correct positions
     for i in range(5):
         if guess[i] == secret[i]:
-            answer[i] = Answer.CORRECT
+            answer[i] = Status.CORRECT
             secret = secret[:i] + '_' + secret[i+1:]
 
     # Second pass: Identify misplaced letters
     for i in range(5):
-        if answer[i] == Answer.ABSENT and guess[i] in secret:
-            answer[i] = Answer.MISPLACED
+        if answer[i] == Status.ABSENT and guess[i] in secret:
+            answer[i] = Status.MISPLACED
             secret = secret.replace(guess[i], "_", 1)
 
     return answer
 
-def possible_words(words: pd.DataFrame, guess: str, answer: list[Status]) -> pd.DataFrame:
+def filter_words(words: pd.DataFrame, guess: str, answer: list[str]) -> pd.DataFrame:
     """
     Filters the words dataframe to find words that match the given guess and expected feedback.
 
@@ -68,7 +68,7 @@ def possible_words(words: pd.DataFrame, guess: str, answer: list[Status]) -> pd.
         )
     ]
 
-    return filtered_words
+    return filtered_words.reset_index(drop=True)
 
 def entropy(word: str, words: pd.DataFrame) -> float:
     """
@@ -106,11 +106,11 @@ def entropy(word: str, words: pd.DataFrame) -> float:
     # Iterate over each word in the DataFrame and calculate feedback
     for _, row in words.iterrows():
         guess: str = row["word"]
-        answer: list[Status] = feedback(word, guess)
-        answer_code: str = word_code(answer)
+        answer: list[str] = feedback(word, guess)
+        answer_code: str = "".join(answer)
 
         # Update the frequency count for the current feedback pattern
-        if answer_code not in answer_frequencies.keys():
+        if answer_code not in answer_frequencies:
             answer_frequencies[answer_code] = 1
         else:
             answer_frequencies[answer_code] += 1
@@ -123,6 +123,41 @@ def entropy(word: str, words: pd.DataFrame) -> float:
         entropy_sum -= probability * log2(probability)
 
     return entropy_sum
+
+def calculate_entropies(all_words: pd.DataFrame, possible_words: pd.DataFrame):
+    """
+    Calculate the entropy for each word in the provided list of all possible words, 
+    based on how that word would perform as a guess against the list of possible remaining words.
+
+    Parameters:
+    -----------
+    all_words : pd.DataFrame
+        A DataFrame containing the complete list of words, typically representing all valid guesses.
+    possible_words : pd.DataFrame
+        A DataFrame containing the subset of words that are still considered possible based on previous guesses.
+
+    Returns:
+    --------
+    pd.DataFrame
+        A DataFrame with the original words from `all_words`, with an additional column 'entropy' that contains the calculated entropy value for each word.
+
+    Notes:
+    ------
+    - The `progress_apply` method is used to apply the `entropy` function to each word, with a progress bar for better tracking.
+    - The higher the entropy of a word, the more it is expected to help in narrowing down the set of possible remaining words.
+    """
+
+    # Create a copy of the all_words DataFrame to work with, avoiding modifications to the original DataFrame.
+    words_aux: pd.DataFrame = all_words
+
+    # Calculate entropy for each word in all_words by applying the entropy function.
+
+    words_aux["entropy"] = words_aux.word.progress_apply(
+        lambda word: entropy(word, possible_words)
+    )
+
+    return words_aux
+
 
 def best_guess(words: pd.DataFrame, weight: float) -> str:
     """

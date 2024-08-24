@@ -20,61 +20,34 @@ class Language:
 class Status:
     """
     A class to represent the status of a letter in a Wordle guess.
-
-    Attributes:
-    ----------
-    code : str
-        A string representing the status code ('0' for correct, '1' for misplaced, '2' for absent).
-    color : str
-        A string representing the color associated with the status, typically used for UI display in hexadecimal format.
-    """
-
-    def __init__(self, code: str, color: str):
-        self.code: str = code
-        self.color: str = color
-
-    def __repr__(self):
-        return f"Status({self.code})"
-
-    def __str__(self):
-        return f"{self.code} : #{self.color}"
-
-
-class Answer:
-    """
-    A class that holds the possible statuses for letters in a Wordle guess.
     
     This class provides predefined instances of Status for each possible outcome:
     CORRECT, MISPLACED, and ABSENT.
     
     Attributes:
     ----------
-    CORRECT : Status
-        Represents a letter that is in the correct position ('0') and is colored green ('#43a047').
-    MISPLACED : Status
-        Represents a letter that is in the word but in the wrong position ('1') and is colored yellow ('#e4a81d').
-    ABSENT : Status
-        Represents a letter that is not in the word at all ('2') and is colored gray ('#757575').
+    CORRECT : str
+        Represents a letter that is in the correct position ('0').
+    MISPLACED : str
+        Represents a letter that is in the word but in the wrong position ('1').
+    ABSENT : str
+        Represents a letter that is not in the word at all ('2').
     """
 
-    CORRECT: Status = Status("0", "43a047")
-    MISPLACED: Status = Status("1", "e4a81d")
-    ABSENT: Status = Status("2", "757575")
+    CORRECT: str = "0"
+    MISPLACED: str = "1"
+    ABSENT: str = "2"
 
 
-def word_code(word: list[Answer]) -> str:
-    """
-    Converts a list of Status objects into a corresponding string of status codes.
+def reformat_answer(answer: str) -> list[str]:
+    status_list = []
+    for code in answer:
+        match code:
+            case "0":
+                status_list.append(Status.CORRECT)
+            case "1":
+                status_list.append(Status.MISPLACED)
+            case "2":
+                status_list.append(Status.ABSENT)
 
-    Parameters:
-    ----------
-    answer : list[Status]
-        A list of Status objects representing the feedback for each letter in a word.
-
-    Returns:
-    -------
-    str
-        A string composed of the status codes from the Status objects. Each character in the string corresponds to the status code for a letter in the word.
-    """
-
-    return "".join(map(lambda status: status.code, word))
+    return status_list
