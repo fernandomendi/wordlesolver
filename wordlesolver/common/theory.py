@@ -1,6 +1,7 @@
-from common.variables import Status, Answer, word_code
 from math import log2
 import pandas as pd
+
+from common.variables import Status, Answer, word_code
 
 
 def feedback(secret: str, guess: str) -> list[Status]:
@@ -96,9 +97,7 @@ def entropy(word: str, words: pd.DataFrame) -> float:
 
     Example:
     -------
-    If the possible words are ["apple", "apply", "ample"], and the word being evaluated is "apple",
-    the function will compute the feedback for "apple" against each word in the list, determine 
-    the frequency of each feedback pattern, and then calculate the entropy based on these frequencies.
+    If the possible words are ["apple", "apply", "ample"], and the word being evaluated is "apple", the function will compute the feedback for "apple" against each word in the list, determine the frequency of each feedback pattern, and then calculate the entropy based on these frequencies.
     """
 
     # Dictionary to store the frequency of each unique feedback pattern
@@ -118,9 +117,50 @@ def entropy(word: str, words: pd.DataFrame) -> float:
 
     # Calculate entropy based on the frequency distribution of feedback patterns
     entropy_sum: float = 0
-    words_count: int = len(words) 
+    words_count: int = len(words)
     for _, frequency in answer_frequencies.items():
         probability = frequency / words_count
         entropy_sum -= probability * log2(probability)
 
     return entropy_sum
+
+def best_guess(words: pd.DataFrame, weight: float) -> str:
+    """
+    Determines the best word to guess based on a weighted average of entropy and probability.
+
+    The function calculates a new column called 'guessability' for each word, which is a weighted average of the entropy and probability columns. The word with the highest guessability score is then selected as the best guess.
+
+    Parameters:
+    ----------
+    words : pd.DataFrame
+        A DataFrame containing a column 'word', along with 'entropy' and 'probability' columns for each word.
+    weight : float
+        A floating-point value between 0 and 1 representing the weight of the entropy in the weighted average.
+        - A weight closer to 1 gives more importance to entropy.
+        - A weight closer to 0 gives more importance to probability.
+
+    Returns:
+    -------
+    str
+        The word with the highest guessability score, which is considered the best guess.
+
+    Raises:
+    ------
+    ValueError
+        If the weight is not between 0 and 1, a ValueError is raised.
+    """
+
+    # Ensure the weight is a number between 0 and 1
+    if weight < 0 or weight > 1:
+        raise ValueError("The weight must be between 0 and 1.")
+
+    # Calculate the 'guessability' score as a weighted average of entropy and probability
+    words["guessability"] = weight * words.entropy + (1 - weight) * words.probability
+
+    # Find the word with the highest 'guessability' score
+    guess: str = words \
+        .sort_values("guessability", ascending=False) \
+        .reset_index() \
+        .loc[0, "word"]
+
+    return guess
