@@ -1,4 +1,6 @@
 import pandas as pd
+from tqdm import tqdm
+tqdm.pandas()
 
 from common import theory
 from common.variables import reformat_answer
