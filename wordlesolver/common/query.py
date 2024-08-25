@@ -1,7 +1,7 @@
 import pandas as pd
 
 from common import theory
-from common.variables import reformat_answer
+from common.variables import Status
 
 
 def filter_words(words: pd.DataFrame, guess: str, answer: list[str]) -> pd.DataFrame:
@@ -80,7 +80,7 @@ def filter_words_accumulative(steps: list[dict[str, str]], language: str) -> pd.
         possible_words = filter_words(
             words, 
             step["guess"], 
-            reformat_answer(step["answer"])
+            Status().reformat_answer(step["answer"])
         )
 
     # Recursive case: process all steps except the last one first
@@ -94,7 +94,7 @@ def filter_words_accumulative(steps: list[dict[str, str]], language: str) -> pd.
         possible_words = filter_words(
             possible_words,
             step["guess"],
-            reformat_answer(step["answer"])
+            Status().reformat_answer(step["answer"])
         )
 
     return possible_words

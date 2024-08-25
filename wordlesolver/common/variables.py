@@ -49,15 +49,15 @@ class Status:
     ABSENT: str = "2"
 
 
-def reformat_answer(answer: str) -> list[str]:
-    status_list = []
-    for code in answer:
-        match code:
-            case "0":
-                status_list.append(Status.CORRECT)
-            case "1":
-                status_list.append(Status.MISPLACED)
-            case "2":
-                status_list.append(Status.ABSENT)
+    def reformat_answer(self, answer: str) -> list[str]:
+        status_list = []
+        for code in answer:
+            match code:
+                case "0":
+                    status_list.append(Status.CORRECT)
+                case "1":
+                    status_list.append(Status.MISPLACED)
+                case "2":
+                    status_list.append(Status.ABSENT)
 
-    return status_list
+        return status_list
