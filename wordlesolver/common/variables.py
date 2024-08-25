@@ -17,6 +17,16 @@ class Language:
     EN: str = "en"
 
 
+    def best_guess(self, language: str) -> str:
+        match language:
+            case Language.ES:
+                guess = "careo"
+            case Language.EN:
+                guess = "crane"
+
+        return guess
+
+
 class Status:
     """
     A class to represent the status of a letter in a Wordle guess.
