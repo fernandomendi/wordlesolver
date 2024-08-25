@@ -2,7 +2,7 @@ from math import log2
 from functools import reduce
 import pandas as pd
 
-from common.variables import Status
+from wordlesolver.common.variables import Status
 
 
 def feedback(secret: str, guess: str) -> list[str]:
@@ -119,7 +119,7 @@ def calculate_entropies(possible_words: pd.DataFrame, language: str):
     - The higher the entropy of a word, the more it is expected to help in narrowing down the set of possible remaining words.
     """
 
-    all_words: pd.DataFrame = pd.read_csv(f"data/{language}/words.csv")[["word", "probability"]]
+    all_words: pd.DataFrame = pd.read_csv(f"wordlesolver/data/{language}/words.csv")[["word", "probability"]]
 
     # Calculate entropy for each word in all_words by applying the entropy function.
     all_words["entropy"] = all_words.word.progress_apply(

@@ -1,3 +1,4 @@
+import sys
 import pandas as pd
 from tqdm import tqdm
 tqdm.pandas()
@@ -81,4 +82,5 @@ def wordle(language: str = Language.ES) -> None:
 
 # This ensures that the `wordle()` function is called only when the script is executed directly, and not when it is imported as a module in another script.
 if __name__ == "__main__":
-    wordle()
+    # wordle()
+    print(sys.argv)
