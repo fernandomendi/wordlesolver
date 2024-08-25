@@ -43,33 +43,6 @@ def feedback(secret: str, guess: str) -> list[str]:
 
     return answer
 
-def filter_words(words: pd.DataFrame, guess: str, answer: list[str]) -> pd.DataFrame:
-    """
-    Filters the words dataframe to find words that match the given guess and expected feedback.
-
-    Parameters:
-    ----------
-    words : pd.DataFrame
-        DataFrame containing a column 'word' with possible words.
-    guess : str
-        The guessed word to be used for comparison. It should be a 5-letter string.
-    answer : list[Status]
-        List of Status objects representing the expected feedback for the guess.
-
-    Returns:
-    -------
-    pd.DataFrame
-        A DataFrame containing only the words that match the given feedback.
-    """
-
-    # Apply the feedback function and filter based on the expected answer
-    filtered_words = words[
-        words.word.apply(
-            lambda secret: feedback(secret, guess) == answer
-        )
-    ]
-
-    return filtered_words.reset_index(drop=True)
 
 def entropy(word: str, words: pd.DataFrame) -> float:
     """
@@ -123,22 +96,20 @@ def entropy(word: str, words: pd.DataFrame) -> float:
 
     return entropy_sum
 
-def calculate_entropies(all_words: pd.DataFrame, possible_words: pd.DataFrame):
+
+def calculate_entropies(possible_words: pd.DataFrame):
     """
-    Calculate the entropy for each word in the provided list of all possible words, 
-    based on how that word would perform as a guess against the list of possible remaining words.
+    Calculate the entropy for each word, based on how that word would perform as a guess against the list of possible remaining words.
 
     Parameters:
     -----------
-    all_words : pd.DataFrame
-        A DataFrame containing the complete list of words, typically representing all valid guesses.
     possible_words : pd.DataFrame
         A DataFrame containing the subset of words that are still considered possible based on previous guesses.
 
     Returns:
     --------
     pd.DataFrame
-        A DataFrame with the original words from `all_words`, with an additional column 'entropy' that contains the calculated entropy value for each word.
+        A DataFrame of all available words`, with an additional column 'entropy' that contains the calculated entropy value for each word.
 
     Notes:
     ------
@@ -146,16 +117,14 @@ def calculate_entropies(all_words: pd.DataFrame, possible_words: pd.DataFrame):
     - The higher the entropy of a word, the more it is expected to help in narrowing down the set of possible remaining words.
     """
 
-    # Create a copy of the all_words DataFrame to work with, avoiding modifications to the original DataFrame.
-    words_aux: pd.DataFrame = all_words.copy()
+    all_words: pd.DataFrame = pd.read_csv("data/probabilities_es.csv")
 
     # Calculate entropy for each word in all_words by applying the entropy function.
-
-    words_aux["entropy"] = words_aux.word.progress_apply(
+    all_words["entropy"] = all_words.word.progress_apply(
         lambda word: entropy(word, possible_words)
     )
 
-    return words_aux
+    return all_words
 
 
 def best_guess(words: pd.DataFrame, weight: float) -> str:
