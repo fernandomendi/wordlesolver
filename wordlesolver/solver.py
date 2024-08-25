@@ -1,11 +1,11 @@
 import sys
+
+from common import query, theory
+from common.variables import Language
+
 import pandas as pd
 from tqdm import tqdm
 tqdm.pandas()
-
-from common import query
-from common import theory
-from common.variables import Language
 
 
 def wordle(language: str = Language.ES) -> None:

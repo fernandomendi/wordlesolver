@@ -1,8 +1,9 @@
 from math import log2
 from functools import reduce
-import pandas as pd
 
 from common.variables import Status
+
+import pandas as pd
 
 
 def feedback(secret: str, guess: str) -> list[str]:

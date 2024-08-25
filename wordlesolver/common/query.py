@@ -1,7 +1,7 @@
-import pandas as pd
-
 from common import theory
 from common.variables import Status
+
+import pandas as pd
 
 
 def filter_words(words: pd.DataFrame, guess: str, answer: list[str]) -> pd.DataFrame:
@@ -78,8 +78,8 @@ def filter_words_accumulative(steps: list[dict[str, str]], language: str) -> pd.
 
         # Apply the filter based on the first guess and its corresponding answer
         possible_words = filter_words(
-            words, 
-            step["guess"], 
+            words,
+            step["guess"],
             Status().reformat_answer(step["answer"])
         )
 
