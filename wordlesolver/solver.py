@@ -4,8 +4,6 @@ from common import query, theory
 from common.variables import Language
 
 import pandas as pd
-from tqdm import tqdm
-tqdm.pandas()
 
 
 def wordle(language: str = Language.ES) -> None:

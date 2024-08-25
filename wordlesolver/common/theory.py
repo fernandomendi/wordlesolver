@@ -4,6 +4,8 @@ from functools import reduce
 from common.variables import Status
 
 import pandas as pd
+from tqdm import tqdm
+tqdm.pandas()
 
 
 def feedback(secret: str, guess: str) -> list[str]:
