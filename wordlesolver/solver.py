@@ -44,7 +44,7 @@ def wordle(language: str = Language.ES) -> None:
     """
 
     # Initial setup: starting guess, empty list of steps, and secret found flag
-    best_guess: str = Language().best_guess(language)
+    best_guess: str = Language().best_initial_guess(language)
     steps: list[dict[str, str]] = []
     secret_found: bool = False
 

@@ -17,12 +17,12 @@ class Language:
     EN: str = "en"
 
 
-    def best_guess(self, language: str) -> str:
+    def best_initial_guess(self, language: str) -> str:
         match language:
             case Language.ES:
                 guess = "careo"
             case Language.EN:
-                guess = "crane"
+                guess = "tares"
 
         return guess
 
