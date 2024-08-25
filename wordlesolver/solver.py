@@ -82,5 +82,9 @@ def wordle(language: str = Language.ES) -> None:
 
 # This ensures that the `wordle()` function is called only when the script is executed directly, and not when it is imported as a module in another script.
 if __name__ == "__main__":
-    # wordle()
-    print(sys.argv)
+    if len(sys.argv) != 1:
+        input_language = getattr(Language, sys.argv[1])
+        wordle(language=input_language)
+
+    else:
+        wordle()

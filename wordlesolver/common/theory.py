@@ -2,7 +2,7 @@ from math import log2
 from functools import reduce
 import pandas as pd
 
-from wordlesolver.common.variables import Status
+from common.variables import Status
 
 
 def feedback(secret: str, guess: str) -> list[str]:

@@ -1,7 +1,7 @@
 import pandas as pd
 
-from wordlesolver.common import theory
-from wordlesolver.common.variables import Status
+from common import theory
+from common.variables import Status
 
 
 def filter_words(words: pd.DataFrame, guess: str, answer: list[str]) -> pd.DataFrame:
