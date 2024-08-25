@@ -1,8 +1,9 @@
 from math import log2
 from functools import reduce
-import pandas as pd
 
 from common.variables import Status
+
+import pandas as pd
 
 
 def feedback(secret: str, guess: str) -> list[str]:
@@ -97,7 +98,7 @@ def entropy(word: str, words: pd.DataFrame) -> float:
     return entropy_sum
 
 
-def calculate_entropies(possible_words: pd.DataFrame):
+def calculate_entropies(possible_words: pd.DataFrame, language: str):
     """
     Calculate the entropy for each word, based on how that word would perform as a guess against the list of possible remaining words.
 
@@ -105,6 +106,8 @@ def calculate_entropies(possible_words: pd.DataFrame):
     -----------
     possible_words : pd.DataFrame
         A DataFrame containing the subset of words that are still considered possible based on previous guesses.
+    language : str
+        Language to choose reference file to query.
 
     Returns:
     --------
@@ -117,7 +120,7 @@ def calculate_entropies(possible_words: pd.DataFrame):
     - The higher the entropy of a word, the more it is expected to help in narrowing down the set of possible remaining words.
     """
 
-    all_words: pd.DataFrame = pd.read_csv("data/probabilities_es.csv")[["word", "probability"]]
+    all_words: pd.DataFrame = pd.read_csv(f"wordlesolver/data/{language}/words.csv")[["word", "probability"]]
 
     # Calculate entropy for each word in all_words by applying the entropy function.
     all_words["entropy"] = all_words.word.progress_apply(

@@ -1,15 +1,23 @@
+import sys
+
+from common import query, theory
+from common.variables import Language
+
 import pandas as pd
 from tqdm import tqdm
 tqdm.pandas()
 
-from common import query
-from common import theory
 
-def wordle() -> None:
+def wordle(language: str = Language.ES) -> None:
     """
     Runs an interactive Wordle-solving loop where the user inputs guesses and feedback, and the program narrows down the possible secret words until it finds the correct one. The program uses entropy-based guessing to improve its chances of identifying the secret word efficiently.
 
     The function uses a list of steps (each containing a guess and the corresponding feedback) to filter the list of possible words iteratively. It continues suggesting the best possible guess based on the remaining words, until the secret word is identified.
+    
+    Parameters:
+    -----------
+    language : str
+        Language to choose reference file to query.
 
     Workflow:
     ---------
@@ -37,7 +45,7 @@ def wordle() -> None:
     """
 
     # Initial setup: starting guess, empty list of steps, and secret found flag
-    best_guess: str = "careo"
+    best_guess: str = Language().best_initial_guess(language)
     steps: list[dict[str, str]] = []
     secret_found: bool = False
 
@@ -54,7 +62,7 @@ def wordle() -> None:
         })
 
         # Filter the list of possible words based on all steps so far
-        possible_words: pd.DataFrame = query.filter_words_accumulative(steps)
+        possible_words: pd.DataFrame = query.filter_words_accumulative(steps, language)
 
         # Preview the top few remaining words
         print(f"There are {len(possible_words)} possible words")
@@ -68,10 +76,15 @@ def wordle() -> None:
 
         # If multiple words remain, calculate entropies and determine the best next guess
         else:
-            stats_words = theory.calculate_entropies(possible_words)
+            stats_words = theory.calculate_entropies(possible_words, language)
             best_guess = theory.best_guess(stats_words, 1)
 
 
 # This ensures that the `wordle()` function is called only when the script is executed directly, and not when it is imported as a module in another script.
 if __name__ == "__main__":
-    wordle()
+    if len(sys.argv) != 1:
+        input_language = getattr(Language, sys.argv[1])
+        wordle(language=input_language)
+
+    else:
+        wordle()

@@ -1,7 +1,7 @@
-import pandas as pd
-
 from common import theory
-from common.variables import reformat_answer
+from common.variables import Status
+
+import pandas as pd
 
 
 def filter_words(words: pd.DataFrame, guess: str, answer: list[str]) -> pd.DataFrame:
@@ -33,7 +33,7 @@ def filter_words(words: pd.DataFrame, guess: str, answer: list[str]) -> pd.DataF
     return filtered_words.reset_index(drop=True)
 
 
-def filter_words_accumulative(steps: list[dict[str, str]]) -> pd.DataFrame:
+def filter_words_accumulative(steps: list[dict[str, str]], language: str) -> pd.DataFrame:
     """
     Filters a list of possible Wordle words based on multiple guess-answer pairs, applied cumulatively.
 
@@ -43,6 +43,8 @@ def filter_words_accumulative(steps: list[dict[str, str]]) -> pd.DataFrame:
         A list of dictionaries, where each dictionary contains:
         - "guess"  : str : A word that was guessed.
         - "answer" : str : The feedback received for the guess, represented as a string of digits (e.g., "22220" where '2' means absent, '1' means misplaced, and '0' means correct).
+    language : str
+        Language to choose reference file to query.
 
     Returns:
     --------
@@ -52,7 +54,7 @@ def filter_words_accumulative(steps: list[dict[str, str]]) -> pd.DataFrame:
     Workflow:
     ---------
     1. **Base Case**: If there is only one step in the list:
-        - Load the full list of words from "data/probabilities_es.csv".
+        - Load the full list of words from "data/es/words.csv".
         - Apply the `filter_words` function to narrow down the possible words based on the first guess-answer pair.
     
     2. **Recursive Case**: If there are multiple steps:
@@ -72,13 +74,13 @@ def filter_words_accumulative(steps: list[dict[str, str]]) -> pd.DataFrame:
         step = steps[0]
 
         # Load the full list of words from the CSV file
-        words = pd.read_csv("data/probabilities_es.csv")[["word", "probability"]]
+        words = pd.read_csv(f"wordlesolver/data/{language}/words.csv")[["word", "probability"]]
 
         # Apply the filter based on the first guess and its corresponding answer
         possible_words = filter_words(
-            words, 
-            step["guess"], 
-            reformat_answer(step["answer"])
+            words,
+            step["guess"],
+            Status().reformat_answer(step["answer"])
         )
 
     # Recursive case: process all steps except the last one first
@@ -86,13 +88,13 @@ def filter_words_accumulative(steps: list[dict[str, str]]) -> pd.DataFrame:
         step = steps[-1]
 
         # Recursively filter words using all previous steps
-        possible_words = filter_words_accumulative(steps[:-1])
+        possible_words = filter_words_accumulative(steps[:-1], language)
 
         # Apply the filter based on the last guess and its corresponding answer
         possible_words = filter_words(
             possible_words,
             step["guess"],
-            reformat_answer(step["answer"])
+            Status().reformat_answer(step["answer"])
         )
 
     return possible_words
