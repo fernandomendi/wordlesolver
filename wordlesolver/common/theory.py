@@ -1,4 +1,5 @@
 from math import log2
+from functools import reduce
 import pandas as pd
 
 from common.variables import Status
@@ -42,33 +43,6 @@ def feedback(secret: str, guess: str) -> list[str]:
 
     return answer
 
-def filter_words(words: pd.DataFrame, guess: str, answer: list[str]) -> pd.DataFrame:
-    """
-    Filters the words dataframe to find words that match the given guess and expected feedback.
-
-    Parameters:
-    ----------
-    words : pd.DataFrame
-        DataFrame containing a column 'word' with possible words.
-    guess : str
-        The guessed word to be used for comparison. It should be a 5-letter string.
-    answer : list[Status]
-        List of Status objects representing the expected feedback for the guess.
-
-    Returns:
-    -------
-    pd.DataFrame
-        A DataFrame containing only the words that match the given feedback.
-    """
-
-    # Apply the feedback function and filter based on the expected answer
-    filtered_words = words[
-        words.word.apply(
-            lambda secret: feedback(secret, guess) == answer
-        )
-    ]
-
-    return filtered_words.reset_index(drop=True)
 
 def entropy(word: str, words: pd.DataFrame) -> float:
     """
@@ -99,47 +73,43 @@ def entropy(word: str, words: pd.DataFrame) -> float:
     -------
     If the possible words are ["apple", "apply", "ample"], and the word being evaluated is "apple", the function will compute the feedback for "apple" against each word in the list, determine the frequency of each feedback pattern, and then calculate the entropy based on these frequencies.
     """
+    # Create a copy of the words DataFrame to work with, avoiding modifications to the original DataFrame.
+    words_aux: pd.DataFrame = words.copy()
+    words_count: int = len(words_aux)
 
-    # Dictionary to store the frequency of each unique feedback pattern
-    answer_frequencies: dict = {}
+    # Apply the feedback function to each word in the DataFrame to generate an "answer code".
+    words_aux["answer_code"] = words_aux.word.apply(
+        lambda x: "".join(feedback(word, x))
+    )
 
-    # Iterate over each word in the DataFrame and calculate feedback
-    for _, row in words.iterrows():
-        guess: str = row["word"]
-        answer: list[str] = feedback(word, guess)
-        answer_code: str = "".join(answer)
+    # Calculate the frequency of each unique "answer code" in the DataFrame.
+    answer_frequencies = words_aux.answer_code.value_counts()
+    # Convert the frequencies to probabilities by dividing each frequency by the total number of words.
+    answer_probabilities = answer_frequencies / words_count
 
-        # Update the frequency count for the current feedback pattern
-        if answer_code not in answer_frequencies:
-            answer_frequencies[answer_code] = 1
-        else:
-            answer_frequencies[answer_code] += 1
-
-    # Calculate entropy based on the frequency distribution of feedback patterns
-    entropy_sum: float = 0
-    words_count: int = len(words)
-    for _, frequency in answer_frequencies.items():
-        probability = frequency / words_count
-        entropy_sum -= probability * log2(probability)
+    # For each probability, compute `prob * log2(prob)` and accumulate the results. The sum is negated to match the definition of entropy.
+    entropy_sum = -reduce(
+        lambda acc, prob: acc + prob * log2(prob),
+        answer_probabilities,
+        0
+    )
 
     return entropy_sum
 
-def calculate_entropies(all_words: pd.DataFrame, possible_words: pd.DataFrame):
+
+def calculate_entropies(possible_words: pd.DataFrame):
     """
-    Calculate the entropy for each word in the provided list of all possible words, 
-    based on how that word would perform as a guess against the list of possible remaining words.
+    Calculate the entropy for each word, based on how that word would perform as a guess against the list of possible remaining words.
 
     Parameters:
     -----------
-    all_words : pd.DataFrame
-        A DataFrame containing the complete list of words, typically representing all valid guesses.
     possible_words : pd.DataFrame
         A DataFrame containing the subset of words that are still considered possible based on previous guesses.
 
     Returns:
     --------
     pd.DataFrame
-        A DataFrame with the original words from `all_words`, with an additional column 'entropy' that contains the calculated entropy value for each word.
+        A DataFrame of all available words`, with an additional column 'entropy' that contains the calculated entropy value for each word.
 
     Notes:
     ------
@@ -147,16 +117,14 @@ def calculate_entropies(all_words: pd.DataFrame, possible_words: pd.DataFrame):
     - The higher the entropy of a word, the more it is expected to help in narrowing down the set of possible remaining words.
     """
 
-    # Create a copy of the all_words DataFrame to work with, avoiding modifications to the original DataFrame.
-    words_aux: pd.DataFrame = all_words
+    all_words: pd.DataFrame = pd.read_csv("data/probabilities_es.csv")[["word", "probability"]]
 
     # Calculate entropy for each word in all_words by applying the entropy function.
-
-    words_aux["entropy"] = words_aux.word.progress_apply(
+    all_words["entropy"] = all_words.word.progress_apply(
         lambda word: entropy(word, possible_words)
     )
 
-    return words_aux
+    return all_words
 
 
 def best_guess(words: pd.DataFrame, weight: float) -> str:
@@ -185,15 +153,18 @@ def best_guess(words: pd.DataFrame, weight: float) -> str:
         If the weight is not between 0 and 1, a ValueError is raised.
     """
 
+    # Create a copy of the words DataFrame to work with, avoiding modifications to the original DataFrame.
+    words_aux: pd.DataFrame = words.copy()
+
     # Ensure the weight is a number between 0 and 1
     if weight < 0 or weight > 1:
         raise ValueError("The weight must be between 0 and 1.")
 
     # Calculate the 'guessability' score as a weighted average of entropy and probability
-    words["guessability"] = weight * words.entropy + (1 - weight) * words.probability
+    words_aux["guessability"] = weight * words_aux.entropy + (1 - weight) * words_aux.probability
 
     # Find the word with the highest 'guessability' score
-    guess: str = words \
+    guess: str = words_aux \
         .sort_values("guessability", ascending=False) \
         .reset_index() \
         .loc[0, "word"]
