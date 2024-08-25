@@ -52,7 +52,7 @@ def filter_words_accumulative(steps: list[dict[str, str]]) -> pd.DataFrame:
     Workflow:
     ---------
     1. **Base Case**: If there is only one step in the list:
-        - Load the full list of words from "data/probabilities_es.csv".
+        - Load the full list of words from "data/es/words.csv".
         - Apply the `filter_words` function to narrow down the possible words based on the first guess-answer pair.
     
     2. **Recursive Case**: If there are multiple steps:
@@ -72,7 +72,7 @@ def filter_words_accumulative(steps: list[dict[str, str]]) -> pd.DataFrame:
         step = steps[0]
 
         # Load the full list of words from the CSV file
-        words = pd.read_csv("data/probabilities_es.csv")[["word", "probability"]]
+        words = pd.read_csv("data/es/words.csv")[["word", "probability"]]
 
         # Apply the filter based on the first guess and its corresponding answer
         possible_words = filter_words(
