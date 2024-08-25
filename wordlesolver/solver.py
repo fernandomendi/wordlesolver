@@ -70,3 +70,8 @@ def wordle() -> None:
         else:
             stats_words = theory.calculate_entropies(possible_words)
             best_guess = theory.best_guess(stats_words, 1)
+
+
+# This ensures that the `wordle()` function is called only when the script is executed directly, and not when it is imported as a module in another script.
+if __name__ == "__main__":
+    wordle()
