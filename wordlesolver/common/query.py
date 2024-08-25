@@ -79,7 +79,7 @@ def filter_words_accumulative(steps: list[dict[str, str]]) -> pd.DataFrame:
         step = steps[0]
 
         # Load the full list of words from the CSV file
-        words = pd.read_csv("data/probabilities_es.csv")
+        words = pd.read_csv("data/probabilities_es.csv")[["word", "probability"]]
 
         # Apply the filter based on the first guess and its corresponding answer
         possible_words = filter_words(

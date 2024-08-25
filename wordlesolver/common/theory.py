@@ -117,7 +117,7 @@ def calculate_entropies(possible_words: pd.DataFrame):
     - The higher the entropy of a word, the more it is expected to help in narrowing down the set of possible remaining words.
     """
 
-    all_words: pd.DataFrame = pd.read_csv("data/probabilities_es.csv")
+    all_words: pd.DataFrame = pd.read_csv("data/probabilities_es.csv")[["word", "probability"]]
 
     # Calculate entropy for each word in all_words by applying the entropy function.
     all_words["entropy"] = all_words.word.progress_apply(
