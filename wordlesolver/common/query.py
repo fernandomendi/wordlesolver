@@ -33,13 +33,6 @@ def filter_words(words: pd.DataFrame, guess: str, answer: list[str]) -> pd.DataF
     return filtered_words.reset_index(drop=True)
 
 
-# steps = [
-#     {
-#         "guess" : "careo",
-#         "answer": "22220",
-#     }
-# ]
-
 def filter_words_accumulative(steps: list[dict[str, str]]) -> pd.DataFrame:
     """
     Filters a list of possible Wordle words based on multiple guess-answer pairs, applied cumulatively.
