@@ -153,15 +153,18 @@ def best_guess(words: pd.DataFrame, weight: float) -> str:
         If the weight is not between 0 and 1, a ValueError is raised.
     """
 
+    # Create a copy of the words DataFrame to work with, avoiding modifications to the original DataFrame.
+    words_aux: pd.DataFrame = words.copy()
+
     # Ensure the weight is a number between 0 and 1
     if weight < 0 or weight > 1:
         raise ValueError("The weight must be between 0 and 1.")
 
     # Calculate the 'guessability' score as a weighted average of entropy and probability
-    words["guessability"] = weight * words.entropy + (1 - weight) * words.probability
+    words_aux["guessability"] = weight * words_aux.entropy + (1 - weight) * words_aux.probability
 
     # Find the word with the highest 'guessability' score
-    guess: str = words \
+    guess: str = words_aux \
         .sort_values("guessability", ascending=False) \
         .reset_index() \
         .loc[0, "word"]
