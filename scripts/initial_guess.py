@@ -30,7 +30,8 @@ def simulation(language: str) -> None:
 
     Returns:
     --------
-    - None: The function caches the possible entropies for future use.
+    None
+        The function caches the possible entropies for future use.
     """
 
     # Retrieve the best initial guess for the specified language.
@@ -56,6 +57,7 @@ if __name__ == "__main__":
     if len(sys.argv) != 3:
         raise ValueError("Wrong number of inputs")
 
+    # Get the language from the command line arguments
     input_language = getattr(Language, sys.argv[1])
 
     simulation(input_language)
