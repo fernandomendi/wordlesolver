@@ -104,29 +104,47 @@ def entropy(word: str, words: pd.DataFrame) -> float:
 
 def calculate_entropies(steps: list[dict[str, str]], language: str) -> pd.DataFrame:
     """
-    Calculate the entropy for each word, based on how that word would perform as a guess against the list of possible remaining words.
+    Calculate the entropy for each word in a list of possible words based on a series of steps (guesses and their outcomes).
 
     Parameters:
     -----------
-    possible_words : pd.DataFrame
-        A DataFrame containing the subset of words that are still considered possible based on previous guesses.
+    steps : list[dict[str, str]]
+        A list of dictionaries where each dictionary represents a guess and its corresponding outcome (answer). Each dictionary in the list should have the following structure:
+        {
+            "guess": "word_guessed",
+            "answer": "feedback_code"
+        }
+        The "guess" is the word guessed, and "answer" is the feedback received (a string representing the status of each letter).
+        
     language : str
-        Language to choose reference file to query.
+        A string representing the language for which the word list and cache files are to be loaded. This string is used to access the correct files within the `data/{language}/` directory.
 
     Returns:
     --------
     pd.DataFrame
-        A DataFrame of all available words`, with an additional column 'entropy' that contains the calculated entropy value for each word.
+        A DataFrame with the entropy values for each word. If the entropy values for the current steps have already been calculated and cached, they are loaded from the cache. Otherwise, the entropies are calculated and stored in the cache for future use. The resulting DataFrame contains all words along with their calculated entropy values.
 
-    Notes:
-    ------
-    - The `progress_apply` method is used to apply the `entropy` function to each word, with a progress bar for better tracking.
-    - The higher the entropy of a word, the more it is expected to help in narrowing down the set of possible remaining words.
+    Process:
+    --------
+    1. Load the list of all possible words from `data/{language}/words.csv`.
+    
+    2. Generate a path for the cache based on the series of steps. The cache directory structure is built using the guesses 
+       and their corresponding answers.
+    
+    3. Check if the entropy values for the provided steps have been previously calculated and stored in the cache:
+        - If cached, load the entropy values from the corresponding file.
+        - If not cached, calculate the entropies by:
+            a. Filtering the possible words based on the current steps.
+            b. Applying the `entropy` function to each word in the full word list.
+            c. Saving the calculated entropies in the cache for future reference.
+    
+    4. Return a DataFrame with the words and their entropy values.
     """
 
+    # Load all words from the CSV file
     all_words: pd.DataFrame = pd.read_csv(f"data/{language}/words.csv")
 
-    # Check if entropies for these steps has been calculated before
+    # Generate a cache path based on the sequence of steps
     cache_path = f"data/{language}/cache/" \
         + "".join(
             map(
@@ -136,25 +154,26 @@ def calculate_entropies(steps: list[dict[str, str]], language: str) -> pd.DataFr
         )
     is_cached = os.path.isfile(cache_path + "stats.csv")
 
-    # If yes, then load the corresponding file
+    # If the entropy values are cached, load them
     if is_cached:
         cache = pd.read_csv(cache_path + "stats.csv")
         stats = pd.merge(all_words, cache, on="id")
 
-    # If not, calculate the entropies manually
+    # If not cached, calculate the entropy values
     else:
         possible_words: pd.DataFrame = query.filter_words_accumulative(steps, language)
         stats = all_words.copy()
 
-        # Calculate entropy for each word in all_words by applying the entropy function.
+        # Apply the entropy function to calculate entropy for each word
         stats["entropy"] = stats.word.progress_apply(
             lambda word: entropy(word, possible_words)
         )
 
+        # Create the cache directory if it doesn't exist
         if not os.path.isdir(cache_path):
             os.makedirs(cache_path)
 
-        # Store the calculated values for future reference
+        # Save the calculated entropy values to the cache
         stats[["id", "entropy"]] \
             .to_csv(cache_path + "stats.csv", index=False)
 

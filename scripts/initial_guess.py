@@ -1,5 +1,5 @@
 """
-This script simulates all possible answers for an initial word in the Wordle game and stores the results in a dictionary for future reference. The simulation calculates which words remain possible after each possible feedback pattern based on the initial guess, and it saves this data for quick lookups later.
+This script simulates all possible answers for an initial guess in the Wordle game and stores the results in a dictionary for future reference. The simulation calculates the entropies for the words remaining after filtering by each possible feedback pattern based on the initial guess, and it saves this data for quick lookups later.
 
 Functions:
 - simulation(language: str) -> None: Simulates all possible feedback patterns for the initial guess and stores the resulting data in a cache.
@@ -8,8 +8,8 @@ Main Functionality:
 - The script accepts a language code as a command-line argument.
 - It retrieves the best initial guess for the specified language.
 - It generates all possible feedback patterns (combinations of correct, misplaced, and absent letters).
-- For each pattern, it filters the possible words and calculates their entropies.
-- The results are stored in a dictionary and written to a JSON file for future use.
+- For each pattern, it calculates the entropies for the corresponding guess-answer combination.
+- The results are cached for future use.
 """
 
 from itertools import product
@@ -23,17 +23,14 @@ def simulation(language: str) -> None:
     """
     Simulate all possible answers based on an initial word for a given language.
 
-    Args:
-    - language (str): The language code to use (e.g., 'ES' for Spanish).
+    Parameters:
+    -----------
+    language : str
+        Language to choose reference file to query.
 
     Returns:
-    - None: The function saves the results to a JSON file instead of returning them.
-    
-    Process:
-    - Retrieves the best initial guess based on the specified language.
-    - Generates all possible combinations of feedback patterns (correct, misplaced, absent).
-    - Filters the possible words and calculates the entropy for each pattern.
-    - Stores the results in a dictionary for quick reference in future games.
+    --------
+    - None: The function caches the possible entropies for future use.
     """
 
     # Retrieve the best initial guess for the specified language.
