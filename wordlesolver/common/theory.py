@@ -1,6 +1,8 @@
 from math import log2
 from functools import reduce
+import os
 
+from wordlesolver.common import query
 from wordlesolver.common.variables import Status
 
 import pandas as pd
@@ -100,7 +102,7 @@ def entropy(word: str, words: pd.DataFrame) -> float:
     return entropy_sum
 
 
-def calculate_entropies(possible_words: pd.DataFrame, language: str):
+def calculate_entropies(steps: list[dict[str, str]], language: str) -> pd.DataFrame:
     """
     Calculate the entropy for each word, based on how that word would perform as a guess against the list of possible remaining words.
 
@@ -122,14 +124,41 @@ def calculate_entropies(possible_words: pd.DataFrame, language: str):
     - The higher the entropy of a word, the more it is expected to help in narrowing down the set of possible remaining words.
     """
 
-    all_words: pd.DataFrame = pd.read_csv(f"data/{language}/words.csv")[["word", "probability"]]
+    all_words: pd.DataFrame = pd.read_csv(f"data/{language}/words.csv")
 
-    # Calculate entropy for each word in all_words by applying the entropy function.
-    all_words["entropy"] = all_words.word.progress_apply(
-        lambda word: entropy(word, possible_words)
-    )
+    # Check if entropies for these steps has been calculated before
+    cache_path = f"data/{language}/cache/" \
+        + "".join(
+            map(
+                lambda x: f"guess={x['guess']}/answer={x['answer']}/",
+                steps
+            )
+        )
+    is_cached = os.path.isfile(cache_path + "stats.csv")
 
-    return all_words
+    # If yes, then load the corresponding file
+    if is_cached:
+        cache = pd.read_csv(cache_path + "stats.csv")
+        stats = pd.merge(all_words, cache, on="id")
+
+    # If not, calculate the entropies manually
+    else:
+        possible_words: pd.DataFrame = query.filter_words_accumulative(steps, language)
+        stats = all_words.copy()
+
+        # Calculate entropy for each word in all_words by applying the entropy function.
+        stats["entropy"] = stats.word.progress_apply(
+            lambda word: entropy(word, possible_words)
+        )
+
+        if not os.path.isdir(cache_path):
+            os.makedirs(cache_path)
+
+        # Store the calculated values for future reference
+        stats[["id", "entropy"]] \
+            .to_csv(cache_path + "stats.csv", index=False)
+
+    return stats
 
 
 def best_guess(words: pd.DataFrame, weight: float) -> str:

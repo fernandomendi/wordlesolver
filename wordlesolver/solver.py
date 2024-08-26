@@ -43,7 +43,8 @@ def wordle(language: str = Language.ES) -> None:
     """
 
     # Initial setup: starting guess, empty list of steps, and secret found flag
-    best_guess: str = Language().best_initial_guess(language)
+    initial_guess: str = Language().best_initial_guess(language)
+    best_guess: str = initial_guess
     steps: list[dict[str, str]] = []
     secret_found: bool = False
 
@@ -74,7 +75,7 @@ def wordle(language: str = Language.ES) -> None:
 
         # If multiple words remain, calculate entropies and determine the best next guess
         else:
-            stats_words = theory.calculate_entropies(possible_words, language)
+            stats_words = theory.calculate_entropies(steps, language)
             best_guess = theory.best_guess(stats_words, 1)
 
 
