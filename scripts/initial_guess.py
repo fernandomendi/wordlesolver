@@ -53,8 +53,8 @@ def simulation(language: str) -> None:
 
 # This ensures that the `simulate()` function is called only when the script is executed directly, and not when it is imported as a module in another script.
 if __name__ == "__main__":
-    if len(sys.argv) == 1:
-        raise ValueError("Missing language parameter")
+    if len(sys.argv) != 3:
+        raise ValueError("Wrong number of inputs")
 
     input_language = getattr(Language, sys.argv[1])
 
