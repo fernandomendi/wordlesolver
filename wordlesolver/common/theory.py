@@ -1,7 +1,7 @@
 from math import log2
 from functools import reduce
 
-from common.variables import Status
+from wordlesolver.common.variables import Status
 
 import pandas as pd
 from tqdm import tqdm

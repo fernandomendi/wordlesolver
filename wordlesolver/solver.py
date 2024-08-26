@@ -1,7 +1,7 @@
 import sys
 
-from common import query, theory
-from common.variables import Language
+from wordlesolver.common import query, theory
+from wordlesolver.common.variables import Language
 
 import pandas as pd
 

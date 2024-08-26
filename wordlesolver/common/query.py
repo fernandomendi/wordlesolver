@@ -1,5 +1,5 @@
-from common import theory
-from common.variables import Status
+from wordlesolver.common import theory
+from wordlesolver.common.variables import Status
 
 import pandas as pd
 
