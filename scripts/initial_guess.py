@@ -13,13 +13,10 @@ Main Functionality:
 """
 
 from itertools import product
-import json
 import sys
 
-from wordlesolver.common import query, theory
+from wordlesolver.common import theory
 from wordlesolver.common.variables import Language, Status
-
-import pandas as pd
 
 
 def simulation(language: str) -> None:
@@ -39,40 +36,23 @@ def simulation(language: str) -> None:
     - Stores the results in a dictionary for quick reference in future games.
     """
 
-    # Retrieve the best initial guess for the specified language
+    # Retrieve the best initial guess for the specified language.
     initial_guess: str = Language().best_initial_guess(language)
-    cache: dict = {
-        initial_guess: {}
-    }
 
-    # Generate all possible combinations of feedback patterns
+    # Generate all possible combinations of feedback patterns.
     possible_answers = product(
         [Status.CORRECT, Status.MISPLACED, Status.ABSENT],
         repeat=5
     )
     for answer in possible_answers:
+        answer_str = "".join(answer)
+        print(f"Calculating entropies for {answer_str}")
 
-        # Filter the words based on the current feedback pattern
-        possible_words: pd.DataFrame = query.filter_words_accumulative(
-            steps=[{
-                "guess" : initial_guess, 
-                "answer" : answer
-            }],
-            language=language
-        )
-
-        # Calculate entropies for the remaining possible words
-        stats_words: pd.DataFrame = theory.calculate_entropies(possible_words, language)
-
-        cache[initial_guess]["".join(answer)] = list(
-            stats_words \
-                .to_dict(orient="index") \
-                .values()
-        )
-
-    with open("data/es/cache/initial_guess.json", "w") as f:
-        json.dump(cache, f, indent=4)
-
+        # Calculate entropies for these steps and cache them in memory.
+        theory.calculate_entropies([{
+            "guess" : initial_guess,
+            "answer" : answer_str
+        }], language)
 
 # This ensures that the `simulate()` function is called only when the script is executed directly, and not when it is imported as a module in another script.
 if __name__ == "__main__":
@@ -80,4 +60,5 @@ if __name__ == "__main__":
         raise ValueError("Missing language parameter")
 
     input_language = getattr(Language, sys.argv[1])
-    simulation(Language.ES)
+
+    simulation(input_language)
