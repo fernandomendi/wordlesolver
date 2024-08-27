@@ -25,12 +25,14 @@ def validate_word(word: str, language: str) -> bool:
         If the word does not exist in the word list.
     """
 
-    words: pd.DataFrame = pd.read_csv(f"data/{language}/words.csv")
+    if len(word) != 5:
+        raise ValueError(f"The word '{word}' is not 5 characters long.")
 
+    words: pd.DataFrame = pd.read_csv(f"data/{language}/words.csv")
     is_word: bool = any(words.word == word)
 
     if not is_word:
-        raise ValueError(f"The word '{word}' does not exist in the {language} word list.")
+        raise ValueError(f"The word '{word}' does not exist in the {language.upper()} word list.")
 
     return is_word
 
@@ -56,7 +58,6 @@ def validate_answer(answer: str) -> bool:
     """
 
     pattern: re.Pattern = re.compile("^[012]{5}$")
-
     is_answer: bool = pattern.match(answer)
 
     if not is_answer:
