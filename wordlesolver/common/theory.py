@@ -152,7 +152,7 @@ def calculate_entropies(steps: list[dict[str, str]], language: str) -> pd.DataFr
                 steps
             )
         )
-    is_cached = os.path.isfile(cache_path + "stats.csv")
+    is_cached = os.path.exists(cache_path + "stats.csv")
 
     # If the entropy values are cached, load them
     if is_cached:
@@ -170,7 +170,7 @@ def calculate_entropies(steps: list[dict[str, str]], language: str) -> pd.DataFr
         )
 
         # Create the cache directory if it doesn't exist
-        if not os.path.isdir(cache_path):
+        if not os.path.exists(cache_path):
             os.makedirs(cache_path)
 
         # Save the calculated entropy values to the cache
