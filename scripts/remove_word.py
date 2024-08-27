@@ -3,7 +3,7 @@ import os
 import shutil
 import sys
 
-from wordlesolver.common.variables import Language
+from wordlesolver.common.core.variables import Language
 
 import pandas as pd
 import numpy as np

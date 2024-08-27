@@ -3,7 +3,7 @@ from functools import reduce
 import os
 
 from wordlesolver.common import query
-from wordlesolver.common.variables import Status
+from wordlesolver.common.core.variables import Status
 
 import pandas as pd
 from tqdm import tqdm

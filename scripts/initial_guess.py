@@ -16,7 +16,7 @@ from itertools import product
 import sys
 
 from wordlesolver.common import theory
-from wordlesolver.common.variables import Language, Status
+from wordlesolver.common.core.variables import Language, Status
 
 
 def simulation(language: str) -> None:
