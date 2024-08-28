@@ -95,7 +95,7 @@ def wordle(language_code: str) -> None:
 
         # If multiple words remain, calculate entropies and determine the best next guess
         else:
-            stats_words = theory.calculate_entropies(steps, language)
+            stats_words = theory.get_entropies(steps, language)
             best_guess = theory.best_guess(stats_words, 1)
 
 

@@ -65,9 +65,54 @@ def validate_answer(answer: str) -> bool:
 
     # Compile a regular expression pattern that matches exactly 5 characters, each '0', '1', or '2'.
     pattern: re.Pattern = re.compile("^[012]{5}$")
-    is_answer: bool = pattern.match(answer)
+    is_answer: bool = bool(pattern.match(answer))
 
     if not is_answer:
         raise exceptions.InvalidAnswerError(answer)
 
     return is_answer
+
+
+def validate_steps(steps: list[dict[str, str]], language: Language) -> bool:
+    """
+    Validates whether a set of steps is valid by checking each step.
+
+    Parameters
+    ----------
+    steps : list[dict[str, str]]
+        A list of dictionaries where each dictionary represents a guess and its corresponding outcome (answer). Each dictionary in the list should have the following structure:
+        {
+            "guess": "word_guessed",
+            "answer": "feedback_code"
+        }
+        The "guess" is the word guessed, and "answer" is the feedback received (a string representing the status of each letter).
+
+    language : Language
+        A Language object for which the word list and cache files are to be loaded. This language's code is used to access the correct files within the `data/{language.code}/` directory.
+
+    Returns
+    -------
+    bool
+        True if the steps are valid.
+
+    Raises
+    ------
+    InvalidWordLengthError
+        If the word is not exactly 5 letters long.
+    WordNotFoundError
+        If the word does not exist in the word list.
+    InvalidAnswerError
+        If the answer string is not valid.
+    """
+
+    is_valid: bool = True
+
+    for step in steps:
+        guess = step["guess"]
+        answer = step["answer"]
+
+        # Validate step
+        is_valid &= validate_word(guess, language)
+        is_valid &= validate_answer(answer)
+
+    return is_valid

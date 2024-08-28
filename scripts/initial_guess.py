@@ -48,8 +48,8 @@ def simulation(language_code: str) -> None:
         answer_str = "".join(answer)
         print(f"Calculating entropies for {answer_str}")
 
-        # Calculate entropies for these steps and cache them in memory.
-        theory.calculate_entropies([{
+        # Get entropies for these steps and cache them in memory.
+        theory.get_entropies([{
             "guess" : initial_guess,
             "answer" : answer_str
         }], language)

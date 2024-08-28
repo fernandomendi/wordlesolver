@@ -1,17 +1,19 @@
 from math import log2
 from functools import reduce
 import os
+import multiprocessing as mp
 
-from wordlesolver.common import query
-from wordlesolver.common.validation import validate_answer, validate_word
+from wordlesolver.common.core.utilities import split_chunks
 from wordlesolver.common.core.variables import Language, Status
+from wordlesolver.common import query
+from wordlesolver.common.validation import validate_steps
 
 import pandas as pd
 from tqdm import tqdm
 tqdm.pandas()
 
 
-def feedback(secret: str, guess: str) -> list[str]:
+def feedback(secret: str, guess: str) -> str:
     """
     Evaluates a Wordle guess against a secret word and returns a string representing the feedback for each letter in the guess. The feedback is provided as a sequence of status codes, where each code corresponds to the status of a letter in the guess:
     
@@ -28,8 +30,8 @@ def feedback(secret: str, guess: str) -> list[str]:
 
     Returns:
     -------
-    list[str]
-        A list of str objects representing the status of each letter in the guess. The list contains five str objects, each corresponding to one letter in the guess.
+    str
+        A str object representing the status of each letter in the guess. The str is 5 characters long, each corresponding to one letter in the guess.
     """
 
     # Initialize the answer with a list of ABSENT Status objects
@@ -47,7 +49,7 @@ def feedback(secret: str, guess: str) -> list[str]:
             answer[i] = Status.MISPLACED
             secret = secret.replace(guess[i], "_", 1)
 
-    return answer
+    return "".join(answer)
 
 
 def entropy(word: str, words: pd.DataFrame) -> float:
@@ -84,12 +86,12 @@ def entropy(word: str, words: pd.DataFrame) -> float:
     words_count: int = len(words_aux)
 
     # Apply the feedback function to each word in the DataFrame to generate an "answer code".
-    words_aux["answer_code"] = words_aux.word.apply(
-        lambda x: "".join(feedback(word, x))
+    words_aux["answer"] = words_aux.word.apply(
+        lambda x: feedback(word, x)
     )
 
     # Calculate the frequency of each unique "answer code" in the DataFrame.
-    answer_frequencies = words_aux.answer_code.value_counts()
+    answer_frequencies = words_aux.answer.value_counts()
     # Convert the frequencies to probabilities by dividing each frequency by the total number of words.
     answer_probabilities = answer_frequencies / words_count
 
@@ -102,10 +104,36 @@ def entropy(word: str, words: pd.DataFrame) -> float:
 
     return entropy_sum
 
-
-def calculate_entropies(steps: list[dict[str, str]], language: Language) -> pd.DataFrame:
+def process_entropies_chunk(chunk: pd.DataFrame, possible_words: pd.DataFrame) -> pd.DataFrame:
     """
-    Calculate the entropy for each word in a list of possible words based on a series of steps (guesses and their outcomes).
+    Calculates the entropy for each word in a DataFrame chunk.
+
+    This function applies the entropy calculation to each word in a given chunk of the DataFrame, using the possible words provided. The entropy values are stored in a new column called "entropy".
+
+    Parameters
+    ----------
+    chunk : pd.DataFrame
+        A chunk of the DataFrame containing a subset of words to process.
+    possible_words : pd.DataFrame
+        The DataFrame containing the set of possible words used for entropy calculation.
+
+    Returns
+    -------
+    pd.DataFrame
+        The input chunk with an additional column, "entropy", containing the calculated entropy for each word.
+    """
+
+    chunk["entropy"] = chunk.word.apply(
+        lambda word: entropy(word, possible_words)
+    )
+    return chunk
+
+
+
+
+def get_entropies(steps: list[dict[str, str]], language: Language, parallelize: bool = True) -> pd.DataFrame:
+    """
+    Get the entropy for each word in a list of possible words based on a series of steps (guesses and their outcomes).
 
     Parameters:
     -----------
@@ -120,43 +148,55 @@ def calculate_entropies(steps: list[dict[str, str]], language: Language) -> pd.D
     language : Language
         A Language object for which the word list and cache files are to be loaded. This language's code is used to access the correct files within the `data/{language.code}/` directory.
 
+    parallelize : bool, optional
+        If `True`, the entropy calculations are parallelized across multiple processes to improve performance. Defaults to `True`.
+
     Returns:
     --------
     pd.DataFrame
         A DataFrame with the entropy values for each word. If the entropy values for the current steps have already been calculated and cached, they are loaded from the cache. Otherwise, the entropies are calculated and stored in the cache for future use. The resulting DataFrame contains all words along with their calculated entropy values.
 
+    Raises:
+    -------
+    InvalidWordLengthError
+        If a guess is not exactly 5 letters long.
+    WordNotFoundError
+        If a guess does not exist in the word list.
+    InvalidAnswerError
+        If an answer string is not valid.
+    
     Process:
     --------
-    1. Load the list of all possible words from `data/{language.code}/words.csv`.
+    1. Validates the input steps and language.
     
-    2. Generate a path for the cache based on the series of steps. The cache directory structure is built using the guesses 
-       and their corresponding answers.
+    2. Loads the list of all possible words from `data/{language.code}/words.csv`.
     
-    3. Check if the entropy values for the provided steps have been previously calculated and stored in the cache:
-        - If cached, load the entropy values from the corresponding file.
-        - If not cached, calculate the entropies by:
+    3. Generates a cache path based on the series of steps. The cache directory structure is built using the guesses and their corresponding answers.
+    
+    4. Checks if the entropy values for the provided steps have been previously calculated and stored in the cache:
+        - If cached, loads the entropy values from the corresponding file.
+        - If not cached, calculates the entropies by:
             a. Filtering the possible words based on the current steps.
-            b. Applying the `entropy` function to each word in the full word list.
-            c. Saving the calculated entropies in the cache for future reference.
+            b. Applying the `entropy` function to each word in the full word list, either sequentially or in parallel.
+            c. Saves the calculated entropies in the cache for future reference.
     
-    4. Return a DataFrame with the words and their entropy values.
+    5. Returns a DataFrame with the words and their entropy values.
     """
+
+    # Validate input steps
+    validate_steps(steps, language)
 
     # Load all words from the CSV file
     all_words: pd.DataFrame = pd.read_csv(f"data/{language.code}/words.csv")
 
     # Generate a cache path based on the sequence of steps
-    cache_path = f"data/{language.code}/cache/"
-    for step in steps:
-        guess = step["guess"]
-        answer = step["answer"]
-
-        # Validate step
-        validate_word(guess, language)
-        validate_answer(answer)
-
-        cache_path += f"guess={guess}/answer={answer}/"
-
+    cache_path = f"data/{language.code}/cache/" \
+        + "".join(
+            map(
+                lambda x: f"guess={x['guess']}/answer={x['answer']}/",
+                steps
+            )
+        )
     is_cached = os.path.exists(cache_path + "stats.csv")
 
     # If the entropy values are cached, load them
@@ -167,12 +207,30 @@ def calculate_entropies(steps: list[dict[str, str]], language: Language) -> pd.D
     # If not cached, calculate the entropy values
     else:
         possible_words: pd.DataFrame = query.filter_words_accumulative(steps, language)
-        stats = all_words.copy()
+        words_aux: pd.DataFrame = all_words.copy()
 
-        # Apply the entropy function to calculate entropy for each word
-        stats["entropy"] = stats.word.progress_apply(
-            lambda word: entropy(word, possible_words)
-        )
+        # Parallelize processes to reduce time
+        if parallelize:
+            n_processes = mp.cpu_count()
+            chunks = split_chunks(words_aux, n_processes)
+
+            # Map across n processes the calculation of entropies for a given chunk
+            with mp.Pool(processes=n_processes) as pool:
+                stats_chunks = pool.starmap(
+                    process_entropies_chunk,
+                    [(chunk, possible_words) for chunk in chunks]
+                )
+
+            # Rebuild full dataframe from dataframe chunks
+            stats: pd.DataFrame = pd.concat(stats_chunks)
+
+        else:
+            # Apply the entropy function to calculate entropy for each word
+            words_aux["entropy"] = words_aux.word.progress_apply(
+                lambda word: entropy(word, possible_words)
+            )
+
+            stats: pd.DataFrame = words_aux
 
         # Create the cache directory if it doesn't exist
         if not os.path.exists(cache_path):
