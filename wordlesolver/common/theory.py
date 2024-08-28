@@ -209,15 +209,19 @@ def get_entropies(steps: list[dict[str, str]], language: Language, parallelize: 
         possible_words: pd.DataFrame = filter_words_accumulative(steps, language)
         words_aux: pd.DataFrame = all_words.copy()
 
+        # Parallelize processes to reduce time
         if parallelize:
             n_processes = mp.cpu_count()
             chunks = split_chunks(words_aux, n_processes)
 
+            # Map across n processes the calculation of entropies for a given chunk
             with mp.Pool(processes=n_processes) as pool:
                 stats_chunks = pool.starmap(
                     process_entropies_chunk,
                     [(chunk, possible_words) for chunk in chunks]
                 )
+
+            # Rebuild full dataframe from dataframe chunks
             stats: pd.DataFrame = pd.concat(stats_chunks)
 
         else:
