@@ -22,3 +22,11 @@ class InvalidAnswerError(Exception):
         self.answer = answer
         self.message = f"The answer '{answer}' is not a valid Wordle-style answer. It must be exactly 5 characters long, with each character being '0', '1', or '2'."
         super().__init__(self.message)
+
+
+class InvalidLanguageError(Exception):
+    """Exception raised for invalid language input."""
+    def __init__(self, language: str):
+        self.language = language
+        self.message = f"'{self.language}' is not a valid language."
+        super().__init__(self.message)

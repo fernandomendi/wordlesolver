@@ -1,6 +1,7 @@
 import re
 
 from wordlesolver.common.core import exceptions
+from wordlesolver.common.core.variables import Language
 
 import pandas as pd
 
@@ -69,3 +70,28 @@ def validate_answer(answer: str) -> bool:
         raise exceptions.InvalidAnswerError(answer)
 
     return is_answer
+
+
+def validate_language(language: str) -> bool:
+    """
+    Validates if the given language is an attribute of the Language class.
+    
+    Parameters
+    ----------
+    language : str
+        The language to validate.
+    
+    Returns
+    -------
+    bool
+        True if the language is valid, raises InvalidLanguageError otherwise.
+    
+    Raises
+    ------
+    InvalidLanguageError
+        If the language is not an attribute of the Language class.
+    """
+    if not hasattr(Language, language):
+        raise exceptions.InvalidLanguageError(language)
+
+    return True
