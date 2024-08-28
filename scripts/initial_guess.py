@@ -16,17 +16,17 @@ from itertools import product
 import sys
 
 from wordlesolver.common import theory
-from wordlesolver.common.variables import Language, Status
+from wordlesolver.common.core.variables import Language, Languages, Status
 
 
-def simulation(language: str) -> None:
+def simulation(language_code: str) -> None:
     """
     Simulate all possible answers based on an initial word for a given language.
 
     Parameters:
     -----------
-    language : str
-        Language to choose reference file to query.
+    language_code : str
+        Language code to choose reference file to query and initial best guess.
 
     Returns:
     --------
@@ -34,8 +34,10 @@ def simulation(language: str) -> None:
         The function caches the possible entropies for future use.
     """
 
+    language: Language = Languages().from_code(language_code)
+
     # Retrieve the best initial guess for the specified language.
-    initial_guess: str = Language().best_initial_guess(language)
+    initial_guess: str = language.best_initial_guess
 
     # Generate all possible combinations of feedback patterns.
     possible_answers = product(
@@ -54,10 +56,8 @@ def simulation(language: str) -> None:
 
 # This ensures that the `simulate()` function is called only when the script is executed directly, and not when it is imported as a module in another script.
 if __name__ == "__main__":
-    if len(sys.argv) != 3:
-        raise ValueError("Wrong number of inputs")
 
-    # Get the language from the command line arguments
-    input_language = getattr(Language, sys.argv[1])
+    # Unpack values from command line input
+    in_language, = sys.argv[1:]
 
-    simulation(input_language)
+    simulation(in_language)

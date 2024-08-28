@@ -1,10 +1,11 @@
 from wordlesolver.common import theory
-from wordlesolver.common.variables import Status
+from wordlesolver.common.validation import validate_answer, validate_word
+from wordlesolver.common.core.variables import Language, Status
 
 import pandas as pd
 
 
-def filter_words(words: pd.DataFrame, guess: str, answer: list[str]) -> pd.DataFrame:
+def filter_words(words: pd.DataFrame, guess: str, answer: list[str], language: Language) -> pd.DataFrame:
     """
     Filters the words dataframe to find words that match the given guess and expected feedback.
 
@@ -16,12 +17,18 @@ def filter_words(words: pd.DataFrame, guess: str, answer: list[str]) -> pd.DataF
         The guessed word to be used for comparison. It should be a 5-letter string.
     answer : list[Status]
         List of Status objects representing the expected feedback for the guess.
+    language : Language
+        A Language object to choose reference file to query.
 
     Returns:
     -------
     pd.DataFrame
         A DataFrame containing only the words that match the given feedback.
     """
+
+    # Validate input
+    validate_word(guess, language)
+    validate_answer(answer)
 
     # Apply the feedback function and filter based on the expected answer
     filtered_words = words[
@@ -33,7 +40,7 @@ def filter_words(words: pd.DataFrame, guess: str, answer: list[str]) -> pd.DataF
     return filtered_words.reset_index(drop=True)
 
 
-def filter_words_accumulative(steps: list[dict[str, str]], language: str) -> pd.DataFrame:
+def filter_words_accumulative(steps: list[dict[str, str]], language: Language) -> pd.DataFrame:
     """
     Filters a list of possible Wordle words based on multiple guess-answer pairs, applied cumulatively.
 
@@ -43,8 +50,8 @@ def filter_words_accumulative(steps: list[dict[str, str]], language: str) -> pd.
         A list of dictionaries, where each dictionary contains:
         - "guess"  : str : A word that was guessed.
         - "answer" : str : The feedback received for the guess, represented as a string of digits (e.g., "22220" where '2' means absent, '1' means misplaced, and '0' means correct).
-    language : str
-        Language to choose reference file to query.
+    language : Language
+        A Language object to choose reference file to query.
 
     Returns:
     --------
@@ -74,13 +81,14 @@ def filter_words_accumulative(steps: list[dict[str, str]], language: str) -> pd.
         step = steps[0]
 
         # Load the full list of words from the CSV file
-        words = pd.read_csv(f"data/{language}/words.csv")[["word", "probability"]]
+        words = pd.read_csv(f"data/{language.code}/words.csv")[["word", "probability"]]
 
         # Apply the filter based on the first guess and its corresponding answer
         possible_words = filter_words(
             words,
             step["guess"],
-            Status().reformat_answer(step["answer"])
+            Status().reformat_answer(step["answer"]),
+            language
         )
 
     # Recursive case: process all steps except the last one first
@@ -94,7 +102,8 @@ def filter_words_accumulative(steps: list[dict[str, str]], language: str) -> pd.
         possible_words = filter_words(
             possible_words,
             step["guess"],
-            Status().reformat_answer(step["answer"])
+            Status().reformat_answer(step["answer"]),
+            language
         )
 
     return possible_words
