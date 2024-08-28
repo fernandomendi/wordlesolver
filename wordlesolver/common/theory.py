@@ -6,7 +6,7 @@ import multiprocessing as mp
 from wordlesolver.common.core.utilities import split_chunks
 from wordlesolver.common.core.variables import Language, Status
 from wordlesolver.common import query
-from wordlesolver.common.validation import validate_steps
+from wordlesolver.common.validation import validate_steps, validate_weight
 
 import pandas as pd
 from tqdm import tqdm
@@ -268,6 +268,9 @@ def best_guess(words: pd.DataFrame, weight: float) -> str:
     ValueError
         If the weight is not between 0 and 1, a ValueError is raised.
     """
+
+    # Validate input
+    validate_weight(weight)
 
     # Create a copy of the words DataFrame to work with, avoiding modifications to the original DataFrame.
     words_aux: pd.DataFrame = words.copy()

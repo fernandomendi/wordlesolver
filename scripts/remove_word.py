@@ -4,11 +4,11 @@ import shutil
 import sys
 
 from wordlesolver.common.core.variables import Language, Languages
+from wordlesolver.common.validation import validate_word
 
 import pandas as pd
 import numpy as np
 
-from wordlesolver.common.validation import validate_word
 
 
 def sigmoid(x: float) -> float:
