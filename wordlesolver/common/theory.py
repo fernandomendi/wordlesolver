@@ -11,7 +11,7 @@ from tqdm import tqdm
 tqdm.pandas()
 
 
-def feedback(secret: str, guess: str) -> list[str]:
+def feedback(secret: str, guess: str) -> str:
     """
     Evaluates a Wordle guess against a secret word and returns a string representing the feedback for each letter in the guess. The feedback is provided as a sequence of status codes, where each code corresponds to the status of a letter in the guess:
     
@@ -28,8 +28,8 @@ def feedback(secret: str, guess: str) -> list[str]:
 
     Returns:
     -------
-    list[str]
-        A list of str objects representing the status of each letter in the guess. The list contains five str objects, each corresponding to one letter in the guess.
+    str
+        A str object representing the status of each letter in the guess. The str is 5 characters long, each corresponding to one letter in the guess.
     """
 
     # Initialize the answer with a list of ABSENT Status objects
@@ -47,7 +47,7 @@ def feedback(secret: str, guess: str) -> list[str]:
             answer[i] = Status.MISPLACED
             secret = secret.replace(guess[i], "_", 1)
 
-    return answer
+    return "".join(answer)
 
 
 def entropy(word: str, words: pd.DataFrame) -> float:
@@ -84,12 +84,12 @@ def entropy(word: str, words: pd.DataFrame) -> float:
     words_count: int = len(words_aux)
 
     # Apply the feedback function to each word in the DataFrame to generate an "answer code".
-    words_aux["answer_code"] = words_aux.word.apply(
-        lambda x: "".join(feedback(word, x))
+    words_aux["answer"] = words_aux.word.apply(
+        lambda x: feedback(word, x)
     )
 
     # Calculate the frequency of each unique "answer code" in the DataFrame.
-    answer_frequencies = words_aux.answer_code.value_counts()
+    answer_frequencies = words_aux.answer.value_counts()
     # Convert the frequencies to probabilities by dividing each frequency by the total number of words.
     answer_probabilities = answer_frequencies / words_count
 

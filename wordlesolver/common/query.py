@@ -1,11 +1,11 @@
 from wordlesolver.common import theory
 from wordlesolver.common.validation import validate_answer, validate_word
-from wordlesolver.common.core.variables import Language, Status
+from wordlesolver.common.core.variables import Language
 
 import pandas as pd
 
 
-def filter_words(words: pd.DataFrame, guess: str, answer: list[str], language: Language) -> pd.DataFrame:
+def filter_words(words: pd.DataFrame, guess: str, answer: str, language: Language) -> pd.DataFrame:
     """
     Filters the words dataframe to find words that match the given guess and expected feedback.
 
@@ -15,8 +15,8 @@ def filter_words(words: pd.DataFrame, guess: str, answer: list[str], language: L
         DataFrame containing a column 'word' with possible words.
     guess : str
         The guessed word to be used for comparison. It should be a 5-letter string.
-    answer : list[Status]
-        List of Status objects representing the expected feedback for the guess.
+    answer : str
+        A str object representing the expected feedback for the guess.
     language : Language
         A Language object to choose reference file to query.
 
@@ -87,7 +87,7 @@ def filter_words_accumulative(steps: list[dict[str, str]], language: Language) -
         possible_words = filter_words(
             words,
             step["guess"],
-            Status().reformat_answer(step["answer"]),
+            step["answer"],
             language
         )
 
@@ -102,7 +102,7 @@ def filter_words_accumulative(steps: list[dict[str, str]], language: Language) -
         possible_words = filter_words(
             possible_words,
             step["guess"],
-            Status().reformat_answer(step["answer"]),
+            step["answer"],
             language
         )
 
