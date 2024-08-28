@@ -104,10 +104,25 @@ def entropy(word: str, words: pd.DataFrame) -> float:
 
     return entropy_sum
 
-def process_entropies_chunk(chunk: pd.DataFrame, possible_words: pd.DataFrame):
+def process_entropies_chunk(chunk: pd.DataFrame, possible_words: pd.DataFrame) -> pd.DataFrame:
     """
-    Apply the entropy function to process the entropy for each word to a chunk of all_words dataframe.
+    Calculates the entropy for each word in a DataFrame chunk.
+
+    This function applies the entropy calculation to each word in a given chunk of the DataFrame, using the possible words provided. The entropy values are stored in a new column called "entropy".
+
+    Parameters
+    ----------
+    chunk : pd.DataFrame
+        A chunk of the DataFrame containing a subset of words to process.
+    possible_words : pd.DataFrame
+        The DataFrame containing the set of possible words used for entropy calculation.
+
+    Returns
+    -------
+    pd.DataFrame
+        The input chunk with an additional column, "entropy", containing the calculated entropy for each word.
     """
+
     chunk["entropy"] = chunk.word.apply(
         lambda word: entropy(word, possible_words)
     )
@@ -133,29 +148,42 @@ def get_entropies(steps: list[dict[str, str]], language: Language, parallelize: 
     language : Language
         A Language object for which the word list and cache files are to be loaded. This language's code is used to access the correct files within the `data/{language.code}/` directory.
 
+    parallelize : bool, optional
+        If `True`, the entropy calculations are parallelized across multiple processes to improve performance. Defaults to `True`.
+
     Returns:
     --------
     pd.DataFrame
         A DataFrame with the entropy values for each word. If the entropy values for the current steps have already been calculated and cached, they are loaded from the cache. Otherwise, the entropies are calculated and stored in the cache for future use. The resulting DataFrame contains all words along with their calculated entropy values.
 
+    Raises:
+    -------
+    InvalidWordLengthError
+        If a guess is not exactly 5 letters long.
+    WordNotFoundError
+        If a guess does not exist in the word list.
+    InvalidAnswerError
+        If an answer string is not valid.
+    
     Process:
     --------
-    1. Load the list of all possible words from `data/{language.code}/words.csv`.
+    1. Validates the input steps and language.
     
-    2. Generate a path for the cache based on the series of steps. The cache directory structure is built using the guesses 
-       and their corresponding answers.
+    2. Loads the list of all possible words from `data/{language.code}/words.csv`.
     
-    3. Check if the entropy values for the provided steps have been previously calculated and stored in the cache:
-        - If cached, load the entropy values from the corresponding file.
-        - If not cached, calculate the entropies by:
+    3. Generates a cache path based on the series of steps. The cache directory structure is built using the guesses and their corresponding answers.
+    
+    4. Checks if the entropy values for the provided steps have been previously calculated and stored in the cache:
+        - If cached, loads the entropy values from the corresponding file.
+        - If not cached, calculates the entropies by:
             a. Filtering the possible words based on the current steps.
-            b. Applying the `entropy` function to each word in the full word list.
-            c. Saving the calculated entropies in the cache for future reference.
+            b. Applying the `entropy` function to each word in the full word list, either sequentially or in parallel.
+            c. Saves the calculated entropies in the cache for future reference.
     
-    4. Return a DataFrame with the words and their entropy values.
+    5. Returns a DataFrame with the words and their entropy values.
     """
 
-    # Validate input
+    # Validate input steps
     validate_steps(steps, language)
 
     # Load all words from the CSV file
