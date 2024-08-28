@@ -76,34 +76,39 @@ def filter_words_accumulative(steps: list[dict[str, str]], language: Language) -
     - The filtering process is cumulative, meaning each step's filtering is based on the results of all previous steps.
     """
 
-    # Base case: if there is only one step, load the words and apply the first filter
-    if len(steps) == 1:
-        step = steps[0]
+    match len(steps):
 
-        # Load the full list of words from the CSV file
-        words = pd.read_csv(f"data/{language.code}/words.csv")[["word", "probability"]]
+        # Base case: 0: if there are no steps, then the possible words are all available words
+        case 0:
+            possible_words = pd.read_csv(f"data/{language.code}/words.csv")[["word", "probability"]]
 
-        # Apply the filter based on the first guess and its corresponding answer
-        possible_words = filter_words(
-            words,
-            step["guess"],
-            step["answer"],
-            language
-        )
+        # Base case: 1: if there is only one step, load the words and apply the first filter
+        case 1:
+            step = steps[0]
 
-    # Recursive case: process all steps except the last one first
-    else:
-        step = steps[-1]
+            # Load the full list of words from the CSV file
+            words = pd.read_csv(f"data/{language.code}/words.csv")[["word", "probability"]]
 
-        # Recursively filter words using all previous steps
-        possible_words = filter_words_accumulative(steps[:-1], language)
+            # Apply the filter based on the first guess and its corresponding answer
+            possible_words = filter_words(
+                words,
+                step["guess"],
+                step["answer"],
+                language
+            )
+        # Recursive case: process all steps except the last one first
+        case _:
+            step = steps[-1]
 
-        # Apply the filter based on the last guess and its corresponding answer
-        possible_words = filter_words(
-            possible_words,
-            step["guess"],
-            step["answer"],
-            language
-        )
+            # Recursively filter words using all previous steps
+            possible_words = filter_words_accumulative(steps[:-1], language)
+
+            # Apply the filter based on the last guess and its corresponding answer
+            possible_words = filter_words(
+                possible_words,
+                step["guess"],
+                step["answer"],
+                language
+            )
 
     return possible_words
