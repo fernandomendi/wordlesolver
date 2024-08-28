@@ -65,9 +65,42 @@ def validate_answer(answer: str) -> bool:
 
     # Compile a regular expression pattern that matches exactly 5 characters, each '0', '1', or '2'.
     pattern: re.Pattern = re.compile("^[012]{5}$")
-    is_answer: bool = pattern.match(answer)
+    is_answer: bool = bool(pattern.match(answer))
 
     if not is_answer:
         raise exceptions.InvalidAnswerError(answer)
 
     return is_answer
+
+
+def validate_steps(steps: list[dict[str, str]], language: Language) -> bool:
+    """
+    Validates whether a set of steps is valid by checking each step.
+
+    Parameters
+    ----------
+    answer : str
+        The answer string to validate.
+
+    Returns
+    -------
+    bool
+        True if the answer is valid.
+
+    Raises
+    ------
+    InvalidAnswerError
+        If the answer string is not valid.
+    """
+
+    is_valid: bool = True
+
+    for step in steps:
+        guess = step["guess"]
+        answer = step["answer"]
+
+        # Validate step
+        is_valid &= validate_word(guess, language)
+        is_valid &= validate_answer(answer)
+
+    return is_valid
