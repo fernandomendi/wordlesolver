@@ -1,9 +1,12 @@
 import sys
 
 from wordlesolver.common import query, theory
+from wordlesolver.common.core.exceptions import InvalidAnswerError, InvalidWordLengthError, WordNotFoundError
 from wordlesolver.common.core.variables import Language, Languages
 
 import pandas as pd
+
+from wordlesolver.common.validation import validate_answer, validate_word
 
 
 def wordle(language_code: str) -> None:
@@ -54,9 +57,24 @@ def wordle(language_code: str) -> None:
     while not secret_found:
         print(f"Best guess: {best_guess}")
 
-        # Prompt user for their guess and the corresponding feedback (answer)
-        guess: str = input("Guess: ")
-        answer: str = input("Answer: ")
+        # Prompt user for a valid guess
+        valid_guess = False
+        while not valid_guess:
+            guess: str = input("Guess: ")
+            try:
+                valid_guess = validate_word(guess, language)
+            except (InvalidWordLengthError, WordNotFoundError) as e:
+                print(e)
+
+        # Prompt user for a valid answer
+        valid_answer = False
+        while not valid_answer:
+            answer: str = input("Answer: ")
+            try:
+                valid_answer = validate_answer(answer)
+            except InvalidAnswerError as e:
+                print(e)
+
         steps.append({
             "guess" : guess,
             "answer" : answer,
