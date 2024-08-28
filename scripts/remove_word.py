@@ -8,6 +8,8 @@ from wordlesolver.common.core.variables import Language, Languages
 import pandas as pd
 import numpy as np
 
+from wordlesolver.common.validation import validate_word
+
 
 def sigmoid(x: float) -> float:
     """
@@ -88,5 +90,8 @@ if __name__ == "__main__":
 
     # Reformat parameters
     in_language: Language = Languages().from_code(in_language)
+
+    # Validate input
+    validate_word(in_word, in_language)
 
     simulation(in_word, in_language)

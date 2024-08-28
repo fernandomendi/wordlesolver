@@ -7,6 +7,7 @@ from wordlesolver.common.theory import best_guess, feedback, get_entropies
 import pandas as pd
 from tqdm import tqdm
 
+from wordlesolver.common.validation import validate_weight
 tqdm.pandas()
 
 
@@ -56,5 +57,8 @@ if __name__ == "__main__":
 
     # Reformat parameters
     in_language: Language = Languages().from_code(in_language)
+
+    # Validate input
+    validate_weight(in_weight)
 
     simulation(in_language)
