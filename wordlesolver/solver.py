@@ -6,7 +6,7 @@ from wordlesolver.common.core.variables import Language
 import pandas as pd
 
 
-def wordle(language: str = Language.ES) -> None:
+def wordle(language: str) -> None:
     """
     Runs an interactive Wordle-solving loop where the user inputs guesses and feedback, and the program narrows down the possible secret words until it finds the correct one. The program uses entropy-based guessing to improve its chances of identifying the secret word efficiently.
 
@@ -81,9 +81,11 @@ def wordle(language: str = Language.ES) -> None:
 
 # This ensures that the `wordle()` function is called only when the script is executed directly, and not when it is imported as a module in another script.
 if __name__ == "__main__":
-    if len(sys.argv) != 1:
-        input_language = getattr(Language, sys.argv[1])
-        wordle(language=input_language)
 
-    else:
-        wordle()
+    # Unpack values from command line input
+    in_language, = sys.argv[1:]
+
+    # Reformat parameters
+    in_language = getattr(Language, in_language)
+
+    wordle(language=in_language)
