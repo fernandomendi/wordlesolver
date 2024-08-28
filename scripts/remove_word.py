@@ -82,11 +82,11 @@ def simulation(word: str, language: str) -> None:
 
 # This ensures that the `simulate()` function is called only when the script is executed directly, and not when it is imported as a module in another script.
 if __name__ == "__main__":
-    if len(sys.argv) != 3:
-        raise ValueError("Wrong number of inputs")
 
-    # Get the word and language from the command line arguments
-    input_word = sys.argv[1]
-    input_language = getattr(Language, sys.argv[2])
+    # Unpack values from command line input
+    in_word, in_language, = sys.argv[1:]
 
-    simulation(input_word, input_language)
+    # Reformat parameters
+    in_language = getattr(Language, in_language)
+
+    simulation(in_word, in_language)
