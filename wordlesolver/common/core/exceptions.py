@@ -28,5 +28,5 @@ class InvalidLanguageError(Exception):
     """Exception raised for invalid language input."""
     def __init__(self, language: str):
         self.language = language
-        self.message = f"'{self.language}' is not a valid language."
+        self.message = f"'{self.language}' is not a supported language."
         super().__init__(self.message)

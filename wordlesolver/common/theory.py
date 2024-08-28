@@ -3,7 +3,7 @@ from functools import reduce
 import os
 
 from wordlesolver.common import query
-from wordlesolver.common.core.variables import Status
+from wordlesolver.common.core.variables import Language, Status
 
 import pandas as pd
 from tqdm import tqdm
@@ -102,7 +102,7 @@ def entropy(word: str, words: pd.DataFrame) -> float:
     return entropy_sum
 
 
-def calculate_entropies(steps: list[dict[str, str]], language: str) -> pd.DataFrame:
+def calculate_entropies(steps: list[dict[str, str]], language: Language) -> pd.DataFrame:
     """
     Calculate the entropy for each word in a list of possible words based on a series of steps (guesses and their outcomes).
 
@@ -116,8 +116,8 @@ def calculate_entropies(steps: list[dict[str, str]], language: str) -> pd.DataFr
         }
         The "guess" is the word guessed, and "answer" is the feedback received (a string representing the status of each letter).
         
-    language : str
-        A string representing the language for which the word list and cache files are to be loaded. This string is used to access the correct files within the `data/{language}/` directory.
+    language : Language
+        A Language object for which the word list and cache files are to be loaded. This language's code is used to access the correct files within the `data/{language.code}/` directory.
 
     Returns:
     --------
@@ -126,7 +126,7 @@ def calculate_entropies(steps: list[dict[str, str]], language: str) -> pd.DataFr
 
     Process:
     --------
-    1. Load the list of all possible words from `data/{language}/words.csv`.
+    1. Load the list of all possible words from `data/{language.code}/words.csv`.
     
     2. Generate a path for the cache based on the series of steps. The cache directory structure is built using the guesses 
        and their corresponding answers.
@@ -142,10 +142,10 @@ def calculate_entropies(steps: list[dict[str, str]], language: str) -> pd.DataFr
     """
 
     # Load all words from the CSV file
-    all_words: pd.DataFrame = pd.read_csv(f"data/{language}/words.csv")
+    all_words: pd.DataFrame = pd.read_csv(f"data/{language.code}/words.csv")
 
     # Generate a cache path based on the sequence of steps
-    cache_path = f"data/{language}/cache/" \
+    cache_path = f"data/{language.code}/cache/" \
         + "".join(
             map(
                 lambda x: f"guess={x['guess']}/answer={x['answer']}/",

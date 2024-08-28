@@ -1,30 +1,24 @@
 class Language:
-    """
-    A class to represent language codes.
+    def __init__(self, code, best_initial_guess):
+        self.code = code
+        self.best_initial_guess = best_initial_guess
 
-    This class provides predefined string constants for supported languages, making it easier 
-    to reference and manage language settings across the application.
-
-    Attributes:
-    ----------
-    ES : str
-        Represents the Spanish language code ('es').
-    EN : str
-        Represents the English language code ('en').
-    """
-
-    ES: str = "es"
-    EN: str = "en"
+    def __repr__(self):
+        return self.code.upper()
 
 
-    def best_initial_guess(self, language: str) -> str:
-        match language:
-            case Language.ES:
-                guess = "careo"
-            case Language.EN:
-                guess = "tares"
+class Languages:
+    ES: Language = Language(
+        code = "es",
+        best_initial_guess = "careo"
+    )
+    EN: Language = Language(
+        code = "en",
+        best_initial_guess = "tares"
+    )
 
-        return guess
+    def from_code(self, language_name: str) -> Language:
+        return getattr(self, language_name)
 
 
 class Status:

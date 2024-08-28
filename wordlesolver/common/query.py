@@ -1,5 +1,5 @@
 from wordlesolver.common import theory
-from wordlesolver.common.core.variables import Status
+from wordlesolver.common.core.variables import Language, Status
 
 import pandas as pd
 
@@ -33,7 +33,7 @@ def filter_words(words: pd.DataFrame, guess: str, answer: list[str]) -> pd.DataF
     return filtered_words.reset_index(drop=True)
 
 
-def filter_words_accumulative(steps: list[dict[str, str]], language: str) -> pd.DataFrame:
+def filter_words_accumulative(steps: list[dict[str, str]], language: Language) -> pd.DataFrame:
     """
     Filters a list of possible Wordle words based on multiple guess-answer pairs, applied cumulatively.
 
@@ -43,8 +43,8 @@ def filter_words_accumulative(steps: list[dict[str, str]], language: str) -> pd.
         A list of dictionaries, where each dictionary contains:
         - "guess"  : str : A word that was guessed.
         - "answer" : str : The feedback received for the guess, represented as a string of digits (e.g., "22220" where '2' means absent, '1' means misplaced, and '0' means correct).
-    language : str
-        Language to choose reference file to query.
+    language : Language
+        A Language object to choose reference file to query.
 
     Returns:
     --------
@@ -74,7 +74,7 @@ def filter_words_accumulative(steps: list[dict[str, str]], language: str) -> pd.
         step = steps[0]
 
         # Load the full list of words from the CSV file
-        words = pd.read_csv(f"data/{language}/words.csv")[["word", "probability"]]
+        words = pd.read_csv(f"data/{language.code}/words.csv")[["word", "probability"]]
 
         # Apply the filter based on the first guess and its corresponding answer
         possible_words = filter_words(

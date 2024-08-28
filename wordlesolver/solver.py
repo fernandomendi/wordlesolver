@@ -1,12 +1,12 @@
 import sys
 
 from wordlesolver.common import query, theory
-from wordlesolver.common.core.variables import Language
+from wordlesolver.common.core.variables import Language, Languages
 
 import pandas as pd
 
 
-def wordle(language: str) -> None:
+def wordle(language_code: str) -> None:
     """
     Runs an interactive Wordle-solving loop where the user inputs guesses and feedback, and the program narrows down the possible secret words until it finds the correct one. The program uses entropy-based guessing to improve its chances of identifying the secret word efficiently.
 
@@ -14,13 +14,13 @@ def wordle(language: str) -> None:
     
     Parameters:
     -----------
-    language : str
-        Language to choose reference file to query.
+    language_code : str
+        Language code to choose reference file to query and initial best guess.
 
     Workflow:
     ---------
     1. **Initialization**:
-        - Set `best_guess` to a default starting word, e.g., "careo".
+        - Set `best_guess` to a default starting word depending on the language.
         - Initialize an empty list `steps` to store the guess-feedback pairs.
         - Initialize `secret_found` as `False` to control the loop until the secret word is identified.
 
@@ -42,8 +42,10 @@ def wordle(language: str) -> None:
         - Once the loop ends (when only one word remains), the secret word is displayed to the user.
     """
 
+    language: Language = Languages().from_code(language_code)
+
     # Initial setup: starting guess, empty list of steps, and secret found flag
-    initial_guess: str = Language().best_initial_guess(language)
+    initial_guess: str = language.best_initial_guess
     best_guess: str = initial_guess
     steps: list[dict[str, str]] = []
     secret_found: bool = False
@@ -85,7 +87,4 @@ if __name__ == "__main__":
     # Unpack values from command line input
     in_language, = sys.argv[1:]
 
-    # Reformat parameters
-    in_language = getattr(Language, in_language)
-
-    wordle(language=in_language)
+    wordle(in_language)

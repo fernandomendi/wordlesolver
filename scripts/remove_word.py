@@ -3,7 +3,7 @@ import os
 import shutil
 import sys
 
-from wordlesolver.common.core.variables import Language
+from wordlesolver.common.core.variables import Language, Languages
 
 import pandas as pd
 import numpy as np
@@ -26,7 +26,7 @@ def sigmoid(x: float) -> float:
     return 1/(1 + exp(-x))
 
 
-def simulation(word: str, language: str) -> None:
+def simulation(word: str, language_code: str) -> None:
     """
     Simulates the removal of a word from a list of words, updating probabilities for the remaining words.
 
@@ -36,12 +36,14 @@ def simulation(word: str, language: str) -> None:
     -----------
     word : str
         The word to be removed from the list.
-    language : str
-        The language code, used to determine the file paths.
+    language_code : str
+        Language code to choose reference file to query and initial best guess.
     """
 
+    language: Language = Languages().from_code(language_code)
+
     # Define the path to the words file based on the language
-    words_path = f"data/{language}/words.csv"
+    words_path = f"data/{language.code}/words.csv"
     words = pd.read_csv(words_path)[["word"]]
 
     # Check if the word exists in the list
@@ -73,7 +75,7 @@ def simulation(word: str, language: str) -> None:
         filtered_words.to_csv(words_path, index=False)
 
         # Define the path to the cache directory and remove it if it exists
-        cache_path = f"data/{language}/cache"
+        cache_path = f"data/{language.code}/cache"
         if os.path.exists(cache_path):
             shutil.rmtree(cache_path)
 
@@ -85,8 +87,5 @@ if __name__ == "__main__":
 
     # Unpack values from command line input
     in_word, in_language, = sys.argv[1:]
-
-    # Reformat parameters
-    in_language = getattr(Language, in_language)
 
     simulation(in_word, in_language)
