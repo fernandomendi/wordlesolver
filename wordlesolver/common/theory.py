@@ -5,7 +5,7 @@ import multiprocessing as mp
 
 from wordlesolver.common.core.utilities import split_chunks
 from wordlesolver.common.core.variables import Language, Status
-from wordlesolver.common.query import filter_words_accumulative
+from wordlesolver.common import query
 from wordlesolver.common.validation import validate_steps
 
 import pandas as pd
@@ -206,7 +206,7 @@ def get_entropies(steps: list[dict[str, str]], language: Language, parallelize: 
 
     # If not cached, calculate the entropy values
     else:
-        possible_words: pd.DataFrame = filter_words_accumulative(steps, language)
+        possible_words: pd.DataFrame = query.filter_words_accumulative(steps, language)
         words_aux: pd.DataFrame = all_words.copy()
 
         # Parallelize processes to reduce time
@@ -226,11 +226,11 @@ def get_entropies(steps: list[dict[str, str]], language: Language, parallelize: 
 
         else:
             # Apply the entropy function to calculate entropy for each word
-            words_aux["entropy"] = stats.word.progress_apply(
+            words_aux["entropy"] = words_aux.word.progress_apply(
                 lambda word: entropy(word, possible_words)
             )
 
-            stats: pd.DataFrame = stats
+            stats: pd.DataFrame = words_aux
 
         # Create the cache directory if it doesn't exist
         if not os.path.exists(cache_path):
