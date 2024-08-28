@@ -1,11 +1,13 @@
 import re
 
 from wordlesolver.common.core import exceptions
+from wordlesolver.common.core.variables import Language
 
 import pandas as pd
 
 
-def validate_word(word: str, language: str) -> bool:
+
+def validate_word(word: str, language: Language) -> bool:
     """
     Validates whether a given word exists in the word list for a specified language. Additionally checks if the word is exactly 5 letters long. Raises exceptions if the word is invalid.
 
@@ -13,8 +15,8 @@ def validate_word(word: str, language: str) -> bool:
     ----------
     word : str
         The word to validate.
-    language : str
-        The language code used to select the appropriate word list.
+    language : Language
+        The language used to select the appropriate word list.
 
     Returns
     -------
@@ -32,7 +34,7 @@ def validate_word(word: str, language: str) -> bool:
     if len(word) != 5:
         raise exceptions.InvalidWordLengthError(word)
 
-    words: pd.DataFrame = pd.read_csv(f"data/{language}/words.csv")
+    words: pd.DataFrame = pd.read_csv(f"data/{language.code}/words.csv")
     is_word: bool = any(words.word == word)
 
     if not is_word:

@@ -1,3 +1,6 @@
+from wordlesolver.common.core.variables import Language
+
+
 class InvalidWordLengthError(Exception):
     """Exception raised when a word is not exactly 5 letters long."""
     def __init__(self, word: str):
@@ -9,10 +12,10 @@ class InvalidWordLengthError(Exception):
 
 class WordNotFoundError(Exception):
     """Exception raised when a word is not found in the word list."""
-    def __init__(self, word: str, language: str):
+    def __init__(self, word: str, language: Language):
         self.word = word
         self.language = language
-        self.message = f"The word '{word}' does not exist in the {language.upper()} word list."
+        self.message = f"The word '{word}' does not exist in the {language} word list."
         super().__init__(self.message)
 
 
