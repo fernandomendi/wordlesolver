@@ -1,7 +1,7 @@
 import sys
 
 from wordlesolver.core.common import validate_answer, validate_word
-from wordlesolver.core.errors import InvalidAnswerError, InvalidWordLengthError, WordNotFoundError
+from wordlesolver.core.exceptions import InvalidAnswerError, InvalidWordLengthError, WordNotFoundError
 from wordlesolver.core.variables import Language, Languages
 from wordlesolver.filter import filter_words_accumulative
 from wordlesolver.theory import get_entropies, best_guess
