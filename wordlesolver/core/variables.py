@@ -1,13 +1,35 @@
-class Language:
-    def __init__(self, code, initial_suggestion):
-        self.code = code
-        self.initial_suggestion = initial_suggestion
+from dataclasses import dataclass
 
-    def __repr__(self):
-        return self.code.upper()
+
+@dataclass(frozen=True)
+class Language:
+    """
+    A class to represent a language configuration used in the word-guessing game.
+
+    Attributes
+    ----------
+    code : str
+        The language code (e.g., "es" for Spanish, "en" for English).
+    initial_suggestion : str
+        The best initial word guess for the language, typically chosen based on frequency analysis or other heuristic.
+    """
+
+    code: str
+    initial_suggestion: str
 
 
 class Languages:
+    """
+    A class that holds different Language configurations and provides methods to retrieve them.
+
+    Attributes
+    ----------
+    ES : Language
+        A Language object for Spanish ("es"), with a predefined best initial guess.
+    EN : Language
+        A Language object for English ("en"), with a predefined best initial guess.
+    """
+
     ES: Language = Language(
         code = "es",
         initial_suggestion = "careo"
@@ -18,6 +40,27 @@ class Languages:
     )
 
     def from_code(self, language_name: str) -> Language:
+        """
+        Retrieve the Language object based on a language code string.
+
+        Parameters
+        ----------
+        language_name : str
+            The language code as a string (e.g., "ES" for Spanish, "EN" for English).
+
+        Returns
+        -------
+        Language
+            The Language object corresponding to the provided language code.
+
+        Raises
+        ------
+        AttributeError
+            If the language code does not match any of the predefined languages, an AttributeError is raised.
+        """
+
+        # Use getattr to dynamically access the Language attribute based on the string provided.
+        # This allows the method to retrieve the corresponding Language object by code (e.g., "ES", "EN").
         return getattr(self, language_name)
 
 
