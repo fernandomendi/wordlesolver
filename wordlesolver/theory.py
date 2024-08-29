@@ -3,53 +3,14 @@ from functools import reduce
 import os
 import multiprocessing as mp
 
-from wordlesolver.common.core.utilities import split_chunks
-from wordlesolver.common.core.variables import Language, Status
-from wordlesolver.common import query
-from wordlesolver.common.validation import validate_steps, validate_weight
+from wordlesolver.filter import filter_words_accumulative
+from wordlesolver.common import feedback, split_chunks
+from wordlesolver.core.common import validate_steps, validate_weight
+from wordlesolver.core.variables import Language
 
 import pandas as pd
 from tqdm import tqdm
 tqdm.pandas()
-
-
-def feedback(secret: str, guess: str) -> str:
-    """
-    Evaluates a Wordle guess against a secret word and returns a string representing the feedback for each letter in the guess. The feedback is provided as a sequence of status codes, where each code corresponds to the status of a letter in the guess:
-    
-    The function operates in two passes:
-    1. It first identifies all letters that are in the correct position.
-    2. Then, it identifies any letters that are in the word but in the wrong position.
-
-    Parameters:
-    ----------
-    secret : str
-        The secret word against which the guess is evaluated. It should be a 5-letter string.
-    guess : str
-        The guessed word that needs to be evaluated. It should be a 5-letter string.
-
-    Returns:
-    -------
-    str
-        A str object representing the status of each letter in the guess. The str is 5 characters long, each corresponding to one letter in the guess.
-    """
-
-    # Initialize the answer with a list of ABSENT Status objects
-    answer = [Status.ABSENT] * 5
-
-    # First pass: Identify correct positions
-    for i in range(5):
-        if guess[i] == secret[i]:
-            answer[i] = Status.CORRECT
-            secret = secret[:i] + '_' + secret[i+1:]
-
-    # Second pass: Identify misplaced letters
-    for i in range(5):
-        if answer[i] == Status.ABSENT and guess[i] in secret:
-            answer[i] = Status.MISPLACED
-            secret = secret.replace(guess[i], "_", 1)
-
-    return "".join(answer)
 
 
 def entropy(word: str, words: pd.DataFrame) -> float:
@@ -104,6 +65,7 @@ def entropy(word: str, words: pd.DataFrame) -> float:
 
     return entropy_sum
 
+
 def process_entropies_chunk(chunk: pd.DataFrame, possible_words: pd.DataFrame) -> pd.DataFrame:
     """
     Calculates the entropy for each word in a DataFrame chunk.
@@ -127,8 +89,6 @@ def process_entropies_chunk(chunk: pd.DataFrame, possible_words: pd.DataFrame) -
         lambda word: entropy(word, possible_words)
     )
     return chunk
-
-
 
 
 def get_entropies(steps: list[dict[str, str]], language: Language, parallelize: bool = True) -> pd.DataFrame:
@@ -206,7 +166,7 @@ def get_entropies(steps: list[dict[str, str]], language: Language, parallelize: 
 
     # If not cached, calculate the entropy values
     else:
-        possible_words: pd.DataFrame = query.filter_words_accumulative(steps, language)
+        possible_words: pd.DataFrame = filter_words_accumulative(steps, language)
         words_aux: pd.DataFrame = all_words.copy()
 
         # Parallelize processes to reduce time

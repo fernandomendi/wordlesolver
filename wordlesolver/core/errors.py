@@ -1,4 +1,4 @@
-from wordlesolver.common.core.variables import Language
+from wordlesolver.core.variables import Language
 
 
 class InvalidWordLengthError(Exception):

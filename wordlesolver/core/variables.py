@@ -1,7 +1,7 @@
 class Language:
-    def __init__(self, code, best_initial_guess):
+    def __init__(self, code, initial_suggestion):
         self.code = code
-        self.best_initial_guess = best_initial_guess
+        self.initial_suggestion = initial_suggestion
 
     def __repr__(self):
         return self.code.upper()
@@ -10,11 +10,11 @@ class Language:
 class Languages:
     ES: Language = Language(
         code = "es",
-        best_initial_guess = "careo"
+        initial_suggestion = "careo"
     )
     EN: Language = Language(
         code = "en",
-        best_initial_guess = "tares"
+        initial_suggestion = "tares"
     )
 
     def from_code(self, language_name: str) -> Language:

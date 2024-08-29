@@ -1,6 +1,6 @@
-from wordlesolver.common import theory
-from wordlesolver.common.validation import validate_answer, validate_word
-from wordlesolver.common.core.variables import Language
+from wordlesolver.common import feedback
+from wordlesolver.core.common import validate_answer, validate_word
+from wordlesolver.core.variables import Language
 
 import pandas as pd
 
@@ -33,7 +33,7 @@ def filter_words(words: pd.DataFrame, guess: str, answer: str, language: Languag
     # Apply the feedback function and filter based on the expected answer
     filtered_words = words[
         words.word.apply(
-            lambda secret: theory.feedback(secret, guess) == answer
+            lambda secret: feedback(secret, guess) == answer
         )
     ]
 

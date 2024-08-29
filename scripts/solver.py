@@ -1,12 +1,12 @@
 import sys
 
-from wordlesolver.common import query, theory
-from wordlesolver.common.core.exceptions import InvalidAnswerError, InvalidWordLengthError, WordNotFoundError
-from wordlesolver.common.core.variables import Language, Languages
+from wordlesolver.core.common import validate_answer, validate_word
+from wordlesolver.core.errors import InvalidAnswerError, InvalidWordLengthError, WordNotFoundError
+from wordlesolver.core.variables import Language, Languages
+from wordlesolver.filter import filter_words_accumulative
+from wordlesolver.theory import get_entropies, best_guess
 
 import pandas as pd
-
-from wordlesolver.common.validation import validate_answer, validate_word
 
 
 def wordle(language_code: str) -> None:
@@ -48,14 +48,14 @@ def wordle(language_code: str) -> None:
     language: Language = Languages().from_code(language_code)
 
     # Initial setup: starting guess, empty list of steps, and secret found flag
-    initial_guess: str = language.best_initial_guess
-    best_guess: str = initial_guess
+    initial_guess: str = language.initial_suggestion
+    suggested_guess: str = initial_guess
     steps: list[dict[str, str]] = []
     secret_found: bool = False
 
     # Main loop: continue until the secret word is found
     while not secret_found:
-        print(f"Best guess: {best_guess}")
+        print(f"Suggested guess: {suggested_guess}")
 
         # Prompt user for a valid guess
         valid_guess = False
@@ -81,7 +81,7 @@ def wordle(language_code: str) -> None:
         })
 
         # Filter the list of possible words based on all steps so far
-        possible_words: pd.DataFrame = query.filter_words_accumulative(steps, language)
+        possible_words: pd.DataFrame = filter_words_accumulative(steps, language)
 
         # Preview the top few remaining words
         print(f"There are {len(possible_words)} possible words")
@@ -95,8 +95,8 @@ def wordle(language_code: str) -> None:
 
         # If multiple words remain, calculate entropies and determine the best next guess
         else:
-            stats_words = theory.get_entropies(steps, language)
-            best_guess = theory.best_guess(stats_words, 1)
+            stats_words = get_entropies(steps, language)
+            suggested_guess = best_guess(stats_words, 1)
 
 
 # This ensures that the `wordle()` function is called only when the script is executed directly, and not when it is imported as a module in another script.
