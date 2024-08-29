@@ -1,6 +1,6 @@
 import re
 
-from wordlesolver.common.core import exceptions
+from wordlesolver.common.core.exceptions import InvalidAnswerError, InvalidWeightError, InvalidWordLengthError, WordNotFoundError
 from wordlesolver.common.core.variables import Language
 
 import pandas as pd
@@ -32,13 +32,13 @@ def validate_word(word: str, language: Language) -> bool:
     """
 
     if len(word) != 5:
-        raise exceptions.InvalidWordLengthError(word)
+        raise InvalidWordLengthError(word)
 
     words: pd.DataFrame = pd.read_csv(f"data/{language.code}/words.csv")
     is_word: bool = any(words.word == word)
 
     if not is_word:
-        raise exceptions.WordNotFoundError(word, language)
+        raise WordNotFoundError(word, language)
 
     return is_word
 
@@ -68,7 +68,7 @@ def validate_answer(answer: str) -> bool:
     is_answer: bool = bool(pattern.match(answer))
 
     if not is_answer:
-        raise exceptions.InvalidAnswerError(answer)
+        raise InvalidAnswerError(answer)
 
     return is_answer
 
@@ -114,5 +114,33 @@ def validate_steps(steps: list[dict[str, str]], language: Language) -> bool:
         # Validate step
         is_valid &= validate_word(guess, language)
         is_valid &= validate_answer(answer)
+
+    return is_valid
+
+
+def validate_weight(weight: float) -> bool:
+    """
+    Validates whether a given value is a valid guess weight. A valid guess weight a value between 0 and 1. Raises an exception if the weight is invalid.
+
+    Parameters
+    ----------
+    weight : str
+        The weight value to validate.
+
+    Returns
+    -------
+    bool
+        True if the weight is valid.
+
+    Raises
+    ------
+    InvalidWeightError
+        If the weight value is not valid.
+    """
+
+    is_valid: bool = 0 <= weight <= 1
+
+    if not is_valid:
+        raise InvalidWeightError(weight)
 
     return is_valid

@@ -19,7 +19,7 @@ from wordlesolver.common import theory
 from wordlesolver.common.core.variables import Language, Languages, Status
 
 
-def simulation(language_code: str) -> None:
+def simulation(language: Language) -> None:
     """
     Simulate all possible answers based on an initial word for a given language.
 
@@ -33,8 +33,6 @@ def simulation(language_code: str) -> None:
     None
         The function caches the possible entropies for future use.
     """
-
-    language: Language = Languages().from_code(language_code)
 
     # Retrieve the best initial guess for the specified language.
     initial_guess: str = language.best_initial_guess
@@ -59,5 +57,8 @@ if __name__ == "__main__":
 
     # Unpack values from command line input
     in_language, = sys.argv[1:]
+
+    # Reformat parameters
+    in_language: Language = Languages().from_code(in_language)
 
     simulation(in_language)

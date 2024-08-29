@@ -4,9 +4,11 @@ import shutil
 import sys
 
 from wordlesolver.common.core.variables import Language, Languages
+from wordlesolver.common.validation import validate_word
 
 import pandas as pd
 import numpy as np
+
 
 
 def sigmoid(x: float) -> float:
@@ -26,7 +28,7 @@ def sigmoid(x: float) -> float:
     return 1/(1 + exp(-x))
 
 
-def simulation(word: str, language_code: str) -> None:
+def simulation(word: str, language: Language) -> None:
     """
     Simulates the removal of a word from a list of words, updating probabilities for the remaining words.
 
@@ -39,8 +41,6 @@ def simulation(word: str, language_code: str) -> None:
     language_code : str
         Language code to choose reference file to query and initial best guess.
     """
-
-    language: Language = Languages().from_code(language_code)
 
     # Define the path to the words file based on the language
     words_path = f"data/{language.code}/words.csv"
@@ -87,5 +87,11 @@ if __name__ == "__main__":
 
     # Unpack values from command line input
     in_word, in_language, = sys.argv[1:]
+
+    # Reformat parameters
+    in_language: Language = Languages().from_code(in_language)
+
+    # Validate input
+    validate_word(in_word, in_language)
 
     simulation(in_word, in_language)
