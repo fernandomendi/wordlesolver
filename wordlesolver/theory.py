@@ -91,7 +91,12 @@ def process_entropies_chunk(chunk: pd.DataFrame, possible_words: pd.DataFrame) -
     return chunk
 
 
-def get_entropies(steps: list[dict[str, str]], language: Language, parallelize: bool = True) -> pd.DataFrame:
+def get_entropies(
+        steps: list[dict[str, str]],
+        language: Language,
+        parallelize: bool = True,
+        recalculate: bool = False
+    ) -> pd.DataFrame:
     """
     Get the entropy for each word in a list of possible words based on a series of steps (guesses and their outcomes).
 
@@ -157,6 +162,11 @@ def get_entropies(steps: list[dict[str, str]], language: Language, parallelize: 
                 steps
             )
         )
+
+    if recalculate:
+        if os.path.exists(cache_path + "stats.csv"):
+            os.remove(cache_path + "stats.csv")
+
     is_cached = os.path.exists(cache_path + "stats.csv")
 
     # If the entropy values are cached, load them
