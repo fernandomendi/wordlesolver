@@ -83,6 +83,7 @@ def simulation(language: Language, weight: float, sample_size: int) -> None:
     steps_aggregated = words.steps.value_counts().reset_index()
     steps_aggregated.steps = steps_aggregated.steps.replace(7, "6+")
     steps_aggregated["probability"] = steps_aggregated["count"] / len(words)
+    steps_aggregated = steps_aggregated[["steps", "probability"]]
 
     print("Average steps per word")
     output = steps_aggregated.to_string(formatters={
