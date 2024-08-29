@@ -1,9 +1,10 @@
 import sys
 
-from wordlesolver.common.core.variables import Language, Languages
-from wordlesolver.common.query import filter_words_accumulative
-from wordlesolver.common.theory import best_guess, feedback, get_entropies
-from wordlesolver.common.validation import validate_weight
+from wordlesolver.common import feedback
+from wordlesolver.core.common import validate_weight
+from wordlesolver.core.variables import Language, Languages
+from wordlesolver.filter import filter_words_accumulative
+from wordlesolver.theory import best_guess, get_entropies
 
 import pandas as pd
 from tqdm import tqdm

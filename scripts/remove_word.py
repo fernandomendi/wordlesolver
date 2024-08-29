@@ -3,8 +3,8 @@ import os
 import shutil
 import sys
 
-from wordlesolver.common.core.variables import Language, Languages
-from wordlesolver.common.validation import validate_word
+from wordlesolver.core.common import validate_word
+from wordlesolver.core.variables import Language, Languages
 
 import pandas as pd
 import numpy as np

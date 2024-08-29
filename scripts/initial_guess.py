@@ -15,8 +15,8 @@ Main Functionality:
 from itertools import product
 import sys
 
-from wordlesolver.common import theory
-from wordlesolver.common.core.variables import Language, Languages, Status
+from wordlesolver.theory import get_entropies
+from wordlesolver.core.variables import Language, Languages, Status
 
 
 def simulation(language: Language) -> None:
@@ -35,7 +35,7 @@ def simulation(language: Language) -> None:
     """
 
     # Retrieve the best initial guess for the specified language.
-    initial_guess: str = language.best_initial_guess
+    initial_guess: str = language.initial_suggestion
 
     # Generate all possible combinations of feedback patterns.
     possible_answers = product(
@@ -47,7 +47,7 @@ def simulation(language: Language) -> None:
         print(f"Calculating entropies for {answer_str}")
 
         # Get entropies for these steps and cache them in memory.
-        theory.get_entropies([{
+        get_entropies([{
             "guess" : initial_guess,
             "answer" : answer_str
         }], language)
