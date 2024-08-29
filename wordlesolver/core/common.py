@@ -1,7 +1,7 @@
 import re
 
-from wordlesolver.common.core.exceptions import InvalidAnswerError, InvalidWeightError, InvalidWordLengthError, WordNotFoundError
-from wordlesolver.common.core.variables import Language
+from wordlesolver.core.exceptions import InvalidAnswerError, InvalidWeightError, InvalidWordLengthError, WordNotFoundError
+from wordlesolver.core.variables import Language
 
 import pandas as pd
 

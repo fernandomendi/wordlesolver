@@ -1,4 +1,9 @@
 .venv/
+.vscode/
+
 __pycache__/
 data/*/cache/
+
+wordlesolver.egg-info/
+
 tests.ipynb

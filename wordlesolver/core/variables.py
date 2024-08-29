@@ -10,12 +10,12 @@ class Language:
     ----------
     code : str
         The language code (e.g., "es" for Spanish, "en" for English).
-    best_initial_guess : str
+    initial_suggestion : str
         The best initial word guess for the language, typically chosen based on frequency analysis or other heuristic.
     """
 
     code: str
-    best_initial_guess: str
+    initial_suggestion: str
 
 
 class Languages:
@@ -32,11 +32,11 @@ class Languages:
 
     ES: Language = Language(
         code = "es",
-        best_initial_guess = "careo"
+        initial_suggestion = "careo"
     )
     EN: Language = Language(
         code = "en",
-        best_initial_guess = "tares"
+        initial_suggestion = "tares"
     )
 
     def from_code(self, language_name: str) -> Language:
