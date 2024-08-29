@@ -211,7 +211,7 @@ def get_entropies(steps: list[dict[str, str]], language: Language, parallelize: 
 
         # Parallelize processes to reduce time
         if parallelize:
-            n_processes = mp.cpu_count()
+            n_processes = mp.cpu_count() // 2
             chunks = split_chunks(words_aux, n_processes)
 
             # Map across n processes the calculation of entropies for a given chunk
