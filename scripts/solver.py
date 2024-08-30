@@ -95,7 +95,7 @@ def wordle(language_code: str) -> None:
 
         # If multiple words remain, calculate entropies and determine the best next guess
         else:
-            suggested_guess = best_guess(steps, 0.5, 0.2, language)
+            suggested_guess = best_guess(steps, language)
 
 
 # This ensures that the `wordle()` function is called only when the script is executed directly, and not when it is imported as a module in another script.

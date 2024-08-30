@@ -1,7 +1,6 @@
 import sys
 
 from wordlesolver.common import feedback
-from wordlesolver.core.common import validate_weight
 from wordlesolver.core.variables import Language, Languages
 from wordlesolver.filter import filter_words_accumulative
 from wordlesolver.theory import best_guess
@@ -11,7 +10,7 @@ from tqdm import tqdm
 tqdm.pandas()
 
 
-def steps_per_secret(secret: str, language: Language, entropy_weight: float, filter_weight: float) -> int:
+def steps_per_secret(secret: str, language: Language) -> int:
     """
     Simulates the process of guessing a secret word in the given language, returning the sequence of steps taken.
 
@@ -21,10 +20,6 @@ def steps_per_secret(secret: str, language: Language, entropy_weight: float, fil
         The secret word that needs to be guessed.
     language : Language
         The language object containing the word list and other relevant data.
-    entropy_weight : float
-        A weighting factor used in the entropy-based guessing strategy.
-    filter_weight : float
-        A weighting factor used in the entropy-based guessing strategy.
 
     Returns
     -------
@@ -37,7 +32,7 @@ def steps_per_secret(secret: str, language: Language, entropy_weight: float, fil
 
     # Continue the loop while there is more than one possible word and fewer than 6 steps have been taken.
     while len(possible_words) > 1 and len(steps) < 6:
-        guess = best_guess(steps, entropy_weight, filter_weight, language)
+        guess = best_guess(steps, language)
         answer = feedback(secret, guess)
         steps.append({
             "guess" : guess,
@@ -58,7 +53,7 @@ def steps_per_secret(secret: str, language: Language, entropy_weight: float, fil
     return len(steps)
 
 
-def simulation(language: Language, entropy_weight: float, filter_weight: float, sample_size: int) -> None:
+def simulation(language: Language, sample_size: int) -> None:
     """
     Simulates the word-guessing process across a sample of words in the given language, and prints the results.
 
@@ -81,7 +76,7 @@ def simulation(language: Language, entropy_weight: float, filter_weight: float, 
     words = pd.read_csv(f"data/{language.code}/words.csv") \
         .sample(n=sample_size)
 
-    words["steps"] = words.word.progress_apply(lambda x: steps_per_secret(x, language, entropy_weight, filter_weight))
+    words["steps"] = words.word.progress_apply(lambda x: steps_per_secret(x, language))
 
     steps_aggregated = words.steps.value_counts().reset_index()
     steps_aggregated.steps = steps_aggregated.steps.replace(7, "6+")
@@ -103,12 +98,6 @@ if __name__ == "__main__":
 
     # Reformat parameters
     in_language: Language = Languages().from_code(in_language)
-    in_entropy_weight: float = float(in_entropy_weight)
-    in_filter_weight: float = float(in_filter_weight)
     in_sample_size: int = int(in_sample_size)
 
-    # Validate input
-    validate_weight(in_entropy_weight)
-    validate_weight(in_filter_weight)
-
-    simulation(in_language, in_entropy_weight, in_filter_weight, in_sample_size)
+    simulation(in_language, in_sample_size)

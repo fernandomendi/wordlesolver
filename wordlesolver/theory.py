@@ -5,7 +5,7 @@ import multiprocessing as mp
 
 from wordlesolver.filter import filter_words_accumulative
 from wordlesolver.common import feedback, split_chunks
-from wordlesolver.core.common import validate_steps, validate_weight
+from wordlesolver.core.common import validate_steps
 from wordlesolver.core.variables import Language
 
 import pandas as pd
@@ -215,8 +215,6 @@ def get_entropies(
 
 def best_guess(
         steps: list[dict[str, str]],
-        entropy_weight: float,
-        filter_weight: float,
         language: Language
     ) -> str:
     """
@@ -226,16 +224,16 @@ def best_guess(
 
     Parameters:
     ----------
-    words : pd.DataFrame
-        A DataFrame containing a column 'word', along with 'entropy' and 'probability' columns for each word.
-    entropy_weight : float
-        A floating-point value between 0 and 1 representing the weight of the entropy in the weighted average.
-        - A weight closer to 1 gives more importance to entropy.
-        - A weight closer to 0 gives more importance to probability.
-    filter_weight : float
-        A floating-point value between 0 and 1 representing the importance of a word being possible after filtering in the weighted average.
-        - A weight closer to 1 gives more importance to possible words.
-        - A weight closer to 0 gives less importance to possible words.
+    steps : list[dict[str, str]]
+        A list of dictionaries where each dictionary represents a guess and its corresponding outcome (answer). Each dictionary in the list should have the following structure:
+        {
+            "guess": "word_guessed",
+            "answer": "feedback_code"
+        }
+        The "guess" is the word guessed, and "answer" is the feedback received (a string representing the status of each letter).
+        
+    language : Language
+        A Language object for which the word list and cache files are to be loaded. This language's code is used to access the correct files within the `data/{language.code}/` directory.
 
     Returns:
     -------
@@ -248,12 +246,10 @@ def best_guess(
         If the weight is not between 0 and 1, a ValueError is raised.
     """
 
-    # Validate input
-    validate_weight(entropy_weight)
-    validate_weight(filter_weight)
-
     stats: pd.DataFrame = get_entropies(steps, language)
     possible_words: pd.DataFrame = filter_words_accumulative(steps, language)
+
+    n_words_left: int = len(possible_words)
 
     # Normalize (min-max normalization) entropy to make it an even average
     stats["entropy_norm"] = (
@@ -264,19 +260,29 @@ def best_guess(
     possible_words["is_possible"] = 1
     possible_words = possible_words[["id", "is_possible"]]
 
+    # Extend statistics with column indicating whether a word is still possible or not
     stats_ext: pd.DataFrame = pd.merge(stats, possible_words, on="id", how="left")
     stats_ext.is_possible = stats_ext.is_possible.fillna(0)
 
+    max_weight = 0.8
+    min_weight = 0.2
+
+    # Calculate the ratio of possible words to the total number of words
+    ratio = n_words_left / language.threshold
+
+    # Calculate entropy based on possible words left
+    entropy_weight = min_weight + (max_weight - min_weight) * ratio
+
     # Calculate the 'guessability' score as a weighted average of entropy and normalized probability while also taking into account whether a word is possible after filtering
     stats_ext["guessability"] = stats_ext.apply(
-    lambda row:
-        (1 - filter_weight) * (
-            entropy_weight * row.entropy_norm
-            + (1 - entropy_weight) * row.probability
-        )
-        + filter_weight * row.is_possible
-    , axis=1
-)
+        lambda row:
+            (
+                entropy_weight * row.entropy_norm
+                + (1 - entropy_weight) * row.probability
+            )
+            + row.is_possible / n_words_left
+        , axis=1
+    )
 
     # Find the word with the highest 'guessability' score
     guess: str = stats_ext \
