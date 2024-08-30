@@ -268,7 +268,12 @@ def best_guess(
     min_weight = 0.2
 
     # Calculate the ratio of possible words to the total number of words
-    ratio = n_words_left / language.threshold
+    if len(steps) == 0:
+        threshold: int = len(stats)
+    else:
+        threshold: int = language.threshold
+
+    ratio = n_words_left / threshold
 
     # Calculate entropy based on possible words left
     entropy_weight = min_weight + (max_weight - min_weight) * ratio
