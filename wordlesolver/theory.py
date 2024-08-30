@@ -213,7 +213,12 @@ def get_entropies(
     return stats
 
 
-def best_guess(words: pd.DataFrame, weight: float) -> str:
+def best_guess(
+        steps: list[dict[str, str]],
+        entropy_weight: float,
+        filter_weight: float,
+        language: Language
+    ) -> str:
     """
     Determines the best word to guess based on a weighted average of entropy and probability.
 
@@ -223,10 +228,14 @@ def best_guess(words: pd.DataFrame, weight: float) -> str:
     ----------
     words : pd.DataFrame
         A DataFrame containing a column 'word', along with 'entropy' and 'probability' columns for each word.
-    weight : float
+    entropy_weight : float
         A floating-point value between 0 and 1 representing the weight of the entropy in the weighted average.
         - A weight closer to 1 gives more importance to entropy.
         - A weight closer to 0 gives more importance to probability.
+    filter_weight : float
+        A floating-point value between 0 and 1 representing the importance of a word being possible after filtering in the weighted average.
+        - A weight closer to 1 gives more importance to possible words.
+        - A weight closer to 0 gives less importance to possible words.
 
     Returns:
     -------
@@ -240,20 +249,37 @@ def best_guess(words: pd.DataFrame, weight: float) -> str:
     """
 
     # Validate input
-    validate_weight(weight)
+    validate_weight(entropy_weight)
+    validate_weight(filter_weight)
 
-    # Create a copy of the words DataFrame to work with, avoiding modifications to the original DataFrame.
-    words_aux: pd.DataFrame = words.copy()
+    stats: pd.DataFrame = get_entropies(steps, language)
+    possible_words: pd.DataFrame = filter_words_accumulative(steps, language)
 
-    # Ensure the weight is a number between 0 and 1
-    if weight < 0 or weight > 1:
-        raise ValueError("The weight must be between 0 and 1.")
+    # Normalize (min-max normalization) entropy to make it an even average
+    stats["entropy_norm"] = (
+        (stats.entropy - stats.entropy.min()) 
+        / (stats.entropy.max() - stats.entropy.min())
+    )
 
-    # Calculate the 'guessability' score as a weighted average of entropy and probability
-    words_aux["guessability"] = weight * words_aux.entropy + (1 - weight) * words_aux.probability
+    possible_words["is_possible"] = 1
+    possible_words = possible_words[["id", "is_possible"]]
+
+    stats_ext: pd.DataFrame = pd.merge(stats, possible_words, on="id", how="left")
+    stats_ext.is_possible = stats_ext.is_possible.fillna(0)
+
+    # Calculate the 'guessability' score as a weighted average of entropy and normalized probability while also taking into account whether a word is possible after filtering
+    stats_ext["guessability"] = stats_ext.apply(
+    lambda row:
+        (1 - filter_weight) * (
+            entropy_weight * row.entropy_norm
+            + (1 - entropy_weight) * row.probability
+        )
+        + filter_weight * row.is_possible
+    , axis=1
+)
 
     # Find the word with the highest 'guessability' score
-    guess: str = words_aux \
+    guess: str = stats_ext \
         .sort_values("guessability", ascending=False) \
         .reset_index() \
         .loc[0, "word"]

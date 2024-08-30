@@ -80,14 +80,14 @@ def filter_words_accumulative(steps: list[dict[str, str]], language: Language) -
 
         # Base case: 0: if there are no steps, then the possible words are all available words
         case 0:
-            possible_words = pd.read_csv(f"data/{language.code}/words.csv")[["word", "probability"]]
+            possible_words = pd.read_csv(f"data/{language.code}/words.csv")
 
         # Base case: 1: if there is only one step, load the words and apply the first filter
         case 1:
             step = steps[0]
 
             # Load the full list of words from the CSV file
-            words = pd.read_csv(f"data/{language.code}/words.csv")[["word", "probability"]]
+            words = pd.read_csv(f"data/{language.code}/words.csv")
 
             # Apply the filter based on the first guess and its corresponding answer
             possible_words = filter_words(
