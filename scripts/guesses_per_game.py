@@ -94,7 +94,7 @@ def simulation(language: Language, sample_size: int) -> None:
 if __name__ == "__main__":
 
     # Unpack values from command line input
-    in_language, in_entropy_weight, in_filter_weight, in_sample_size = sys.argv[1:]
+    in_language, in_sample_size = sys.argv[1:]
 
     # Reformat parameters
     in_language: Language = Languages().from_code(in_language)
