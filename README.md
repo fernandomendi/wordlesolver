@@ -83,8 +83,6 @@ This project is licensed under the MIT License. See the LICENSE file for details
 - Improve the efficiency of the entropy calculation.
 
 ## Acknowledgements
-Special thanks to 3Blue1Brown's video [Solving Wordle using information theory](https://www.youtube.com/watch?v=v68zYyaEmEA) for inspiring this project! 
-
 I have studied a Mathematics degree and in one of the courses we learnt about Information Theory. However, back in 2022, I did not see the possible uses for this field. A couple of weeks after learning about this in class, a new video popped up on my YouTube feed, it was [Solving Wordle using information theory](https://www.youtube.com/watch?v=v68zYyaEmEA) from [3Blue1Brown](https://www.youtube.com/@3blue1brown). This led me to want to learn more on the topic and develop an initial version of this project.
 
 Now, two years later I have reopened my interest for this topic and have decided to develop a well organised package with all necessary code based on Information Theory and Statistics.
