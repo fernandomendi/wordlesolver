@@ -9,7 +9,7 @@ from wordlesolver.theory import best_guess
 import pandas as pd
 
 
-def wordle(language_code: str) -> None:
+def simulation(language_code: str) -> None:
     """
     Runs an interactive Wordle-solving loop where the user inputs guesses and feedback, and the program narrows down the possible secret words until it finds the correct one. The program uses entropy-based guessing to improve its chances of identifying the secret word efficiently.
 
@@ -104,4 +104,4 @@ if __name__ == "__main__":
     # Unpack values from command line input
     in_language, = sys.argv[1:]
 
-    wordle(in_language)
+    simulation(in_language)
