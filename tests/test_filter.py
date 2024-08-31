@@ -37,7 +37,7 @@ def test_feedback(secret: str, guess: str, expected: str):
 )
 def test_no_filter(language: Language):
     filtered_words = filter_words_accumulative([], language)
-    all_words = pd.read_csv(f"data/{language.code}/words.csv")[["word", "probability"]]
+    all_words = pd.read_csv(f"data/{language.code}/words.csv")
     pd.testing.assert_frame_equal(filtered_words, all_words)
 
 

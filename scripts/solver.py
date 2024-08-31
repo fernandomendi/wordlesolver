@@ -4,7 +4,7 @@ from wordlesolver.core.common import validate_answer, validate_word
 from wordlesolver.core.exceptions import InvalidAnswerError, InvalidWordLengthError, WordNotFoundError
 from wordlesolver.core.variables import Language, Languages
 from wordlesolver.filter import filter_words_accumulative
-from wordlesolver.theory import get_entropies, best_guess
+from wordlesolver.theory import best_guess
 
 import pandas as pd
 
@@ -95,8 +95,7 @@ def wordle(language_code: str) -> None:
 
         # If multiple words remain, calculate entropies and determine the best next guess
         else:
-            stats_words = get_entropies(steps, language)
-            suggested_guess = best_guess(stats_words, 1)
+            suggested_guess = best_guess(steps, language)
 
 
 # This ensures that the `wordle()` function is called only when the script is executed directly, and not when it is imported as a module in another script.

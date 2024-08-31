@@ -23,17 +23,16 @@ def test_base_entropy(word: str, value: float, language: Language):
 
 @pytest.mark.skip("Takes too long (5mins) - Will resume once processing get more efficient.")
 @pytest.mark.parametrize(
-    "language, word",
+    "language",
     [
-        (Languages.ES, "careo"),
-        (Languages.EN, "tares"),
+        (Languages.ES),
+        (Languages.EN),
     ]
 )
-def test_most_entropy(language: Language, word: str):
-    stats = get_entropies([], language)
-    most_entropy = best_guess(stats, 1)
+def test_most_entropy(language: Language):
+    best_initial = best_guess([], language)
 
-    assert most_entropy == word
+    assert best_initial == language.initial_suggestion
 
 
 @pytest.mark.parametrize(
