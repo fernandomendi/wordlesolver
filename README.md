@@ -25,11 +25,11 @@ pip install -e .
 You can use the package to find the best guesses based on feedback from the game. Here's an example:
 
 ```python
-from wordlesolver.common.utilities import best_guess
+from wordlesolver.theory import best_guess
 from wordlesolver.core.variables import Languages
 
 # Initialize language
-language = Languages().from_code('ES')
+language = Languages.EN
 
 # Simulate a series of guesses
 steps = [
@@ -63,9 +63,12 @@ pytest tests/
 ├── data/                        # Data files required by the solver
 ├── scripts/                     # Scripts for running simulations and other tasks
 ├── wordlesolver/                # Main package code
-│   ├── common/                  # Common utilities and validation functions
 │   ├── core/                    # Core components, such as exceptions and variables
-│   ├── query.py                 # Functions for querying possible words
+│   │   ├── common.py            # Common utilities and validation functions
+│   │   ├── exceptions.py        # Custom exception and error handling classes
+│   │   ├── variables.py         # Custom data types to be used across the package
+│   ├── common.py                # Common utilities and functions used in filter.py and theory.py
+│   ├── filter.py                # Functions for filtering possible words
 │   ├── theory.py                # Functions implementing wordle-solving strategies
 ├── tests/                       # Unit tests for the package
 ├── README.md                    # Project documentation
