@@ -1,15 +1,10 @@
 [build-system]
-requires = [
-    "setuptools>=77.0",
-    "wheel",
-]
-build-backend = "setuptools.build_meta"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
 [project]
 name = "wordlesolver"
-dynamic = [
-    "version",
-]
+version = "0.1.0"
 description = "Wordle assistant library based on Mathematics and Information Theory"
 readme = "README.md"
 authors = [
@@ -22,16 +17,27 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
     "Operating System :: OS Independent",
 ]
+dependencies = [
+    "pandas==2.2.2",
+    "tqdm==4.66.5",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest==8.3.2",
+]
+
+[project.scripts]
+wordlesolver = "cli:main"
 
 [project.urls]
 repository = "https://github.com/fernandomendi/wordlesolver"
 
-[tool.setuptools.packages.find]
-where = ["."]
-include = ["core*"]
+[tool.hatch.build.targets.wheel]
+packages = ["core", "cli", "api"]
 
-[tool.setuptools.package-data]
-"core.data" = ["**/*.csv"]
+[tool.hatch.build.targets.wheel.sources]
+"core/data" = "core/data"
 
 [tool.pytest.ini_options]
 testpaths = [
