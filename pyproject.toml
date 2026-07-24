@@ -12,11 +12,6 @@ authors = [
 ]
 license = "BSD-3-Clause"
 requires-python = ">=3.12"
-classifiers = [
-    "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.12",
-    "Operating System :: OS Independent",
-]
 dependencies = [
     "pandas>=3",
     "tqdm>=4.69",
