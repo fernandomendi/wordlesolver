@@ -1,9 +1,12 @@
 import click
 
 from core import Solver, Languages
-from core.language import Status
 from core.exceptions import InvalidWordLengthError, WordNotFoundError, InvalidAnswerError
 from core.validations import validate_word, validate_answer
+
+
+def _dim(text: str) -> str:
+    return click.style(f"  {text}", fg="bright_black")
 
 
 @click.group()
@@ -38,8 +41,9 @@ def main():
     help="A guess and its feedback (repeatable). Example: --step careo 12110"
 )
 @click.option("--count", is_flag=True, help="Show number of remaining possible words.")
-@click.option("--top", default=0, help="Show top N possible words.")
-def suggest(lang: str, step: tuple, count: bool, top: int):
+@click.option("--top-probable", "top_probable", default=0, help="Show top N most probable answers.")
+@click.option("--top-suggestions", "top_suggestions", default=0, help="Show top N best next guesses by entropy.")
+def suggest(lang: str, step: tuple, count: bool, top_probable: int, top_suggestions: int):
     """Return the next best guess given accumulated steps."""
     match lang:
         case "en":
@@ -66,15 +70,20 @@ def suggest(lang: str, step: tuple, count: bool, top: int):
         raise click.ClickException("No possible words remaining. Check your feedback.")
 
     if total == 1:
-        word = solver.possible_words()[0]["word"]
-        click.echo(f"answer: {word}")
+        click.echo(click.style(solver.possible_words()[0]["word"], bold=True))
         return
 
-    click.echo(solver.best_guess())
-
     if count:
-        click.echo(f"remaining: {total}")
+        click.echo(_dim(f"remaining: {total}"))
 
-    if top:
-        for entry in solver.possible_words()[:top]:
-            click.echo(f"  {entry['word']}")
+    if top_probable:
+        click.echo(_dim("top probable:"))
+        for entry in solver.possible_words()[:top_probable]:
+            click.echo(_dim(f"  {entry['word']}"))
+
+    if top_suggestions:
+        click.echo(_dim("top suggestions:"))
+        for entry in solver.suggestions()[:top_suggestions]:
+            click.echo(_dim(f"  {entry['word']}"))
+
+    click.echo(click.style(solver.best_guess(), bold=True))
