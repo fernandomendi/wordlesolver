@@ -1,32 +1,27 @@
+from core.feedback import feedback
+from core.language import Language, Languages, Status, Step
+from core.filter import filter_words_accumulative, _load_words
+
 import pytest
-
-# TODO(#50): Tests reference old module paths (wordlesolver.*) removed in the restructure.
-# These will be rewritten to test via the Solver class in issue #50.
-pytest.skip("Pending rewrite for new core structure — see issue #50", allow_module_level=True)
-
-from wordlesolver.common import feedback
-from wordlesolver.core.variables import Language, Languages, Status
-from wordlesolver.filter import filter_words_accumulative
-
 import pandas as pd
 
 
 @pytest.mark.parametrize(
     "secret, guess, expected",
     [
-        ("sobre", "sobre", 5 * Status.CORRECT),
-        ("carta", "cargo", 3 * Status.CORRECT + 2 * Status.ABSENT),
-        ("pluma", "sobre", 5 * Status.ABSENT),
-        ("sobre", "serbo", 1 * Status.CORRECT + 4 * Status.MISPLACED),
-        ("pista", "tapis", 5 * Status.MISPLACED),
-        ("apnea", "costa", 4 * Status.ABSENT + Status.CORRECT),
-        ("piano", "pinoc", 2 * Status.CORRECT + 2 * Status.MISPLACED + Status.ABSENT),
-        ("apple", "apply", 4 * Status.CORRECT + Status.ABSENT),
-        ("level", "lemon", 2 * Status.CORRECT + 3 * Status.ABSENT),
-        ("brick", "stone", 5 * Status.ABSENT),
-        ("angle", "glean", 5 * Status.MISPLACED),
-        ("eager", "alter", 1 * Status.MISPLACED + 2 * Status.ABSENT + 2 * Status.CORRECT),
-        ("ooooo", "ooxxo", 2 * Status.CORRECT + 2 * Status.ABSENT + Status.CORRECT),
+        ("sobre", "sobre", 5 * Status.CORRECT),                                                 # All letters are correct
+        ("carta", "cargo", 3 * Status.CORRECT + 2 * Status.ABSENT),                             # Some letters correct, some absent
+        ("pluma", "sobre", 5 * Status.ABSENT),                                                  # All letters are absent
+        ("sobre", "serbo", 1 * Status.CORRECT + 4 * Status.MISPLACED),                          # Some letters correct, some misplaced
+        ("pista", "tapis", 5 * Status.MISPLACED),                                               # All letters are misplaced
+        ("apnea", "costa", 4 * Status.ABSENT + Status.CORRECT),                                 # One correct, rest absent
+        ("piano", "pinoc", 2 * Status.CORRECT + 2 * Status.MISPLACED + Status.ABSENT),          # Some letters correct, some misplaced, some absent
+        ("apple", "apply", 4 * Status.CORRECT + Status.ABSENT),                                 # Edge case with repeated letters, some correct, some absent
+        ("level", "lemon", 2 * Status.CORRECT + 3 * Status.ABSENT),                             # Edge case with repeated letters, some correct, some misplaced
+        ("brick", "stone", 5 * Status.ABSENT),                                                  # No letters match
+        ("angle", "glean", 5 * Status.MISPLACED),                                               # All letters correct but in the wrong order
+        ("eager", "alter", 1 * Status.MISPLACED + 2 * Status.ABSENT + 2 * Status.CORRECT),      # Some correct, some absent, with repeat letters
+        ("ooooo", "ooxxo", 2 * Status.CORRECT + 2 * Status.ABSENT + Status.CORRECT),            # Special case: Word with all letters the same
     ]
 )
 def test_feedback(secret: str, guess: str, expected: str):
@@ -35,11 +30,14 @@ def test_feedback(secret: str, guess: str, expected: str):
 
 @pytest.mark.parametrize(
     "language",
-    [Languages.ES, Languages.EN]
+    [
+        Languages.ES,
+        Languages.EN,
+    ]
 )
 def test_no_filter(language: Language):
     filtered_words = filter_words_accumulative([], language)
-    all_words = pd.read_csv(f"data/{language.code}/words.csv")
+    all_words = _load_words(language)
     pd.testing.assert_frame_equal(filtered_words, all_words)
 
 
@@ -51,5 +49,5 @@ def test_no_filter(language: Language):
     ]
 )
 def test_exact_filter(guess: str, language: Language):
-    filtered_words = filter_words_accumulative([{"guess": guess, "answer": "00000"}], language)
+    filtered_words = filter_words_accumulative([Step(guess=guess, answer="00000")], language)
     assert len(filtered_words) == 1

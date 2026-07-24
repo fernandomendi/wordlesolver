@@ -1,13 +1,9 @@
-import pytest
-
-# TODO(#50): Tests reference old module paths (wordlesolver.*) removed in the restructure.
-# These will be rewritten to test via the Solver class in issue #50.
-pytest.skip("Pending rewrite for new core structure — see issue #50", allow_module_level=True)
-
-from wordlesolver.core.variables import Language, Languages
-from wordlesolver.theory import best_guess, entropy, get_entropies
+from core.language import Language, Languages, Step
+from core.theory import entropy, get_entropies
+from core.filter import _load_words
 
 import pandas as pd
+import pytest
 
 
 @pytest.mark.parametrize(
@@ -22,7 +18,7 @@ import pandas as pd
     ]
 )
 def test_base_entropy(word: str, value: float, language: Language):
-    all_words: pd.DataFrame = pd.read_csv(f"data/{language.code}/words.csv")
+    all_words: pd.DataFrame = _load_words(language)
     assert value == entropy(word, all_words)
 
 
@@ -35,20 +31,22 @@ def test_base_entropy(word: str, value: float, language: Language):
     ]
 )
 def test_most_entropy(language: Language):
-    best_initial = best_guess([], language)
-    assert best_initial == language.initial_suggestion
+    stats = get_entropies([], language)
+    best = stats.sort_values("entropy", ascending=False).iloc[0]["word"]
+    assert best == language.initial_suggestion
 
 
 @pytest.mark.parametrize(
     "steps, language",
     [
         ([
-            {"guess": "careo", "answer": "21222"},
-            {"guess": "pista", "answer": "22200"},
+            Step(guess="careo", answer="21222"),
+            Step(guess="pista", answer="22200"),
         ], Languages.ES),
     ]
 )
-def test_parallelism(steps: list[dict[str, str]], language: Language):
+def test_parallelism(steps: list[Step], language: Language):
     stats_parallelism = get_entropies(steps, language, parallelize=True, recalculate=True)
     stats_basic = get_entropies(steps, language, parallelize=False, recalculate=True)
+
     pd.testing.assert_frame_equal(stats_parallelism, stats_basic)
