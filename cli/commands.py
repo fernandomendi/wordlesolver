@@ -11,6 +11,17 @@ def main():
     pass
 
 
+# TODO: implement `interactive` command (issue #39) using Textual TUI.
+# Design:
+#   uv run wordlesolver interactive --lang es
+#   uv run wordlesolver interactive --lang es --step careo 12110  (preload game state)
+#
+# - Fixed terminal layout: grid of guesses, live suggestion, remaining word count
+# - Consumes core/ directly (no API hop)
+# - --step flags preload steps before the TUI opens (same pattern as `suggest`)
+# - Deferred until after React frontend — Textual borrows from React concepts
+
+
 @main.command()
 @click.option(
     "--lang",
