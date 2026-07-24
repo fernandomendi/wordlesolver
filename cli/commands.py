@@ -37,8 +37,8 @@ def main():
     metavar="GUESS ANSWER",
     help="A guess and its feedback (repeatable). Example: --step careo 12110"
 )
-@click.option("--verbose", is_flag=True, help="Show top 10 possible words.")
-def suggest(lang: str, step: tuple, verbose: bool):
+@click.option("--top", default=0, help="Show top N possible words and remaining count.")
+def suggest(lang: str, step: tuple, top: int):
     """Return the next best guess given accumulated steps."""
     match lang:
         case "en":
@@ -69,10 +69,9 @@ def suggest(lang: str, step: tuple, verbose: bool):
         click.echo(f"answer: {word}")
         return
 
-    click.echo(f"suggestion: {solver.best_guess()}")
-    click.echo(f"remaining: {total}")
+    click.echo(solver.best_guess())
 
-    if verbose:
-        click.echo("\ntop possible words:")
-        for entry in solver.possible_words():
+    if top:
+        click.echo(f"remaining: {total}")
+        for entry in solver.possible_words()[:top]:
             click.echo(f"  {entry['word']}")
