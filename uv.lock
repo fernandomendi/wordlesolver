@@ -190,18 +190,6 @@ wheels = [
 ]
 
 [[package]]
-name = "tqdm"
-version = "4.69.0"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "colorama", marker = "sys_platform == 'win32'" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/8c/69/40407dfc835517f058b603dbf37a6df094d8582b015a51eddc988febbcb7/tqdm-4.69.0.tar.gz", hash = "sha256:700c5e85dcd5f009dd6222588a29180a193a748247a5d855b4d67db93d79a53b", size = 792569, upload-time = "2026-07-17T18:09:06.2Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/fe/21/99a0cdaf54eb35e77623c41b5a2c9472ee4404bba687052791fe2aba6773/tqdm-4.69.0-py3-none-any.whl", hash = "sha256:9979978912be667a6ef21fd5d8abf54e324e63d82f7f43c360792ebc2bc4e622", size = 676680, upload-time = "2026-07-17T18:09:04.172Z" },
-]
-
-[[package]]
 name = "tzdata"
 version = "2026.3"
 source = { registry = "https://pypi.org/simple" }
@@ -216,7 +204,6 @@ version = "0.1.0"
 source = { editable = "." }
 dependencies = [
     { name = "pandas" },
-    { name = "tqdm" },
 ]
 
 [package.optional-dependencies]
@@ -228,6 +215,5 @@ test = [
 requires-dist = [
     { name = "pandas", specifier = ">=3" },
     { name = "pytest", marker = "extra == 'test'", specifier = ">=9" },
-    { name = "tqdm", specifier = ">=4.69" },
 ]
 provides-extras = ["test"]

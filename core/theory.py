@@ -10,8 +10,6 @@ from core.language import Language, Step
 from core.validations import validate_steps
 
 import pandas as pd
-from tqdm import tqdm
-tqdm.pandas()
 
 CACHE_DIR = Path(".cache")
 
@@ -87,7 +85,7 @@ def get_entropies(
             )
         stats = pd.concat(stats_chunks)
     else:
-        words_aux["entropy"] = words_aux.word.progress_apply(
+        words_aux["entropy"] = words_aux.word.apply(
             lambda word: entropy(word, possible_words)
         )
         stats = words_aux
