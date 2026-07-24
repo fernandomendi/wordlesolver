@@ -13,6 +13,7 @@ authors = [
 license = "BSD-3-Clause"
 requires-python = ">=3.12"
 dependencies = [
+    "click>=8.4.2",
     "pandas>=3",
 ]
 
