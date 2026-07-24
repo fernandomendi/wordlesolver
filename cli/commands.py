@@ -74,7 +74,7 @@ def suggest(lang: str, step: tuple, count: bool, top_probable: int, top_suggesti
         return
 
     if count:
-        click.echo(_dim(f"remaining: {total}"))
+        click.echo(_dim(f"words left: {total}"))
 
     if top_probable:
         click.echo(_dim("top probable:"))
