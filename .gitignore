@@ -5,6 +5,7 @@ __pycache__/
 .cache/
 
 wordlesolver.egg-info/
+frontend/node_modules/
 
 tests.ipynb
 
