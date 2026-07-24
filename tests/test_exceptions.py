@@ -1,6 +1,6 @@
-from wordlesolver.core.common import validate_answer, validate_steps, validate_word
-from wordlesolver.core.exceptions import InvalidAnswerError, InvalidWordLengthError, WordNotFoundError
-from wordlesolver.core.variables import Language, Languages
+from core.validations import validate_answer, validate_steps, validate_word
+from core.exceptions import InvalidAnswerError, InvalidWordLengthError, WordNotFoundError
+from core.language import Language, Languages, Step
 
 import pytest
 
@@ -50,38 +50,17 @@ def test_valid_answer(answer: str):
     "steps, language",
     [
         ([                                  # Example game in Spanish
-            {
-                "guess" : "careo",
-                "answer" : "01222",
-            },
-            {
-                "guess" : "nolit",
-                "answer" : "11212",
-            },
-            {
-                "guess" : "cacho",
-                "answer" : "02120",
-            },
-            {
-                "guess" : "cinco",
-                "answer" : "00000",
-            },
+            Step(guess="careo", answer="01222"),
+            Step(guess="nolit", answer="11212"),
+            Step(guess="cacho", answer="02120"),
+            Step(guess="cinco", answer="00000"),
         ], Languages.ES),
         ([                                  # Example game in English
-            {
-                "guess" : "tares",
-                "answer" : "12221",
-            },
-            {
-                "guess" : "moust",
-                "answer" : "12211",
-            },
-            {
-                "guess" : "smith",
-                "answer" : "00000",
-            },
+            Step(guess="tares", answer="12221"),
+            Step(guess="moust", answer="12211"),
+            Step(guess="smith", answer="00000"),
         ], Languages.EN),
     ]
 )
-def test_valid_steps(steps: list[dict[str, str]], language: Language):
+def test_valid_steps(steps: list[Step], language: Language):
     assert validate_steps(steps, language)

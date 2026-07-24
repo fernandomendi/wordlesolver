@@ -1,6 +1,6 @@
 [build-system]
 requires = [
-    "setuptools>=61.0",
+    "setuptools>=77.0",
     "wheel",
 ]
 build-backend = "setuptools.build_meta"
@@ -13,24 +13,25 @@ dynamic = [
 description = "Wordle assistant library based on Mathematics and Information Theory"
 readme = "README.md"
 authors = [
-  { name="Fernando Mendi", email="fernandomendicamara@gmail.com" },
+  { name="Fernando Mendi", email="fernandoomendi@gmail.com" },
 ]
-license = {file = "LICENSE"}
+license = "BSD-3-Clause"
 requires-python = ">=3.12"
 classifiers = [
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.12",
-    "License :: OSI Approved :: BSD License",
     "Operating System :: OS Independent",
 ]
 
 [project.urls]
 repository = "https://github.com/fernandomendi/wordlesolver"
 
-[tool.setuptools]
-packages = [
-    "wordlesolver",
-]
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["core*"]
+
+[tool.setuptools.package-data]
+"core.data" = ["**/*.csv"]
 
 [tool.pytest.ini_options]
 testpaths = [

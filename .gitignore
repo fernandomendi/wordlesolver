@@ -2,8 +2,11 @@
 .vscode/
 
 __pycache__/
-data/*/cache/
+.cache/
 
 wordlesolver.egg-info/
 
 tests.ipynb
+
+# Agent handoff docs (local only)
+.handoff/

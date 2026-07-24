@@ -1,6 +1,6 @@
-from wordlesolver.common import feedback
-from wordlesolver.core.variables import Language, Languages, Status
-from wordlesolver.filter import filter_words_accumulative
+from core.feedback import feedback
+from core.language import Language, Languages, Status, Step
+from core.filter import filter_words_accumulative, _load_words
 
 import pytest
 import pandas as pd
@@ -37,7 +37,7 @@ def test_feedback(secret: str, guess: str, expected: str):
 )
 def test_no_filter(language: Language):
     filtered_words = filter_words_accumulative([], language)
-    all_words = pd.read_csv(f"data/{language.code}/words.csv")
+    all_words = _load_words(language)
     pd.testing.assert_frame_equal(filtered_words, all_words)
 
 
@@ -49,8 +49,5 @@ def test_no_filter(language: Language):
     ]
 )
 def test_exact_filter(guess: str, language: Language):
-    filtered_words = filter_words_accumulative([{
-        "guess": guess,
-        "answer": "00000"
-    }], language)
+    filtered_words = filter_words_accumulative([Step(guess=guess, answer="00000")], language)
     assert len(filtered_words) == 1
