@@ -1,4 +1,4 @@
-from core.language import Language
+from core.models import Language
 
 
 class InvalidWordLengthError(Exception):

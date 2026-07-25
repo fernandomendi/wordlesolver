@@ -1,4 +1,4 @@
-from core.language import Status
+from core.models import Status
 
 
 def feedback(secret: str, guess: str) -> str:
