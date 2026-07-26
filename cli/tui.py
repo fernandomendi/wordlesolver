@@ -10,7 +10,7 @@
 
 import click
 
-from core.language import Language
+from core.models import Language
 
 
 def run(language: Language, steps: list[tuple[str, str]]) -> None:
