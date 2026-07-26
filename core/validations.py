@@ -1,23 +1,16 @@
 import re
 
-from core.exceptions import InvalidAnswerError, InvalidWordLengthError, WordNotFoundError
 from core.filter import _load_words
 from core.models import Language
 
 
-def validate_word(word: str, language: Language) -> bool:
+def validate_word(word: str, language: Language) -> None:
     if len(word) != 5:
-        raise InvalidWordLengthError(word)
-
-    words = _load_words(language)
-    if not any(words.word == word):
-        raise WordNotFoundError(word, language)
-
-    return True
+        raise ValueError(f"'{word}' must be exactly 5 characters long.")
+    if not any(_load_words(language).word == word):
+        raise ValueError(f"'{word}' not found in the {language.code} word list.")
 
 
-def validate_answer(answer: str) -> bool:
+def validate_answer(answer: str) -> None:
     if not re.fullmatch(r"[012]{5}", answer):
-        raise InvalidAnswerError(answer)
-
-    return True
+        raise ValueError(f"'{answer}' is not valid feedback. Must be 5 characters of 0, 1, or 2.")

@@ -1,8 +1,7 @@
 import click
 
 from core import Languages
-from core.language import Language
-from core.exceptions import InvalidWordLengthError, WordNotFoundError, InvalidAnswerError
+from core.models import Language
 from core.validations import validate_word, validate_answer
 
 
@@ -11,11 +10,11 @@ def _parse_steps(step: tuple, language: Language) -> list[tuple[str, str]]:
     for guess, answer in step:
         try:
             validate_word(guess, language)
-        except (InvalidWordLengthError, WordNotFoundError) as e:
+        except ValueError as e:
             raise click.BadParameter(str(e), param_hint="--step GUESS")
         try:
             validate_answer(answer)
-        except InvalidAnswerError as e:
+        except ValueError as e:
             raise click.BadParameter(str(e), param_hint="--step ANSWER")
         steps.append((guess, answer))
     return steps
