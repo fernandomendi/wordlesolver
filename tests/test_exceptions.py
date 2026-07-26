@@ -31,4 +31,3 @@ def test_word_not_found(word: str, language: Language):
     with pytest.raises(ValueError):
         validate_word(word, language)
 
-

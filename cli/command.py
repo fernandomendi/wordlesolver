@@ -1,19 +1,19 @@
 import click
 
 from core import Solver
-from core.models import Language
+from core.models import Language, Step
 
 
 def _dim(text: str) -> str:
     return click.style(f"  {text}", fg="bright_black")
 
 
-def run(language: Language, steps: list[tuple[str, str]], verbose: bool) -> None:
+def run(language: Language, steps: list[Step], verbose: bool) -> None:
     solver = Solver(language)
 
-    for guess, answer in steps:
+    for step in steps:
         try:
-            solver.add_step(guess, answer)
+            solver.add_step(step.guess, step.answer)
         except ValueError as e:
             raise click.BadParameter(str(e), param_hint="--step")
 

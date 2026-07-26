@@ -11,7 +11,8 @@
 import click
 
 from core.models import Language
+from core.models import Step
 
 
-def run(language: Language, steps: list[tuple[str, str]]) -> None:
+def run(language: Language, steps: list[Step]) -> None:
     raise click.ClickException("TUI not yet implemented (issue #39).")

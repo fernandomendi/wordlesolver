@@ -1,6 +1,6 @@
 import click
 
-from core import Languages
+from core import parse_language, parse_steps
 
 
 @click.command()
@@ -8,7 +8,7 @@ from core import Languages
     "--lang",
     default="en",
     show_default=True,
-    type=click.Choice(["en", "es"]),
+    type=str,
     help="Language of the Wordle game."
 )
 @click.option(
@@ -22,15 +22,19 @@ from core import Languages
 @click.option("--verbose", "-v", is_flag=True, help="Show words left, top probable, and top suggestions.")
 def main(lang: str, step: tuple, tui: bool, verbose: bool):
     """Wordle solver — returns the next best guess given accumulated steps."""
-    match lang:
-        case "en":
-            language = Languages.EN
-        case "es":
-            language = Languages.ES
+    try:
+        language = parse_language(lang)
+    except ValueError as error:
+        raise click.BadParameter(str(error), param_hint="--lang") from error
+
+    try:
+        steps = parse_steps(step)
+    except ValueError as error:
+        raise click.BadParameter(str(error), param_hint="--step") from error
 
     if tui:
         from cli.tui import run
-        run(language, step)
+        run(language, steps)
     else:
         from cli.command import run
-        run(language, step, verbose)
+        run(language, steps, verbose)
