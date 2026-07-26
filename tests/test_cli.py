@@ -1,3 +1,4 @@
+import pytest
 from click.testing import CliRunner
 from cli.main import main
 
@@ -5,12 +6,14 @@ from cli.main import main
 runner = CliRunner()
 
 
+@pytest.mark.slow
 def test_no_steps_en():
     result = runner.invoke(main, ["--lang", "en"])
     assert result.exit_code == 0
     assert len(result.output.strip()) == 5
 
 
+@pytest.mark.slow
 def test_no_steps_es():
     result = runner.invoke(main, ["--lang", "es"])
     assert result.exit_code == 0

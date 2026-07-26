@@ -38,3 +38,6 @@ packages = ["core", "cli", "api"]
 testpaths = [
     "tests/",
 ]
+markers = [
+    "slow: marks tests as slow (skipped in CI)",
+]
