@@ -7,16 +7,17 @@ from werkzeug.exceptions import HTTPException
 
 from api.routes import health_bp, solve_bp
 
+DEFAULT_DEBUG = "false"
+DEFAULT_PORT = "5000"
+FRONTEND_ORIGIN = "http://localhost:3000"
+
 
 def create_app() -> Flask:
     app = Flask(__name__)
-    app.config["DEBUG"] = _to_bool(os.getenv("DEBUG", "false"))
-    app.config["PORT"] = int(os.getenv("PORT", "5000"))
+    app.config["DEBUG"] = _to_bool(os.getenv("DEBUG", DEFAULT_DEBUG))
+    app.config["PORT"] = int(os.getenv("PORT", DEFAULT_PORT))
 
-    CORS(
-        app,
-        resources={r"/*": {"origins": ["http://localhost:3000"]}},
-    )
+    CORS(app, resources={r"/*": {"origins": [FRONTEND_ORIGIN]}})
 
     app.register_blueprint(health_bp)
     app.register_blueprint(solve_bp)
