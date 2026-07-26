@@ -2,22 +2,20 @@ from core.models import Status
 
 
 def feedback(secret: str, guess: str) -> str:
-    """
-    Evaluates a Wordle guess against a secret word.
-
-    Returns a 5-character string where each character represents the status
-    of the corresponding letter: '0' = correct position, '1' = misplaced, '2' = absent.
-    """
-    answer = [Status.ABSENT] * 5
+    result = [Status.ABSENT] * 5
+    consumed = [False] * 5
 
     for i in range(5):
         if guess[i] == secret[i]:
-            answer[i] = Status.CORRECT
-            secret = secret[:i] + '_' + secret[i+1:]
+            result[i] = Status.CORRECT
+            consumed[i] = True
 
     for i in range(5):
-        if answer[i] == Status.ABSENT and guess[i] in secret:
-            answer[i] = Status.MISPLACED
-            secret = secret.replace(guess[i], "_", 1)
+        if result[i] == Status.ABSENT:
+            for j in range(5):
+                if not consumed[j] and guess[i] == secret[j]:
+                    result[i] = Status.MISPLACED
+                    consumed[j] = True
+                    break
 
-    return "".join(answer)
+    return "".join(result)
