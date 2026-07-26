@@ -1,9 +1,6 @@
 import click
 
 from core import Languages
-from core.models import Language
-def _parse_steps(step: tuple) -> list[tuple[str, str]]:
-    return list(step)
 
 
 @click.command()
@@ -31,11 +28,9 @@ def main(lang: str, step: tuple, tui: bool, verbose: bool):
         case "es":
             language = Languages.ES
 
-    steps = _parse_steps(step)
-
     if tui:
         from cli.tui import run
-        run(language, steps)
+        run(language, step)
     else:
         from cli.command import run
-        run(language, steps, verbose)
+        run(language, step, verbose)
