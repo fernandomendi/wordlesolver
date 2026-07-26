@@ -2,9 +2,9 @@ from math import log2
 from functools import reduce
 import multiprocessing as mp
 
-from core.feedback import feedback
-
 import pandas as pd
+
+from core.feedback import feedback
 
 
 def entropy(word: str, possible_words: pd.DataFrame) -> float:
@@ -19,21 +19,11 @@ def _compute_chunk(chunk: pd.DataFrame, possible_words: pd.DataFrame) -> pd.Data
     return chunk
 
 
-def _split_chunks(df: pd.DataFrame, n: int) -> list[pd.DataFrame]:
-    size = len(df)
-    base, remainder = divmod(size, n)
-    chunks, i = [], 0
-    for k in range(n):
-        chunk_size = base + (1 if k < remainder else 0)
-        chunks.append(df.iloc[i:i + chunk_size])
-        i += chunk_size
-    return chunks
-
-
 def compute_entropies(all_words: pd.DataFrame, possible_words: pd.DataFrame, parallelize: bool = True) -> pd.DataFrame:
     if parallelize:
         n = mp.cpu_count() // 2
-        chunks = _split_chunks(all_words.copy(), n)
+        df = all_words.copy()
+        chunks = [df.iloc[i::n] for i in range(n)]
         with mp.Pool(processes=n) as pool:
             results = pool.starmap(_compute_chunk, [(c, possible_words) for c in chunks])
         return pd.concat(results)
