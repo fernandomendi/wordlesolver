@@ -2,22 +2,8 @@ import click
 
 from core import Languages
 from core.models import Language
-from core.validations import validate_word, validate_answer
-
-
-def _parse_steps(step: tuple, language: Language) -> list[tuple[str, str]]:
-    steps = []
-    for guess, answer in step:
-        try:
-            validate_word(guess, language)
-        except ValueError as e:
-            raise click.BadParameter(str(e), param_hint="--step GUESS")
-        try:
-            validate_answer(answer)
-        except ValueError as e:
-            raise click.BadParameter(str(e), param_hint="--step ANSWER")
-        steps.append((guess, answer))
-    return steps
+def _parse_steps(step: tuple) -> list[tuple[str, str]]:
+    return list(step)
 
 
 @click.command()
@@ -45,7 +31,7 @@ def main(lang: str, step: tuple, tui: bool, verbose: bool):
         case "es":
             language = Languages.ES
 
-    steps = _parse_steps(step, language)
+    steps = _parse_steps(step)
 
     if tui:
         from cli.tui import run

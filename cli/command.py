@@ -1,7 +1,7 @@
 import click
 
 from core import Solver
-from core.language import Language
+from core.models import Language
 
 
 def _dim(text: str) -> str:
@@ -12,7 +12,10 @@ def run(language: Language, steps: list[tuple[str, str]], verbose: bool) -> None
     solver = Solver(language)
 
     for guess, answer in steps:
-        solver.add_step(guess, answer)
+        try:
+            solver.add_step(guess, answer)
+        except ValueError as e:
+            raise click.BadParameter(str(e), param_hint="--step")
 
     total = solver.total_possible()
 

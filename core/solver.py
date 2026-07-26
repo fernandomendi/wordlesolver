@@ -2,6 +2,7 @@ from core import cache
 from core.filter import _load_words, filter_words
 from core.theory import compute_entropies
 from core.models import Language, Step
+from core.validations import validate_word, validate_answer
 
 import pandas as pd
 
@@ -15,6 +16,8 @@ class Solver:
         self._entropies: pd.DataFrame | None = None
 
     def add_step(self, guess: str, answer: str) -> None:
+        validate_word(guess, self._language)
+        validate_answer(answer)
         step = Step(guess=guess, answer=answer)
         self._steps.append(step)
         self._possible = filter_words(self._possible, step)
