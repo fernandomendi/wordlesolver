@@ -1,9 +1,11 @@
 import os
 from http import HTTPStatus
 
-from flask import Flask, jsonify
+from flask import Flask
 from flask_cors import CORS
 from werkzeug.exceptions import HTTPException
+
+from api.routes import health_bp, solve_bp
 
 
 def create_app() -> Flask:
@@ -16,9 +18,8 @@ def create_app() -> Flask:
         resources={r"/*": {"origins": ["http://localhost:3000"]}},
     )
 
-    @app.get("/health")
-    def health() -> tuple[dict[str, str], int]:
-        return {"status": "ok"}, HTTPStatus.OK
+    app.register_blueprint(health_bp)
+    app.register_blueprint(solve_bp)
 
     register_error_handlers(app)
     return app
