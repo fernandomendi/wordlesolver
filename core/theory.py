@@ -21,9 +21,8 @@ def _compute_chunk(chunk: pd.DataFrame, possible_words: pd.DataFrame) -> pd.Data
 
 def compute_entropies(all_words: pd.DataFrame, possible_words: pd.DataFrame, parallelize: bool = True) -> pd.DataFrame:
     if parallelize:
-        n = mp.cpu_count() // 2
-        df = all_words.copy()
-        chunks = [df.iloc[i::n] for i in range(n)]
+        n = max(1, mp.cpu_count() - 1)
+        chunks = [all_words.iloc[i::n] for i in range(n)]
         with mp.Pool(processes=n) as pool:
             results = pool.starmap(_compute_chunk, [(c, possible_words) for c in chunks])
         return pd.concat(results)
