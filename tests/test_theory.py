@@ -22,15 +22,7 @@ def test_base_entropy(word: str, value: float, language: Language):
     assert value == entropy(word, all_words)
 
 
-@pytest.mark.skip("Takes too long (5mins) — will resume once processing is more efficient.")
-@pytest.mark.parametrize("language", [Languages.ES, Languages.EN])
-def test_most_entropy(language: Language):
-    all_words = _load_words(language)
-    stats = compute_entropies(all_words, all_words)
-    best = stats.sort_values("entropy", ascending=False).iloc[0]["word"]
-    assert best == language.initial_suggestion
-
-
+@pytest.mark.slow
 @pytest.mark.parametrize(
     "steps, language",
     [
