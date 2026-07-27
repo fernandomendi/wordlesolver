@@ -1,91 +1,83 @@
 # wordlesolver
 
-wordlesolver is a Python package designed to assist in solving the popular Wordle game. It leverages strategies such as entropy calculation and word filtering to determine the best possible guesses and optimize the solving process.
-
-## Features
-
-- **Entropy Calculation**: Calculate the entropy of possible words to determine the most informative guesses.
-- **Word Filtering**: Dynamically filter possible words based on feedback from previous guesses.
-- **Language Support**: Support for multiple languages, each with an optimized initial guess.
-- **Simulation Mode**: Run simulations to determine the effectiveness of different strategies.
+Wordle solver project with:
+- `core` Python solving library
+- `cli` command-line interface
+- `api` Flask API
+- `frontend` React scaffold (in progress)
 
 ## Installation
 
-Clone the repository and install the necessary dependencies using `pip`:
+This repository uses `uv`.
 
 ```bash
-git clone https://github.com/yourusername/wordlesolver.git
+git clone https://github.com/fernandomendi/wordlesolver.git
 cd wordlesolver
-pip install -e .
+uv sync --extra test
 ```
 
-## Usage
+## Quick usage
 
-### 1. Solving a Wordle Puzzle
-You can use the package to find the best guesses based on feedback from the game. Here's an example:
-
-```python
-from wordlesolver.theory import best_guess
-from wordlesolver.core.variables import Languages
-
-# Initialize language
-language = Languages.EN
-
-# Simulate a series of guesses
-steps = [
-    {"guess": "tares", "answer": "00010"},
-    {"guess": "slant", "answer": "01000"},
-]
-
-# Get the best next guess
-next_guess = best_guess(steps, language)
-print(f"Next best guess: {next_guess}")
-```
-
-### 2. Running a Simulation
-You can simulate a Wordle game by running a Python script fom the root folder:
+### CLI
 
 ```bash
-python scripts/solver.py ES
-```
-This command will output the maximum number of possible words remaining after applying the initial guess.
-
-### 3. Running Tests
-To ensure everything is functioning as expected, you can run the unit tests:
-
-```python
-pytest tests/
+uv run wordlesolver --lang en
+uv run wordlesolver --lang en --step tares 12221 --step moust 12211
+uv run wordlesolver --lang en --step tares 12221 -v
 ```
 
-## Project Structure
+### API
+
+Run API:
+
 ```bash
-.
-├── data/                        # Data files required by the solver
-├── scripts/                     # Scripts for running simulations and other tasks
-├── wordlesolver/                # Main package code
-│   ├── core/                    # Core components, such as exceptions and variables
-│   │   ├── common.py            # Common utilities and validation functions
-│   │   ├── exceptions.py        # Custom exception and error handling classes
-│   │   ├── variables.py         # Custom data types to be used across the package
-│   ├── common.py                # Common utilities and functions used in filter.py and theory.py
-│   ├── filter.py                # Functions for filtering possible words
-│   ├── theory.py                # Functions implementing wordle-solving strategies
-├── tests/                       # Unit tests for the package
-├── README.md                    # Project documentation
+uv run flask --app api run --host 0.0.0.0 --port 5000
 ```
 
-## Contributing
-Contributions are welcome! If you have ideas or improvements, please open an issue or submit a pull request. Make sure to follow the coding standards and include appropriate tests.
+Call API:
 
-## License
-This project is licensed under the MIT License. See the LICENSE file for details.
+```bash
+curl -X POST http://localhost:5000/solve \
+  -H "Content-Type: application/json" \
+  -d '{"language":"en","steps":[{"guess":"tares","answer":"12221"}]}'
+```
 
-## Future Plans
-- Add support for additional languages.
-- Implement more advanced strategies for word selection.
-- Improve the efficiency of the entropy calculation.
+## Testing
 
-## Acknowledgements
-I have studied a Mathematics degree and in one of the courses we learnt about Information Theory. However, back in 2022, I did not see the possible uses for this field. A couple of weeks after learning about this in class, a new video popped up on my YouTube feed, it was [Solving Wordle using information theory](https://www.youtube.com/watch?v=v68zYyaEmEA) from [3Blue1Brown](https://www.youtube.com/@3blue1brown). This led me to want to learn more on the topic and develop an initial version of this project.
+```bash
+uv run --extra test pytest tests/ -m "not slow"
+```
 
-Now, two years later I have reopened my interest for this topic and have decided to develop a well organised package with all necessary code based on Information Theory and Statistics.
+CI also runs:
+- unit tests (`pytest -m "not slow"`)
+- markdown lint and markdown link checks
+
+## Repository structure
+
+```text
+wordlesolver/
+├── core/       # Solver logic, filtering, entropy, validations, models
+├── cli/        # Click entrypoint and command mode
+├── api/        # Flask app and route modules
+├── frontend/   # Frontend scaffold
+├── tests/      # Pytest suite
+├── docs/       # Canonical project documentation
+└── scripts/    # Legacy scripts (not part of current supported flow)
+```
+
+## Documentation map
+
+- [`docs/README.md`](docs/README.md): docs index
+- [`docs/architecture.md`](docs/architecture.md): architecture and data flow
+- [`docs/information-theory.md`](docs/information-theory.md): why entropy-based ranking works
+- [`docs/development.md`](docs/development.md): development workflow
+- [`core/README.md`](core/README.md): core module guide
+- [`cli/README.md`](cli/README.md): CLI module guide
+- [`api/README.md`](api/README.md): API module guide
+- [`frontend/README.md`](frontend/README.md): frontend status and plan
+- [`tests/README.md`](tests/README.md): test structure and conventions
+
+## Scripts status
+
+`scripts/` currently contains legacy utilities based on the old layout/import paths.
+They are kept for now but are not part of the supported v1 CLI/API workflow.

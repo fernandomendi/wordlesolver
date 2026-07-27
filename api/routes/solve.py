@@ -28,6 +28,7 @@ def solve() -> tuple[dict[str, object], int]:
             raise BadRequest(str(error)) from error
 
     total_possible = solver.total_possible()
+    # Contradictory feedback should be surfaced as a client error.
     if total_possible == 0:
         raise BadRequest("No possible words remaining. Check your feedback.")
 
