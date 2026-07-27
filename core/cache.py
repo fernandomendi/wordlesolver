@@ -1,4 +1,5 @@
 import hashlib
+import shutil
 from pathlib import Path
 
 from core.models import Language, Step
@@ -21,3 +22,8 @@ def read(language: Language, steps: list[Step]) -> pd.DataFrame | None:
 def write(language: Language, steps: list[Step], data: pd.DataFrame) -> None:
     CACHE_DIR.mkdir(exist_ok=True)
     data.to_csv(CACHE_DIR / f"{_key(language, steps)}.csv", index=False)
+
+
+def clear() -> None:
+    if CACHE_DIR.exists():
+        shutil.rmtree(CACHE_DIR)
