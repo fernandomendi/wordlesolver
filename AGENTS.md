@@ -20,8 +20,9 @@ wordlesolver/
 This repo uses `uv`. Do not use `pip` or `requirements.txt`.
 
 ```bash
+uv sync --extra dev               # install dev/test/lint deps
 uv run pytest tests/              # run tests
-uv run --extra test pytest tests/ # run tests with test deps
+uv run ruff check core cli api tests
 uv run wordlesolver               # run CLI
 uv add <package>                  # add dependency
 ```

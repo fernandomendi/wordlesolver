@@ -11,13 +11,19 @@
 Install deps:
 
 ```bash
-uv sync --extra test
+uv sync --extra dev
 ```
 
 Run tests:
 
 ```bash
-uv run --extra test pytest tests/ -m "not slow"
+uv run pytest tests/ -m "not slow"
+```
+
+Run lint:
+
+```bash
+uv run ruff check core cli api tests
 ```
 
 Run CLI:
@@ -36,8 +42,9 @@ uv run flask --app api run --host 0.0.0.0 --port 5000
 
 Current CI validates:
 
-1. Python tests (`.github/workflows/unit_tests.yml`)
-2. Markdown lint + link checks (`.github/workflows/docs_checks.yml`)
+1. Python lint via Ruff (`uv run ruff check core cli api tests`)
+2. Python tests (`uv run pytest tests/ -m "not slow"`)
+3. Markdown lint + link checks (`.github/workflows/ci.yml`, `docs` job)
 
 ## Branch and PR conventions
 

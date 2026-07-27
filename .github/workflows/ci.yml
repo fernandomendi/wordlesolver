@@ -1,0 +1,55 @@
+name: CI
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  docs:
+    name: Markdown lint and link check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Markdown lint
+        uses: DavidAnson/markdownlint-cli2-action@v20
+        with:
+          globs: |
+            **/*.md
+
+      - name: Link check
+        uses: lycheeverse/lychee-action@v2
+        with:
+          args: |
+            --verbose
+            --include-mail=false
+            "./**/*.md"
+
+  python:
+    name: Python lint and tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          version: "latest"
+          enable-cache: true
+
+      - name: Install project dependencies
+        run: |
+          uv sync --extra dev
+
+      - name: Run Ruff
+        run: |
+          uv run ruff check core cli api tests
+
+      - name: Run unit tests
+        run: |
+          uv run pytest tests/ -m "not slow"

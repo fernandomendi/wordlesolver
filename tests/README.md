@@ -11,7 +11,8 @@ Tests are organized in dedicated files by domain (API, CLI, parsing, validations
 ## Running tests
 
 ```bash
-uv run --extra test pytest tests/ -m "not slow"
+uv sync --extra dev
+uv run pytest tests/ -m "not slow"
 ```
 
 ## How to add tests
