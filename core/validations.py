@@ -1,13 +1,13 @@
 import re
 
-from core.filter import _load_words
+from core.data_tools import load_words
 from core.models import Language
 
 
 def validate_word(word: str, language: Language) -> None:
     if len(word) != 5:
         raise ValueError(f"'{word}' must be exactly 5 characters long.")
-    if not any(_load_words(language).word == word):
+    if not any(load_words(language).word == word):
         raise ValueError(f"'{word}' not found in the {language.code} word list.")
 
 

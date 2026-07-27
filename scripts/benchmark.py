@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import argparse
 import sys
-from importlib import resources
 from pathlib import Path
 
 import pandas as pd
@@ -14,6 +13,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from core.feedback import feedback
+from core.data_tools import load_words as load_word_table
 from core.models import Language
 from core.parsing import parse_language
 from core.solver import Solver
@@ -23,12 +23,6 @@ def render_progress(current: int, total: int, width: int = 20) -> str:
     filled = int(width * current / total)
     bar = "#" * filled + "-" * (width - filled)
     return f"[{bar}] {current}/{total}"
-
-
-def load_words(language: Language) -> pd.DataFrame:
-    resource = resources.files("core.data").joinpath(f"{language.code}/words.csv")
-    with resource.open("r") as handle:
-        return pd.read_csv(handle)
 
 
 def steps_per_secret(secret: str, language: Language) -> int:
@@ -50,7 +44,7 @@ def steps_per_secret(secret: str, language: Language) -> int:
 
 
 def benchmark(language: Language, sample_size: int, seed: int | None = None) -> None:
-    words = load_words(language)
+    words = load_word_table(language)
     if sample_size < 1:
         raise ValueError("Sample size must be at least 1.")
     if sample_size > len(words):

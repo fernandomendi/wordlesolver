@@ -1,6 +1,6 @@
 from core.feedback import feedback
 from core.models import Language, Languages, Status
-from core.filter import _load_words
+from core.data_tools import load_words
 from core import Solver
 
 import pytest
@@ -31,7 +31,7 @@ def test_feedback(secret: str, guess: str, expected: str):
 @pytest.mark.parametrize("language", [Languages.ES, Languages.EN])
 def test_no_filter(language: Language):
     solver = Solver(language)
-    assert solver.total_possible() == len(_load_words(language))
+    assert solver.total_possible() == len(load_words(language))
 
 
 @pytest.mark.parametrize(
