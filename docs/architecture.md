@@ -33,3 +33,28 @@ The project is split into one shared solver core and multiple interfaces:
 - CLI and API both reuse shared parser helpers from `core/parsing.py`.
 - CLI maps validation errors to `click.BadParameter`.
 - API maps validation errors to `BadRequest` JSON responses.
+
+## Frontend + API architecture (current)
+
+### Runtime roles
+
+- `api` (Flask): backend API service on `http://localhost:5000`
+- `frontend` (React): UI code in `frontend/src/`
+- `vite`: frontend development/build toolchain
+  - local dev server on `http://localhost:5173`
+  - production build output in `frontend/dist/`
+
+### Local development request flow
+
+1. Browser opens frontend at `http://localhost:5173` (`npm run dev`).
+2. Frontend calls `/api/*` paths.
+3. Vite proxy forwards `/api/*` to Flask (`http://localhost:5000/*`).
+
+This keeps frontend code using relative API paths and avoids direct browser cross-origin calls during local development.
+
+### Production shape
+
+- `npm run build` generates static frontend assets in `frontend/dist/`.
+- Static assets are served by a web/static host.
+- Flask remains a separate API service.
+- Frontend should keep `/api/*` contract, with routing/proxy handled by deployment ingress/reverse proxy.

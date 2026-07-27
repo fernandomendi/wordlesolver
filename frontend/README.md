@@ -1,22 +1,36 @@
 # Frontend module (`frontend/`)
 
-## Current status
+## Responsibility
 
-Frontend is scaffold-level at the moment (Dockerfile only).
+Provides React web client for Wordle solver flow and API integration.
 
-## Planned role
+## Stack
 
-- Provide web UI for entering guesses and feedback.
-- Call API `POST /solve`.
-- Display:
-  - best guess
-  - remaining possible words
-  - top suggestions
-  - remaining count
+- React + Vite
+- Tailwind CSS
+- Oxlint (frontend lint command from Vite template)
 
-## Next implementation steps
+## Current scaffold
 
-1. Scaffold React app.
-2. Build input + feedback form.
-3. Render solver outputs.
-4. Wire to Flask API.
+- Vite React app bootstrap
+- Tailwind enabled through `@tailwindcss/vite`
+- API proxy in `vite.config.js`:
+  - `/api/*` → `http://localhost:5000/*`
+- Base folders:
+  - `src/components/`
+  - `src/hooks/`
+  - `src/api/`
+
+## Run locally
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+## Planned next steps
+
+1. Guess + feedback input UI.
+2. Solver submission flow using `src/api/client.js`.
+3. Results panels (best guess, remaining words, suggestions).
