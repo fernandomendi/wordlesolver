@@ -18,7 +18,7 @@ from core.models import Language
 from core.parsing import parse_language
 
 
-def remove_word(word: str, language: Language) -> None:
+def remove_word(language: Language, word: str) -> None:
     words_path = load_words_path(language)
     words = pd.read_csv(words_path).sort_values("id").reset_index(drop=True)
 
@@ -38,12 +38,12 @@ def remove_word(word: str, language: Language) -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Remove a word from a Wordle word list.")
-    parser.add_argument("word", help="Word to remove from the word list.")
     parser.add_argument("language", help="Target language.")
+    parser.add_argument("word", help="Word to remove from the word list.")
     args = parser.parse_args()
 
     language = parse_language(args.language)
-    remove_word(args.word, language)
+    remove_word(language, args.word)
     print(f"Removed '{args.word.lower()}' from {language.code} word list.")
 
 

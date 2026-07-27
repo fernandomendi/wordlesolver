@@ -18,7 +18,7 @@ from core.models import Language
 from core.parsing import parse_language
 
 
-def add_word(word: str, language: Language, rank: int | None = None) -> None:
+def add_word(language: Language, word: str, rank: int | None = None) -> None:
     words_path = load_words_path(language)
     words = pd.read_csv(words_path).sort_values("id").reset_index(drop=True)
 
@@ -48,8 +48,8 @@ def add_word(word: str, language: Language, rank: int | None = None) -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Add a word to a Wordle word list.")
-    parser.add_argument("word", help="Word to add to the word list.")
     parser.add_argument("language", help="Target language.")
+    parser.add_argument("word", help="Word to add to the word list.")
     parser.add_argument(
         "--rank",
         type=int,
@@ -59,7 +59,7 @@ def main() -> None:
     args = parser.parse_args()
 
     language = parse_language(args.language)
-    add_word(args.word, language, rank=args.rank)
+    add_word(language, args.word, rank=args.rank)
     if args.rank is None:
         print(f"Added '{args.word.lower()}' to {language.code} word list.")
     else:
