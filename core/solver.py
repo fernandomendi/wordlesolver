@@ -1,5 +1,6 @@
 from core import cache
-from core.filter import _load_words, filter_words
+from core.data_tools import load_words
+from core.filter import filter_words
 from core.theory import compute_entropies
 from core.models import Language, Step
 from core.validations import validate_word, validate_answer
@@ -11,7 +12,7 @@ class Solver:
     def __init__(self, language: Language):
         self._language = language
         self._steps: list[Step] = []
-        self._all_words: pd.DataFrame = _load_words(language)
+        self._all_words: pd.DataFrame = load_words(language)
         self._possible: pd.DataFrame = self._all_words.copy()
         self._entropies: pd.DataFrame | None = None
 

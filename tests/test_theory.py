@@ -1,6 +1,6 @@
 from core.models import Language, Languages
 from core.theory import entropy, compute_entropies
-from core.filter import _load_words
+from core.data_tools import load_words
 
 import pandas as pd
 import pytest
@@ -18,7 +18,7 @@ import pytest
     ]
 )
 def test_base_entropy(word: str, value: float, language: Language):
-    all_words = _load_words(language)
+    all_words = load_words(language)
     assert value == entropy(word, all_words)
 
 
