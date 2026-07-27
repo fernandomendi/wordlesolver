@@ -14,8 +14,9 @@ import pytest
         ("civic", 0.5916727785823275),
     ],
 )
-def test_entropy_on_fixed_fixture(word: str, expected: float):
-    df_fixture_words = pd.DataFrame(
+def test_entropy_on_fixed_dataset(word: str, expected: float):
+    # Precomputed entropy values on fixed dataset for repeatable numeric checks.
+    df_fixed_dataset_words = pd.DataFrame(
         {"word": [
             "apple",
             "allee",
@@ -26,7 +27,7 @@ def test_entropy_on_fixed_fixture(word: str, expected: float):
             "llama",
         ]}
     )
-    assert entropy(word, df_fixture_words) == pytest.approx(expected, abs=1e-12)
+    assert entropy(word, df_fixed_dataset_words) == pytest.approx(expected, abs=1e-12)
 
 
 @pytest.mark.parametrize("language", [Languages.ES, Languages.EN])
