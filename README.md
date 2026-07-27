@@ -79,5 +79,6 @@ wordlesolver/
 
 ## Scripts status
 
-`scripts/` currently contains legacy utilities based on the old layout/import paths.
-They are kept for now but are not part of the supported v1 CLI/API workflow.
+`scripts/` currently contains legacy utilities based on the old layout/import paths
+plus small maintenance scripts like `scripts/add_word.py`. They are kept for now
+but are not part of the supported v1 CLI/API workflow.
