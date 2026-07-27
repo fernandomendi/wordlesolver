@@ -1,0 +1,15 @@
+# Keep baseline docs flexible while avoiding noisy formatting churn.
+
+# Long lines are acceptable in this repo docs for URLs, examples, and compact summaries.
+# We rely on readability instead of hard wrapping.
+MD013: false
+
+# Existing docs use headings and sections without strict blank-line spacing.
+# Relax these legacy rules so docs can evolve without a mass reformat pass.
+MD022: false
+MD031: false
+MD032: false
+
+# Code fences in docs are sometimes intentionally language-less or legacy.
+# Keep lint signal for docs content, not fence metadata.
+MD040: false

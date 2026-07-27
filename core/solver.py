@@ -49,6 +49,8 @@ class Solver:
         possible_ids = set(self._possible["id"])
         stats["is_possible"] = stats["id"].apply(lambda x: 1 if x in possible_ids else 0)
 
+        # Shift weighting as search space shrinks: early game favors entropy exploration,
+        # later game favors probability exploitation.
         threshold = len(stats) if not self._steps else self._language.threshold
         ratio = n / threshold
         entropy_weight = 0.2 + 0.6 * ratio

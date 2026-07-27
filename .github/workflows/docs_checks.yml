@@ -23,4 +23,7 @@ jobs:
       - name: Link check
         uses: lycheeverse/lychee-action@v2
         with:
-          args: --no-progress --verbose --include-mail=false --exclude-path AGENTS.md "./**/*.md"
+          args: |
+            --verbose
+            --include-mail=false
+            "./**/*.md"

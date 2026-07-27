@@ -2,7 +2,7 @@
 
 ## General
 
-See [`../AGENTS.md`](../AGENTS.md) for cross-repo conventions (GitHub CLI alias, git identity, Python venv).
+See parent AGENTS file for cross-repo conventions (GitHub CLI alias, git identity, Python venv).
 
 ## Repo Structure
 
@@ -39,3 +39,15 @@ Word lists live in `core/data/` and are shipped inside the package via `importli
 ## Cache
 
 Entropy cache is written to `.cache/` at repo root (gitignored). It is safe to delete.
+
+## Documentation style and maintenance
+
+- Root `README.md` is onboarding entrypoint: installation, quick usage, high-level structure, and links.
+- `docs/` holds canonical deeper guides (architecture, workflow, policies).
+- Module READMEs (`core/`, `cli/`, `api/`, `frontend/`, `tests/`) explain responsibilities, contracts, and extension points.
+- Keep documentation tiered:
+  - `core` / `api` / `tests`: medium detail
+  - `cli` / `frontend`: light-to-medium detail
+- Keep code comments for non-obvious logic only; avoid narrating straightforward code.
+- Avoid per-test prose in markdown; explain test structure/conventions instead.
+- Keep `scripts/` treated as legacy unless explicitly modernized.
