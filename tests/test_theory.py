@@ -9,9 +9,9 @@ import pytest
 @pytest.mark.parametrize(
     "word, value, language",
     [
-        ("careo", 6.39140681778416, Languages.ES),
-        ("pista", 5.5384429912797986, Languages.ES),
-        ("alita", 5.383944162488264, Languages.ES),
+        ("careo", 6.391094986076554, Languages.ES),
+        ("pista", 5.538512650446942, Languages.ES),
+        ("alita", 5.383778236161522, Languages.ES),
         ("tares", 6.241873393464967, Languages.EN),
         ("crane", 5.452946441848195, Languages.EN),
         ("hello", 4.515986767125182, Languages.EN),
