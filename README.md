@@ -13,7 +13,7 @@ This repository uses `uv`.
 ```bash
 git clone https://github.com/fernandomendi/wordlesolver.git
 cd wordlesolver
-uv sync --extra test
+uv sync --extra dev
 ```
 
 ## Quick usage
@@ -45,11 +45,14 @@ curl -X POST http://localhost:5000/solve \
 ## Testing
 
 ```bash
-uv run --extra test pytest tests/ -m "not slow"
+uv sync --extra dev
+uv run ruff check core cli api tests
+uv run pytest tests/ -m "not slow"
 ```
 
 CI also runs:
-- unit tests (`pytest -m "not slow"`)
+- Python lint (`uv run ruff check core cli api tests`)
+- unit tests (`uv run pytest tests/ -m "not slow"`)
 - markdown lint and markdown link checks
 
 ## Repository structure
