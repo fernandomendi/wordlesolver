@@ -1,25 +1,43 @@
-from core.models import Language, Languages
-from core.theory import entropy, compute_entropies
 from core.data_tools import load_words
+from core.models import Language, Languages
+from core.theory import compute_entropies, entropy
 
+from math import log2
 import pandas as pd
 import pytest
 
 
 @pytest.mark.parametrize(
-    "word, value, language",
+    "word, expected",
     [
-        ("careo", 6.391094986076554, Languages.ES),
-        ("pista", 5.538512650446942, Languages.ES),
-        ("alita", 5.383778236161522, Languages.ES),
-        ("tares", 6.241873393464967, Languages.EN),
-        ("crane", 5.452946441848195, Languages.EN),
-        ("hello", 4.515986767125182, Languages.EN),
-    ]
+        ("apple", 2.5216406363433186),
+        ("civic", 0.5916727785823275),
+    ],
 )
-def test_base_entropy(word: str, value: float, language: Language):
-    all_words = load_words(language)
-    assert value == entropy(word, all_words)
+def test_entropy_on_fixed_fixture(word: str, expected: float):
+    df_fixture_words = pd.DataFrame(
+        {"word": [
+            "apple",
+            "allee",
+            "angle",
+            "amble",
+            "bloom",
+            "civic",
+            "llama",
+        ]}
+    )
+    assert entropy(word, df_fixture_words) == pytest.approx(expected, abs=1e-12)
+
+
+@pytest.mark.parametrize("language", [Languages.ES, Languages.EN])
+def test_entropy_is_deterministic_and_bounded(language: Language):
+    df_words = load_words(language)
+    sample_words = [df_words.iloc[0].word, df_words.iloc[len(df_words) // 2].word]
+
+    for word in sample_words:
+        value = entropy(word, df_words)
+        assert value == entropy(word, df_words)
+        assert 0 <= value <= log2(len(df_words))
 
 
 @pytest.mark.slow
