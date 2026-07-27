@@ -1,3 +1,5 @@
+"""Benchmark solver performance across a sample of secret words."""
+
 from __future__ import annotations
 
 import argparse

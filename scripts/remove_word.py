@@ -1,3 +1,5 @@
+"""Remove a word from a language word list and rebuild derived probabilities."""
+
 from __future__ import annotations
 
 import argparse
