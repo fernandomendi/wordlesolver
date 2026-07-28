@@ -6,8 +6,7 @@ from core import parse_language, parse_steps
 @click.command()
 @click.option(
     "--lang",
-    default="en",
-    show_default=True,
+    required=True,
     type=str,
     help="Language of the Wordle game."
 )

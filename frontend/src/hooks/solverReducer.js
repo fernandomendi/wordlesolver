@@ -45,7 +45,7 @@ export const ACTIONS = Object.freeze({
 // Exporting INITIAL_STATE lets RESET_ALL return a clean copy without
 // duplicating the object literal, and makes testing trivial.
 export const INITIAL_STATE = {
-  language: 'en',
+  language: 'es',
 
   // The row the user is currently typing into — 5 cells + 5 feedback slots.
   draftCells: ['', '', '', '', ''],
