@@ -15,7 +15,8 @@ Provides React web client for Wordle solver flow and API integration.
 - Vite React app bootstrap
 - Tailwind enabled through `@tailwindcss/vite`
 - API proxy in `vite.config.js`:
-  - `/api/*` → `http://localhost:5000/*`
+  - default: `/api/*` → `http://localhost:5000/*`
+  - Docker Compose override: `/api/*` → `http://api:5000/*`
 - Base folders:
   - `src/components/`
   - `src/hooks/`
@@ -28,6 +29,20 @@ cd frontend
 npm install
 npm run dev
 ```
+
+With Docker Compose (from repo root):
+
+```bash
+docker compose up --build
+```
+
+Or with Podman Compose:
+
+```bash
+podman-compose up --build
+```
+
+Frontend will be available at `http://localhost:5173`.
 
 ## Planned next steps
 

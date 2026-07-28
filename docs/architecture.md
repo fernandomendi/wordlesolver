@@ -52,6 +52,18 @@ The project is split into one shared solver core and multiple interfaces:
 
 This keeps frontend code using relative API paths and avoids direct browser cross-origin calls during local development.
 
+### Docker Compose request flow
+
+When both services run in Docker/Podman, browser still opens `http://localhost:5173`, but service-to-service networking changes:
+
+1. Frontend container runs Vite on `5173`.
+2. API container runs Flask on `5000`.
+3. Vite proxy target is set to `http://api:5000` (Docker service DNS name), not `localhost:5000`.
+
+Inside containers, `localhost` points to the same container itself; service names are required for cross-container calls.
+
+**Supported container runtimes:** Docker (via `docker compose`) and Podman (via `podman-compose`). Both use `Containerfile`/`podman-compose.yml` naming conventions.
+
 ### Production shape
 
 - `npm run build` generates static frontend assets in `frontend/dist/`.
