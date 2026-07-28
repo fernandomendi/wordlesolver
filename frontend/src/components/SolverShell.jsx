@@ -43,6 +43,12 @@ export function SolverShell() {
         </div>
 
         <ResultPanel result={state.result} isSubmitting={state.isSubmitting} />
+
+        {state.gameOver && (
+          <p className="mt-4 text-center text-sm font-bold text-slate-900">
+            {state.isWin ? '🎉 Solved!' : '😵 Better luck next time!'}
+          </p>
+        )}
       </section>
 
       <NotificationStack>

@@ -59,6 +59,7 @@ export const INITIAL_STATE = {
   error: null,    // string | null — surfaces as the dismissible banner
 
   gameOver: false,
+  isWin: false,
 
   // Language-switch confirm flow
   showLanguageResetConfirm: false,
@@ -140,6 +141,7 @@ export function solverReducer(state, action) {
         isSubmitting: false,
         result: action.result,
         gameOver: action.isWin || state.history.length >= 6,
+        isWin: action.isWin,
       }
 
     case ACTIONS.SUBMIT_ERROR:
