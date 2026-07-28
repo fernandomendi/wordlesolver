@@ -1,21 +1,24 @@
 import { useSolver } from '@/hooks/useSolver'
+import { GuessGrid } from '@/components/GuessGrid'
 
 export function SolverShell() {
-  const { state } = useSolver()
+  const { state, dispatch, submitGuesses } = useSolver()
 
   return (
-    <main className="mx-auto flex min-h-screen w-full max-w-4xl items-center justify-center px-6 py-16">
+    <main className="mx-auto flex min-h-screen w-full max-w-lg items-center justify-center px-6 py-16">
       <section className="w-full rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
         <p className="text-sm font-medium uppercase tracking-wide text-emerald-700">Wordle Solver</p>
-        <h1 className="mt-2 text-3xl font-semibold tracking-tight text-slate-900">React frontend scaffold ready</h1>
-        <p className="mt-3 text-slate-600">
-          Next steps: guess input, feedback grid, and API solve flow.
-        </p>
+        <h1 className="mt-1 text-2xl font-semibold tracking-tight text-slate-900">Guess a word</h1>
 
-        <div className="mt-6 rounded-lg bg-slate-50 px-4 py-3 text-sm text-slate-700">
-          Language: <span className="font-semibold">{state.language}</span>
-          {' · '}
-          History rows: <span className="font-semibold">{state.history.length}</span>
+        <div className="mt-6 flex justify-center">
+          <GuessGrid
+            history={state.history}
+            draftCells={state.draftCells}
+            draftFeedback={state.draftFeedback}
+            gameOver={state.gameOver}
+            dispatch={dispatch}
+            onSubmit={submitGuesses}
+          />
         </div>
       </section>
     </main>
