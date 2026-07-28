@@ -18,7 +18,17 @@ export function SolverShell() {
             <p className="text-sm font-medium uppercase tracking-wide text-emerald-700">Wordle Solver</p>
             <h1 className="mt-1 text-2xl font-semibold tracking-tight text-slate-900">Guess a word</h1>
           </div>
-          <LanguageSelector language={state.language} dispatch={dispatch} />
+        <div className="flex items-center gap-2">
+            <LanguageSelector language={state.language} dispatch={dispatch} />
+            <button
+              onClick={() => dispatch({ type: 'RESET_ALL' })}
+              aria-label="Restart game"
+              title="Restart"
+              className="rounded-lg border border-slate-200 px-3 py-1.5 text-sm font-medium text-slate-500 hover:bg-slate-50 hover:text-slate-800"
+            >
+              ↺
+            </button>
+          </div>
         </div>
 
         <div className="mt-6 flex justify-center">
