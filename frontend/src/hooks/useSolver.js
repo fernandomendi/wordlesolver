@@ -22,7 +22,7 @@ export function useSolver() {
     try {
       const result = await solveWordle({ language: state.language, steps })
       dispatch({ type: ACTIONS.ADD_STEP_FROM_DRAFT })
-      dispatch({ type: ACTIONS.SUBMIT_SUCCESS, result })
+      dispatch({ type: ACTIONS.SUBMIT_SUCCESS, result, isWin })
       if (isWin) fireConfetti()
     } catch (err) {
       dispatch({ type: ACTIONS.SUBMIT_ERROR, message: err.message })

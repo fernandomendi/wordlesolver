@@ -139,7 +139,7 @@ export function solverReducer(state, action) {
         ...state,
         isSubmitting: false,
         result: action.result,
-        gameOver: state.history.length >= 6,
+        gameOver: action.isWin || state.history.length >= 6,
       }
 
     case ACTIONS.SUBMIT_ERROR:
