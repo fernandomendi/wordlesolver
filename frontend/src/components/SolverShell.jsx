@@ -2,6 +2,7 @@ import { useSolver } from '@/hooks/useSolver'
 import { GuessGrid } from '@/components/GuessGrid'
 import { LanguageSelector } from '@/components/LanguageSelector'
 import { LanguageResetConfirm } from '@/components/LanguageResetConfirm'
+import { DebugPane } from '@/components/DebugPane'
 
 export function SolverShell() {
   const { state, dispatch, submitGuesses } = useSolver()
@@ -28,6 +29,8 @@ export function SolverShell() {
           />
         </div>
       </section>
+
+      <DebugPane state={state} />
 
       <LanguageResetConfirm
         pendingLanguage={state.showLanguageResetConfirm ? state.pendingLanguage : null}
