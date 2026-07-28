@@ -23,7 +23,14 @@ export function useSolver() {
       const result = await solveWordle({ language: state.language, steps })
       dispatch({ type: ACTIONS.ADD_STEP_FROM_DRAFT })
       dispatch({ type: ACTIONS.SUBMIT_SUCCESS, result, isWin })
-      if (isWin) fireConfetti()
+      if (isWin) {
+        fireConfetti()
+      } else if (result.best_guess) {
+        // Pre-fill the next draft row with the solver's best guess
+        result.best_guess.split('').forEach((char, i) => {
+          dispatch({ type: ACTIONS.SET_GUESS_CHAR, index: i, char })
+        })
+      }
     } catch (err) {
       dispatch({ type: ACTIONS.SUBMIT_ERROR, message: err.message })
     }

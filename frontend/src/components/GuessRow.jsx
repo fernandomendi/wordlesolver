@@ -21,6 +21,7 @@ export function GuessRow({ cells, feedback, isActive, dispatch, onSubmit }) {
 
     if (/^[a-zA-Z]$/.test(e.key)) {
       e.preventDefault()
+      dispatch({ type: ACTIONS.DISMISS_ERROR })
       dispatch({ type: ACTIONS.SET_GUESS_CHAR, index: cellIndex, char: e.key })
       if (cellIndex < 4) focusCell(cellIndex + 1)
       return
