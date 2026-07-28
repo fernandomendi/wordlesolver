@@ -1,7 +1,7 @@
-import { useSolver } from '../hooks/useSolver'
+import { useSolver } from '@/hooks/useSolver'
 
 export function SolverShell() {
-  const { status } = useSolver()
+  const { state } = useSolver()
 
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-4xl items-center justify-center px-6 py-16">
@@ -13,7 +13,9 @@ export function SolverShell() {
         </p>
 
         <div className="mt-6 rounded-lg bg-slate-50 px-4 py-3 text-sm text-slate-700">
-          Solver hook status: <span className="font-semibold">{status}</span>
+          Language: <span className="font-semibold">{state.language}</span>
+          {' · '}
+          History rows: <span className="font-semibold">{state.history.length}</span>
         </div>
       </section>
     </main>
