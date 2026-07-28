@@ -8,6 +8,7 @@ const apiProxyTarget = process.env.VITE_API_PROXY_TARGET ?? 'http://localhost:50
 export default defineConfig({
   plugins: [react(), tailwindcss()],
   server: {
+    watch: { usePolling: true },
     proxy: {
       '/api': {
         target: apiProxyTarget,
