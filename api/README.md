@@ -49,3 +49,12 @@ Response:
 ```bash
 uv run flask --app api run --host 0.0.0.0 --port 5000
 ```
+
+## Frontend origin and CORS
+
+- Default allowed frontend origin: `http://localhost:5173` (Vite dev server)
+- Override via env var when needed:
+
+```bash
+FRONTEND_ORIGINS="http://localhost:5173,http://localhost:3000"
+```

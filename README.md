@@ -4,7 +4,7 @@ Wordle solver project with:
 - `core` Python solving library
 - `cli` command-line interface
 - `api` Flask API
-- `frontend` React scaffold (in progress)
+- `frontend` React app scaffold (Vite + Tailwind)
 
 ## Installation
 
@@ -40,6 +40,14 @@ Call API:
 curl -X POST http://localhost:5000/solve \
   -H "Content-Type: application/json" \
   -d '{"language":"en","steps":[{"guess":"tares","answer":"12221"}]}'
+```
+
+### Frontend
+
+```bash
+cd frontend
+npm install
+npm run dev
 ```
 
 ## Testing

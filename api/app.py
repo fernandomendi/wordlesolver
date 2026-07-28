@@ -9,7 +9,7 @@ from api.routes import health_bp, solve_bp
 
 DEFAULT_DEBUG = "false"
 DEFAULT_PORT = "5000"
-FRONTEND_ORIGIN = "http://localhost:3000"
+DEFAULT_FRONTEND_ORIGINS = "http://localhost:5173"
 
 
 def create_app() -> Flask:
@@ -17,7 +17,7 @@ def create_app() -> Flask:
     app.config["DEBUG"] = _to_bool(os.getenv("DEBUG", DEFAULT_DEBUG))
     app.config["PORT"] = int(os.getenv("PORT", DEFAULT_PORT))
 
-    CORS(app, resources={r"/*": {"origins": [FRONTEND_ORIGIN]}})
+    CORS(app, resources={r"/*": {"origins": _frontend_origins()}})
 
     app.register_blueprint(health_bp)
     app.register_blueprint(solve_bp)
@@ -51,3 +51,9 @@ def register_error_handlers(app: Flask) -> None:
 
 def _to_bool(value: str) -> bool:
     return value.strip().lower() in {"1", "true", "yes", "on"}
+
+
+def _frontend_origins() -> list[str]:
+    raw_origins = os.getenv("FRONTEND_ORIGINS", DEFAULT_FRONTEND_ORIGINS)
+    origins = [origin.strip() for origin in raw_origins.split(",") if origin.strip()]
+    return origins or [DEFAULT_FRONTEND_ORIGINS]
