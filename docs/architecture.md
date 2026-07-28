@@ -38,7 +38,7 @@ The project is split into one shared solver core and multiple interfaces:
 
 ### Runtime roles
 
-- `api` (Flask): backend API service on `http://localhost:5000`
+- `api` (Flask): backend API service on `http://localhost:5001` (container internal port: 5000)
 - `frontend` (React): UI code in `frontend/src/`
 - `vite`: frontend development/build toolchain
   - local dev server on `http://localhost:5173`
