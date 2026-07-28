@@ -80,6 +80,7 @@ wordlesolver/
 
 - [`docs/README.md`](docs/README.md): docs index
 - [`docs/architecture.md`](docs/architecture.md): architecture and data flow
+- [`docs/interaction-spec.md`](docs/interaction-spec.md): shared interaction rules for web and future TUI
 - [`docs/information-theory.md`](docs/information-theory.md): why entropy-based ranking works
 - [`docs/development.md`](docs/development.md): development workflow
 - [`core/README.md`](core/README.md): core module guide
