@@ -12,10 +12,7 @@ export function useSolver() {
     if (!isDraftValid(state.draftCells, state.draftFeedback)) return
     if (state.isSubmitting) return
 
-    // 1. Lock the draft row into history first
-    dispatch({ type: ACTIONS.ADD_STEP_FROM_DRAFT })
-
-    // 2. Build the full steps list including the row we just locked
+    // Capture draft now — state is a snapshot and won't change during the async call
     const nextHistory = [
       ...state.history,
       { cells: [...state.draftCells], feedback: [...state.draftFeedback] },
@@ -25,17 +22,11 @@ export function useSolver() {
     dispatch({ type: ACTIONS.SUBMIT_START })
     try {
       const result = await solveWordle({ language: state.language, steps })
+      // Lock the row only on success — keeps draft intact on API error
+      dispatch({ type: ACTIONS.ADD_STEP_FROM_DRAFT })
       dispatch({ type: ACTIONS.SUBMIT_SUCCESS, result })
     } catch (err) {
-      // Try to surface the API's JSON message; fall back to the raw error string
-      let message = err.message
-      try {
-        const body = await err.response?.json()
-        if (body?.message) message = body.message
-      } catch {
-        // ignore JSON parse failures
-      }
-      dispatch({ type: ACTIONS.SUBMIT_ERROR, message })
+      dispatch({ type: ACTIONS.SUBMIT_ERROR, message: err.message })
     }
   }
 

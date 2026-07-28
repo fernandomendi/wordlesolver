@@ -1,8 +1,11 @@
 import { useSolver } from '@/hooks/useSolver'
 import { GuessGrid } from '@/components/GuessGrid'
+import { ErrorBanner } from '@/components/ErrorBanner'
+import { ResultPanel } from '@/components/ResultPanel'
 import { LanguageSelector } from '@/components/LanguageSelector'
 import { LanguageResetConfirm } from '@/components/LanguageResetConfirm'
 import { DebugPane } from '@/components/DebugPane'
+import { NotificationStack } from '@/components/NotificationStack'
 
 export function SolverShell() {
   const { state, dispatch, submitGuesses } = useSolver()
@@ -28,7 +31,13 @@ export function SolverShell() {
             onSubmit={submitGuesses}
           />
         </div>
+
+        <ResultPanel result={state.result} isSubmitting={state.isSubmitting} />
       </section>
+
+      <NotificationStack>
+        {state.error && <ErrorBanner message={state.error} dispatch={dispatch} />}
+      </NotificationStack>
 
       <DebugPane state={state} />
 

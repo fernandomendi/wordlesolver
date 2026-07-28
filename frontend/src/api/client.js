@@ -10,7 +10,13 @@ export async function solveWordle(payload) {
   })
 
   if (!response.ok) {
-    throw new Error(`Solve request failed with status ${response.status}`)
+    // Try to surface the API's own error message; fall back to status code.
+    let message = `Request failed (${response.status})`
+    try {
+      const body = await response.json()
+      if (body?.message) message = body.message
+    } catch { /* ignore JSON parse failures */ }
+    throw new Error(message)
   }
 
   return response.json()

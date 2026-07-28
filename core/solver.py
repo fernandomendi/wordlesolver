@@ -42,9 +42,10 @@ class Solver:
         stats = self._get_entropies().copy()
         n = len(self._possible)
 
+        entropy_range = stats.entropy.max() - stats.entropy.min()
         stats["entropy_norm"] = (
-            (stats.entropy - stats.entropy.min())
-            / (stats.entropy.max() - stats.entropy.min())
+            (stats.entropy - stats.entropy.min()) / entropy_range
+            if entropy_range > 0 else 0.0
         )
 
         possible_ids = set(self._possible["id"])
