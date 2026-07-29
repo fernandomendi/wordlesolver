@@ -1,20 +1,48 @@
 import { useState, useEffect } from 'react'
 
-const STORAGE_KEY = 'wordle-solver-dark-mode'
+const STORAGE_KEY = 'wordle-solver-theme'
 
-function getInitialDark() {
-  const stored = localStorage.getItem(STORAGE_KEY)
-  if (stored !== null) return stored === 'true'
-  return window.matchMedia('(prefers-color-scheme: dark)').matches
+// Returns the OS preference as 'light' | 'dark'
+function getSystemTheme() {
+  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
 }
 
-export function useDarkMode() {
-  const [isDark, setIsDark] = useState(getInitialDark)
+function getStoredTheme() {
+  return localStorage.getItem(STORAGE_KEY) ?? 'system'
+}
+
+// Resolves the active theme from the stored preference
+function resolveTheme(stored) {
+  return stored === 'system' ? getSystemTheme() : stored
+}
+
+export function useTheme() {
+  const [theme, setTheme] = useState(getStoredTheme)
 
   useEffect(() => {
-    document.documentElement.classList.toggle('dark', isDark)
-    localStorage.setItem(STORAGE_KEY, isDark)
-  }, [isDark])
+    const active = resolveTheme(theme)
+    document.documentElement.classList.toggle('dark', active === 'dark')
+    document.documentElement.classList.toggle('light', active === 'light')
+    localStorage.setItem(STORAGE_KEY, theme)
+  }, [theme])
 
-  return [isDark, () => setIsDark(d => !d)]
+  // Keep 'system' in sync when OS preference changes
+  useEffect(() => {
+    const mq = window.matchMedia('(prefers-color-scheme: dark)')
+    function onSystemChange() {
+      setTheme(t => {
+        if (t === 'system') {
+          // Re-trigger the class update by returning the same value via a fresh state set
+          const active = getSystemTheme()
+          document.documentElement.classList.toggle('dark', active === 'dark')
+          document.documentElement.classList.toggle('light', active === 'light')
+        }
+        return t
+      })
+    }
+    mq.addEventListener('change', onSystemChange)
+    return () => mq.removeEventListener('change', onSystemChange)
+  }, [])
+
+  return [theme, setTheme]
 }

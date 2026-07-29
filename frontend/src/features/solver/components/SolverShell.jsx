@@ -1,5 +1,4 @@
 import { useSolver } from '../hooks/useSolver'
-import { useDarkMode } from '@/shared/hooks/useDarkMode'
 import { GuessGrid } from './GuessGrid'
 import { ErrorBanner } from '@/shared/ui/ErrorBanner'
 import { BestGuessPanel } from '@/features/results/components/BestGuessPanel'
@@ -8,10 +7,10 @@ import { LanguageSelector } from './LanguageSelector'
 import { LanguageResetConfirm } from './LanguageResetConfirm'
 import { DebugPane } from '@/shared/ui/DebugPane'
 import { NotificationStack } from '@/shared/ui/NotificationStack'
+import { ThemeSelector } from '@/shared/ui/ThemeSelector'
 
 export function SolverShell() {
   const { state, dispatch, submitGuesses } = useSolver()
-  const [isDark, toggleDark] = useDarkMode()
 
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-fit items-center justify-center px-6 py-16">
@@ -25,6 +24,7 @@ export function SolverShell() {
               <h1 className="mt-1 text-2xl font-semibold tracking-tight text-slate-900 dark:text-zinc-100">Guess a word</h1>
             </div>
             <div className="flex items-center gap-2">
+              <ThemeSelector />
               <LanguageSelector language={state.language} dispatch={dispatch} />
               <button
                 onClick={() => dispatch({ type: 'RESET_ALL' })}
@@ -33,14 +33,6 @@ export function SolverShell() {
                 className="rounded-lg border border-slate-200 px-3 py-1.5 text-sm font-medium text-slate-500 hover:bg-slate-50 hover:text-slate-800 dark:border-zinc-600 dark:text-zinc-400 dark:hover:bg-zinc-700 dark:hover:text-zinc-200"
               >
                 ↺
-              </button>
-              <button
-                onClick={toggleDark}
-                aria-label="Toggle dark mode"
-                title={isDark ? 'Light mode' : 'Dark mode'}
-                className="rounded-lg border border-slate-200 px-3 py-1.5 text-sm hover:bg-slate-50 dark:border-zinc-600 dark:hover:bg-zinc-700"
-              >
-                {isDark ? '☀️' : '🌙'}
               </button>
             </div>
           </div>
