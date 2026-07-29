@@ -1,15 +1,24 @@
 import { useState, useEffect, useRef } from 'react'
+import type { Dispatch } from 'react'
 import { ThemeSelector } from './ThemeSelector'
 import { LanguageSelector } from '@/features/solver/components/LanguageSelector'
+import type { Language, SolverAction } from '@/types'
 
-export function SettingsPane({ language, dispatch, showDebug, onToggleDebug }) {
+interface SettingsPaneProps {
+  language: Language
+  dispatch: Dispatch<SolverAction>
+  showDebug: boolean
+  onToggleDebug: () => void
+}
+
+export function SettingsPane({ language, dispatch, showDebug, onToggleDebug }: SettingsPaneProps) {
   const [open, setOpen] = useState(false)
-  const containerRef = useRef(null)
+  const containerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     if (!open) return
-    function handleClick(e) {
-      if (!containerRef.current?.contains(e.target)) setOpen(false)
+    function handleClick(e: MouseEvent) {
+      if (!containerRef.current?.contains(e.target as Node)) setOpen(false)
     }
     document.addEventListener('mousedown', handleClick)
     return () => document.removeEventListener('mousedown', handleClick)

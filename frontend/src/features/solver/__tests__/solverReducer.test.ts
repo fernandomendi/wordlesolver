@@ -98,7 +98,7 @@ describe('solverReducer', () => {
   })
 
   it('SUBMIT_SUCCESS stores result and sets gameOver on win', () => {
-    const result = { best_guess: 'crane', total_possible: 1 }
+    const result = { best_guess: 'crane', total_possible: 1, possible_words: [], suggestions: [] }
     const state = solverReducer(INITIAL_STATE, { type: ACTIONS.SUBMIT_SUCCESS, result, isWin: true })
     expect(state.result).toBe(result)
     expect(state.gameOver).toBe(true)
@@ -107,7 +107,7 @@ describe('solverReducer', () => {
   })
 
   it('SUBMIT_SUCCESS does not set gameOver when not a win and under 6 rows', () => {
-    const result = { best_guess: 'crane', total_possible: 10 }
+    const result = { best_guess: 'crane', total_possible: 10, possible_words: [], suggestions: [] }
     const state = solverReducer(INITIAL_STATE, { type: ACTIONS.SUBMIT_SUCCESS, result, isWin: false })
     expect(state.gameOver).toBe(false)
   })
@@ -124,7 +124,7 @@ describe('solverReducer', () => {
   })
 
   it('RESET_ALL resets to initial state but keeps language', () => {
-    const dirty = { ...INITIAL_STATE, language: 'es', history: [{ cells: ['a', 'b', 'c', 'd', 'e'], feedback: [] }], error: 'oops' }
+    const dirty = { ...INITIAL_STATE, language: 'es' as const, history: [{ cells: ['a', 'b', 'c', 'd', 'e'], feedback: [] as [] }], error: 'oops' }
     const state = solverReducer(dirty, { type: ACTIONS.RESET_ALL })
     expect(state.language).toBe('es')
     expect(state.history).toHaveLength(0)
@@ -139,14 +139,14 @@ describe('solverReducer', () => {
   })
 
   it('REQUEST_LANGUAGE_CHANGE shows confirm when history exists', () => {
-    const withHistory = { ...INITIAL_STATE, history: [{ cells: ['a','b','c','d','e'], feedback: [] }] }
+    const withHistory = { ...INITIAL_STATE, history: [{ cells: ['a','b','c','d','e'], feedback: [] as [] }] }
     const state = solverReducer(withHistory, { type: ACTIONS.REQUEST_LANGUAGE_CHANGE, language: 'es' })
     expect(state.showLanguageResetConfirm).toBe(true)
     expect(state.pendingLanguage).toBe('es')
   })
 
   it('CONFIRM_LANGUAGE_CHANGE resets all and switches language', () => {
-    const s = { ...INITIAL_STATE, pendingLanguage: 'es', showLanguageResetConfirm: true, history: [{}] }
+    const s = { ...INITIAL_STATE, pendingLanguage: 'es' as const, showLanguageResetConfirm: true, history: [] as [] }
     const state = solverReducer(s, { type: ACTIONS.CONFIRM_LANGUAGE_CHANGE })
     expect(state.language).toBe('es')
     expect(state.history).toHaveLength(0)
@@ -154,7 +154,7 @@ describe('solverReducer', () => {
   })
 
   it('CANCEL_LANGUAGE_CHANGE closes confirm without switching', () => {
-    const s = { ...INITIAL_STATE, pendingLanguage: 'es', showLanguageResetConfirm: true }
+    const s = { ...INITIAL_STATE, pendingLanguage: 'es' as const, showLanguageResetConfirm: true }
     const state = solverReducer(s, { type: ACTIONS.CANCEL_LANGUAGE_CHANGE })
     expect(state.showLanguageResetConfirm).toBe(false)
     expect(state.pendingLanguage).toBeNull()

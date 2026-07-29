@@ -19,7 +19,7 @@ export function SolverShell() {
 
   function toggleDebug() {
     setShowDebug(v => {
-      localStorage.setItem(DEBUG_KEY, !v)
+      localStorage.setItem(DEBUG_KEY, String(!v))
       return !v
     })
   }

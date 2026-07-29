@@ -1,8 +1,15 @@
+import type { Dispatch } from 'react'
 import { ACTIONS } from '../hooks/solverReducer'
+import type { Language, SolverAction } from '@/types'
+
+interface LanguageResetConfirmProps {
+  pendingLanguage: Language | null
+  dispatch: Dispatch<SolverAction>
+}
 
 // Modal-style confirm dialog for language switch with unsaved progress.
 // Rendered as a fixed overlay — same CSS technique as ErrorBanner.
-export function LanguageResetConfirm({ pendingLanguage, dispatch }) {
+export function LanguageResetConfirm({ pendingLanguage, dispatch }: LanguageResetConfirmProps) {
   if (!pendingLanguage) return null
 
   function confirm() {
@@ -13,7 +20,7 @@ export function LanguageResetConfirm({ pendingLanguage, dispatch }) {
     dispatch({ type: ACTIONS.CANCEL_LANGUAGE_CHANGE })
   }
 
-  function handleKeyDown(e) {
+  function handleKeyDown(e: React.KeyboardEvent<HTMLDivElement>) {
     if (e.key === 'Escape') cancel()
   }
 

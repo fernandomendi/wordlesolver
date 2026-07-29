@@ -1,7 +1,6 @@
 import confetti from 'canvas-confetti'
 
-// Fire a Wordle-style confetti burst — two cannons from the bottom corners.
-export function useConfetti() {
+export function useConfetti(): { fire: () => void } {
   function fire() {
     const shared = {
       particleCount: 80,

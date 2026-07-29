@@ -1,15 +1,17 @@
+import type { FeedbackValue, HistoryRow, SolverAction, SolverState, Step } from '@/types'
+
 // ── Feedback enum ─────────────────────────────────────────────────────────────
 // These are the four possible states for a single tile.
 // We use human-readable strings internally; they map to API codes on submit.
 export const FEEDBACK = Object.freeze({
-  UNSET: 'unset',       // white — user hasn't set this tile yet
-  CORRECT: 'correct',   // green — right letter, right position  → API "0"
-  MISPLACED: 'misplaced', // yellow — right letter, wrong position → API "1"
-  ABSENT: 'absent',     // grey — letter not in word at all       → API "2"
+  UNSET: 'unset' as const,
+  CORRECT: 'correct' as const,
+  MISPLACED: 'misplaced' as const,
+  ABSENT: 'absent' as const,
 })
 
 // Cycle order when the user presses Space or clicks a tile
-const FEEDBACK_CYCLE = [
+const FEEDBACK_CYCLE: FeedbackValue[] = [
   FEEDBACK.UNSET,
   FEEDBACK.CORRECT,
   FEEDBACK.MISPLACED,
@@ -17,7 +19,7 @@ const FEEDBACK_CYCLE = [
 ]
 
 // Translation table used when building the API payload
-const FEEDBACK_TO_CODE = {
+const FEEDBACK_TO_CODE: Record<string, string> = {
   [FEEDBACK.CORRECT]: '0',
   [FEEDBACK.MISPLACED]: '1',
   [FEEDBACK.ABSENT]: '2',
@@ -39,20 +41,20 @@ export const ACTIONS = Object.freeze({
   CONFIRM_LANGUAGE_CHANGE: 'CONFIRM_LANGUAGE_CHANGE',
   CANCEL_LANGUAGE_CHANGE: 'CANCEL_LANGUAGE_CHANGE',
   RESET_ALL: 'RESET_ALL',
-})
+} as const)
 
 // ── Initial state ──────────────────────────────────────────────────────────────
 // Exporting INITIAL_STATE lets RESET_ALL return a clean copy without
 // duplicating the object literal, and makes testing trivial.
-export const INITIAL_STATE = {
+export const INITIAL_STATE: SolverState = {
   language: 'es',
   sessionId: 0,  // increments on reset to re-trigger the opening fetch
 
   // The row the user is currently typing into — 5 cells + 5 feedback slots.
   draftCells: ['', '', '', '', ''],
-  draftFeedback: Array(5).fill(FEEDBACK.UNSET),
+  draftFeedback: Array(5).fill(FEEDBACK.UNSET) as FeedbackValue[],
 
-  // Locked rows in submission order: { cells: string[], feedback: string[] }
+  // Locked rows in submission order: { cells: string[], feedback: FeedbackValue[] }
   history: [],
 
   isSubmitting: false,
@@ -71,7 +73,7 @@ export const INITIAL_STATE = {
 // ── Pure helpers ───────────────────────────────────────────────────────────────
 
 /** Convert locked history rows → the `steps` array the API expects. */
-export function historyToSteps(history) {
+export function historyToSteps(history: HistoryRow[]): Step[] {
   return history.map(({ cells, feedback }) => ({
     guess: cells.join('').toLowerCase(),
     answer: feedback.map(f => FEEDBACK_TO_CODE[f]).join(''),
@@ -79,7 +81,7 @@ export function historyToSteps(history) {
 }
 
 /** True when all 5 cells have a letter and all 5 feedback slots are set. */
-export function isDraftValid(cells, feedback) {
+export function isDraftValid(cells: string[], feedback: FeedbackValue[]): boolean {
   return (
     cells.every(c => /^[a-zA-Z]$/.test(c)) &&
     feedback.every(f => f !== FEEDBACK.UNSET)
@@ -87,7 +89,7 @@ export function isDraftValid(cells, feedback) {
 }
 
 /** Advance a feedback value one step around the cycle. */
-export function cycleFeedback(current) {
+export function cycleFeedback(current: FeedbackValue): FeedbackValue {
   const idx = FEEDBACK_CYCLE.indexOf(current)
   return FEEDBACK_CYCLE[(idx + 1) % FEEDBACK_CYCLE.length]
 }
@@ -96,7 +98,7 @@ export function cycleFeedback(current) {
 // A reducer is just a function: (currentState, action) → nextState.
 // It NEVER mutates state — it always returns a new object.
 // The spread operator `{ ...state, field: newValue }` is the main tool.
-export function solverReducer(state, action) {
+export function solverReducer(state: SolverState, action: SolverAction): SolverState {
   switch (action.type) {
 
     case ACTIONS.SET_GUESS_CHAR: {
@@ -175,7 +177,7 @@ export function solverReducer(state, action) {
     }
 
     case ACTIONS.CONFIRM_LANGUAGE_CHANGE:
-      return { ...INITIAL_STATE, language: state.pendingLanguage, sessionId: state.sessionId + 1 }
+      return { ...INITIAL_STATE, language: state.pendingLanguage!, sessionId: state.sessionId + 1 }
 
     case ACTIONS.CANCEL_LANGUAGE_CHANGE:
       return { ...state, showLanguageResetConfirm: false, pendingLanguage: null }

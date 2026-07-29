@@ -1,23 +1,23 @@
 import { useState, useEffect } from 'react'
+import type { Dispatch, SetStateAction } from 'react'
+import type { ThemePreference } from '@/types'
 
 const STORAGE_KEY = 'wordle-solver-theme'
 
-// Returns the OS preference as 'light' | 'dark'
-function getSystemTheme() {
+function getSystemTheme(): 'light' | 'dark' {
   return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
 }
 
-function getStoredTheme() {
-  return localStorage.getItem(STORAGE_KEY) ?? 'system'
+function getStoredTheme(): ThemePreference {
+  return (localStorage.getItem(STORAGE_KEY) as ThemePreference) ?? 'system'
 }
 
-// Resolves the active theme from the stored preference
-function resolveTheme(stored) {
+function resolveTheme(stored: ThemePreference): 'light' | 'dark' {
   return stored === 'system' ? getSystemTheme() : stored
 }
 
-export function useTheme() {
-  const [theme, setTheme] = useState(getStoredTheme)
+export function useTheme(): [ThemePreference, Dispatch<SetStateAction<ThemePreference>>] {
+  const [theme, setTheme] = useState<ThemePreference>(getStoredTheme)
 
   useEffect(() => {
     const active = resolveTheme(theme)

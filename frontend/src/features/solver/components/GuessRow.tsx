@@ -1,13 +1,24 @@
 import { useRef, useState, useEffect } from 'react'
+import type { Dispatch } from 'react'
 import { GuessTile } from './GuessTile'
 import { ACTIONS, isDraftValid } from '../hooks/solverReducer'
+import type { FeedbackValue, SolverAction } from '@/types'
 
-export function GuessRow({ cells, feedback, isActive, dispatch, onSubmit, errorKey }) {
+interface GuessRowProps {
+  cells: string[]
+  feedback: FeedbackValue[]
+  isActive: boolean
+  dispatch: Dispatch<SolverAction>
+  onSubmit: () => void
+  errorKey?: number
+}
+
+export function GuessRow({ cells, feedback, isActive, dispatch, onSubmit, errorKey }: GuessRowProps) {
   const [focusedCell, setFocusedCell] = useState(0)
   const [isShaking, setIsShaking] = useState(false)
-  const cellRefs = useRef([])
+  const cellRefs = useRef<(HTMLDivElement | null)[]>([])
 
-  function focusCell(index) {
+  function focusCell(index: number) {
     const clamped = Math.max(0, Math.min(4, index))
     setFocusedCell(clamped)
     cellRefs.current[clamped]?.focus({ preventScroll: true })
@@ -27,7 +38,7 @@ export function GuessRow({ cells, feedback, isActive, dispatch, onSubmit, errorK
     if (isActive) focusCell(0)
   }, [isActive]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  function handleKeyDown(cellIndex, e) {
+  function handleKeyDown(cellIndex: number, e: React.KeyboardEvent<HTMLDivElement>) {
     if (!isActive) return
 
     if (/^[a-zA-Z]$/.test(e.key)) {
@@ -86,11 +97,11 @@ export function GuessRow({ cells, feedback, isActive, dispatch, onSubmit, errorK
 
   const wasAlreadyFocused = useRef(false)
 
-  function handleMouseDown(index) {
+  function handleMouseDown(index: number) {
     wasAlreadyFocused.current = document.activeElement === cellRefs.current[index]
   }
 
-  function handleTileClick(index) {
+  function handleTileClick(index: number) {
     if (!isActive) return
     if (wasAlreadyFocused.current) {
       dispatch({ type: ACTIONS.CYCLE_FEEDBACK_AT, index })

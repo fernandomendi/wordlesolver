@@ -1,6 +1,12 @@
 import { WordListItem } from './WordListItem'
+import type { SolverResult, WordEntry } from '@/types'
 
-function WordList({ title, items, keyProp }) {
+interface WordListProps {
+  title: string
+  items: WordEntry[]
+}
+
+function WordList({ title, items }: WordListProps) {
   return (
     <div className="flex flex-col gap-2">
       <h3 className="whitespace-nowrap text-xs font-semibold uppercase tracking-widest text-slate-400 dark:text-zinc-500">
@@ -11,7 +17,7 @@ function WordList({ title, items, keyProp }) {
       ) : (
         <ol className="list-none space-y-0.5">
           {items.map((item, i) => (
-            <WordListItem key={item[keyProp]} word={item[keyProp]} rank={i} />
+            <WordListItem key={item.word} word={item.word} rank={i} />
           ))}
         </ol>
       )}
@@ -19,9 +25,14 @@ function WordList({ title, items, keyProp }) {
   )
 }
 
+interface WordListPanelProps {
+  result: SolverResult | null
+  isLoading: boolean
+}
+
 // Displays top-10 possible words and top-10 suggestions side by side.
 // Both lists fade from full opacity (rank 0) to ~25% (rank 9).
-export function WordListPanel({ result, isLoading }) {
+export function WordListPanel({ result, isLoading }: WordListPanelProps) {
   const possibleWords = result?.possible_words ?? []
   const suggestions = result?.suggestions ?? []
   const total = result?.total_possible ?? null
@@ -55,8 +66,8 @@ export function WordListPanel({ result, isLoading }) {
         {' '}possible {total === 1 ? 'word' : 'words'} remaining
       </p>
       <div className="flex gap-8">
-        <WordList title="Possible words" items={possibleWords} keyProp="word" />
-        <WordList title="Suggestions" items={suggestions} keyProp="word" />
+        <WordList title="Possible words" items={possibleWords} />
+        <WordList title="Suggestions" items={suggestions} />
       </div>
     </div>
   )
