@@ -22,6 +22,14 @@ Provides React web client for Wordle solver flow and API integration.
   - `src/hooks/`
   - `src/api/`
 
+## Shared interaction contract
+
+UI behavior for guesses, feedback, keyboard/mouse controls, validation, and language reset is specified in:
+
+- [`docs/interaction-spec.md`](../docs/interaction-spec.md)
+
+This contract is intended to stay aligned across web frontend and future TUI.
+
 ## Run locally
 
 ```bash

@@ -5,6 +5,7 @@ Canonical documentation index for this repository.
 ## Core guides
 
 - [Architecture](architecture.md)
+- [Interaction spec (Web + TUI contract)](interaction-spec.md)
 - [Information theory](information-theory.md)
 - [Development workflow](development.md)
 

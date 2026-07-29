@@ -1,21 +1,66 @@
-import { useSolver } from '../hooks/useSolver'
+import { useSolver } from '@/hooks/useSolver'
+import { GuessGrid } from '@/components/GuessGrid'
+import { ErrorBanner } from '@/components/ErrorBanner'
+import { ResultPanel } from '@/components/ResultPanel'
+import { LanguageSelector } from '@/components/LanguageSelector'
+import { LanguageResetConfirm } from '@/components/LanguageResetConfirm'
+import { DebugPane } from '@/components/DebugPane'
+import { NotificationStack } from '@/components/NotificationStack'
 
 export function SolverShell() {
-  const { status } = useSolver()
+  const { state, dispatch, submitGuesses } = useSolver()
 
   return (
-    <main className="mx-auto flex min-h-screen w-full max-w-4xl items-center justify-center px-6 py-16">
+    <main className="mx-auto flex min-h-screen w-full max-w-lg items-center justify-center px-6 py-16">
       <section className="w-full rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
-        <p className="text-sm font-medium uppercase tracking-wide text-emerald-700">Wordle Solver</p>
-        <h1 className="mt-2 text-3xl font-semibold tracking-tight text-slate-900">React frontend scaffold ready</h1>
-        <p className="mt-3 text-slate-600">
-          Next steps: guess input, feedback grid, and API solve flow.
-        </p>
-
-        <div className="mt-6 rounded-lg bg-slate-50 px-4 py-3 text-sm text-slate-700">
-          Solver hook status: <span className="font-semibold">{status}</span>
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-sm font-medium uppercase tracking-wide text-emerald-700">Wordle Solver</p>
+            <h1 className="mt-1 text-2xl font-semibold tracking-tight text-slate-900">Guess a word</h1>
+          </div>
+        <div className="flex items-center gap-2">
+            <LanguageSelector language={state.language} dispatch={dispatch} />
+            <button
+              onClick={() => dispatch({ type: 'RESET_ALL' })}
+              aria-label="Restart game"
+              title="Restart"
+              className="rounded-lg border border-slate-200 px-3 py-1.5 text-sm font-medium text-slate-500 hover:bg-slate-50 hover:text-slate-800"
+            >
+              ↺
+            </button>
+          </div>
         </div>
+
+        <div className="mt-6 flex justify-center">
+          <GuessGrid
+            history={state.history}
+            draftCells={state.draftCells}
+            draftFeedback={state.draftFeedback}
+            gameOver={state.gameOver}
+            dispatch={dispatch}
+            onSubmit={submitGuesses}
+          />
+        </div>
+
+        <ResultPanel result={state.result} isSubmitting={state.isSubmitting} />
+
+        {state.gameOver && (
+          <p className="mt-4 text-center text-sm font-bold text-slate-900">
+            {state.isWin ? '🎉 Solved!' : '😵 Better luck next time!'}
+          </p>
+        )}
       </section>
+
+      <NotificationStack>
+        {state.error && <ErrorBanner message={state.error} dispatch={dispatch} />}
+      </NotificationStack>
+
+      <DebugPane state={state} />
+
+      <LanguageResetConfirm
+        pendingLanguage={state.showLanguageResetConfirm ? state.pendingLanguage : null}
+        dispatch={dispatch}
+      />
     </main>
   )
 }
