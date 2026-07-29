@@ -1,7 +1,7 @@
 import { useReducer, useEffect } from 'react'
-import { solverReducer, INITIAL_STATE, ACTIONS, historyToSteps, isDraftValid, FEEDBACK } from '@/hooks/solverReducer'
+import { solverReducer, INITIAL_STATE, ACTIONS, historyToSteps, isDraftValid, FEEDBACK } from './solverReducer'
 import { solveWordle } from '@/api/client'
-import { useConfetti } from '@/hooks/useConfetti'
+import { useConfetti } from './useConfetti'
 
 export function useSolver() {
   const [state, dispatch] = useReducer(solverReducer, INITIAL_STATE)

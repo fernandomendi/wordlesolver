@@ -1,4 +1,4 @@
-import { ACTIONS } from '@/hooks/solverReducer'
+import { ACTIONS } from '../hooks/solverReducer'
 
 // Modal-style confirm dialog for language switch with unsaved progress.
 // Rendered as a fixed overlay — same CSS technique as ErrorBanner.

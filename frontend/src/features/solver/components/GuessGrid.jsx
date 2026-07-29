@@ -1,5 +1,5 @@
-import { GuessRow } from '@/components/GuessRow'
-import { FEEDBACK } from '@/hooks/solverReducer'
+import { GuessRow } from './GuessRow'
+import { FEEDBACK } from '../hooks/solverReducer'
 
 const TOTAL_ROWS = 6
 const EMPTY_CELLS = ['', '', '', '', '']

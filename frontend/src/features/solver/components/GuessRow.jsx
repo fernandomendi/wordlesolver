@@ -1,6 +1,6 @@
 import { useRef, useState, useEffect } from 'react'
-import { GuessTile } from '@/components/GuessTile'
-import { ACTIONS, isDraftValid } from '@/hooks/solverReducer'
+import { GuessTile } from './GuessTile'
+import { ACTIONS, isDraftValid } from '../hooks/solverReducer'
 
 export function GuessRow({ cells, feedback, isActive, dispatch, onSubmit }) {
   const [focusedCell, setFocusedCell] = useState(0)
