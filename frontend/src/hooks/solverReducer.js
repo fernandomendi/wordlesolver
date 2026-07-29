@@ -153,8 +153,9 @@ export function solverReducer(state, action) {
 
     case ACTIONS.REQUEST_LANGUAGE_CHANGE: {
       // action: { language: 'en' | 'es' }
-      const hasData =
-        state.history.length > 0 || state.draftCells.some(c => c !== '')
+      // Only count submitted rows as "user progress" — the pre-filled draft
+      // suggestion is automatic and shouldn't trigger a confirm dialog.
+      const hasData = state.history.length > 0
       if (hasData) {
         // User has unsaved progress → show the confirm dialog
         return {
