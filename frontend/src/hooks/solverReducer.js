@@ -46,6 +46,7 @@ export const ACTIONS = Object.freeze({
 // duplicating the object literal, and makes testing trivial.
 export const INITIAL_STATE = {
   language: 'es',
+  sessionId: 0,  // increments on reset to re-trigger the opening fetch
 
   // The row the user is currently typing into — 5 cells + 5 feedback slots.
   draftCells: ['', '', '', '', ''],
@@ -145,7 +146,7 @@ export function solverReducer(state, action) {
       }
 
     case ACTIONS.SUBMIT_ERROR:
-      return { ...state, isSubmitting: false, error: action.message }
+      return { ...state, isSubmitting: false, error: action.message || null }
 
     case ACTIONS.DISMISS_ERROR:
       return { ...state, error: null }
@@ -167,15 +168,13 @@ export function solverReducer(state, action) {
     }
 
     case ACTIONS.CONFIRM_LANGUAGE_CHANGE:
-      // Wipe everything and start fresh in the new language
-      return { ...INITIAL_STATE, language: state.pendingLanguage }
+      return { ...INITIAL_STATE, language: state.pendingLanguage, sessionId: state.sessionId + 1 }
 
     case ACTIONS.CANCEL_LANGUAGE_CHANGE:
       return { ...state, showLanguageResetConfirm: false, pendingLanguage: null }
 
     case ACTIONS.RESET_ALL:
-      // Keep the language preference, reset everything else
-      return { ...INITIAL_STATE, language: state.language }
+      return { ...INITIAL_STATE, language: state.language, sessionId: state.sessionId + 1 }
 
     default:
       return state

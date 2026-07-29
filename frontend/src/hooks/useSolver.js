@@ -1,4 +1,4 @@
-import { useReducer } from 'react'
+import { useReducer, useEffect } from 'react'
 import { solverReducer, INITIAL_STATE, ACTIONS, historyToSteps, isDraftValid, FEEDBACK } from '@/hooks/solverReducer'
 import { solveWordle } from '@/api/client'
 import { useConfetti } from '@/hooks/useConfetti'
@@ -6,6 +6,23 @@ import { useConfetti } from '@/hooks/useConfetti'
 export function useSolver() {
   const [state, dispatch] = useReducer(solverReducer, INITIAL_STATE)
   const { fire: fireConfetti } = useConfetti()
+
+  // On mount: fetch the opening suggestion with an empty step list
+  useEffect(() => {
+    async function fetchOpening() {
+      dispatch({ type: ACTIONS.SUBMIT_START })
+      try {
+        const result = await solveWordle({ language: state.language, steps: [] })
+        dispatch({ type: ACTIONS.SUBMIT_SUCCESS, result, isWin: false })
+        result.best_guess?.split('').forEach((char, i) => {
+          dispatch({ type: ACTIONS.SET_GUESS_CHAR, index: i, char })
+        })
+      } catch {
+        dispatch({ type: ACTIONS.SUBMIT_ERROR, message: null })
+      }
+    }
+    fetchOpening()
+  }, [state.sessionId, state.language]) // eslint-disable-line react-hooks/exhaustive-deps
 
   async function submitGuesses() {
     if (!isDraftValid(state.draftCells, state.draftFeedback)) return
