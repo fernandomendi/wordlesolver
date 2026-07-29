@@ -26,17 +26,17 @@ export function LanguageResetConfirm({ pendingLanguage, dispatch }) {
       aria-modal="true"
       aria-labelledby="lang-confirm-title"
     >
-      <div className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-xl">
-        <h2 id="lang-confirm-title" className="text-base font-semibold text-slate-900">
+      <div className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-xl dark:bg-zinc-900">
+        <h2 id="lang-confirm-title" className="text-base font-semibold text-slate-900 dark:text-zinc-100">
           Switch to {pendingLanguage.toUpperCase()}?
         </h2>
-        <p className="mt-2 text-sm text-slate-600">
+        <p className="mt-2 text-sm text-slate-600 dark:text-zinc-400">
           This will reset your current guesses and start a new game.
         </p>
         <div className="mt-5 flex justify-end gap-2">
           <button
             onClick={cancel}
-            className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50"
+            className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50 dark:border-zinc-600 dark:text-zinc-400 dark:hover:bg-zinc-700"
           >
             Cancel
           </button>

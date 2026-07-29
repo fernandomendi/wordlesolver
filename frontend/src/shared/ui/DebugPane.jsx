@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { historyToSteps } from '@/features/solver/hooks/solverReducer'
 
-export function DebugPane({ state }) {
+export function DebugPane({ state, visible }) {
   const [open, setOpen] = useState(false)
   const containerRef = useRef(null)
 
@@ -15,7 +15,7 @@ export function DebugPane({ state }) {
     return () => document.removeEventListener('mousedown', handleClick)
   }, [open])
 
-  if (import.meta.env.PROD) return null
+  if (import.meta.env.PROD || !visible) return null
 
   const payload = {
     language: state.language,
@@ -29,9 +29,9 @@ export function DebugPane({ state }) {
   return (
     <div ref={containerRef} className="fixed bottom-4 right-4 z-50 text-xs">
       {open && (
-        <div className="absolute bottom-11 right-0 w-80 rounded-lg border border-slate-200 bg-white shadow-xl">
-          <p className="border-b border-slate-100 px-3 py-2 font-medium text-slate-500">Debug — API payload</p>
-          <pre className="max-h-64 overflow-auto px-3 py-2 text-slate-700">
+        <div className="absolute bottom-11 right-0 w-80 rounded-lg border border-slate-200 bg-white shadow-xl dark:border-zinc-700 dark:bg-zinc-900">
+          <p className="border-b border-slate-100 px-3 py-2 font-medium text-slate-500 dark:border-zinc-700 dark:text-zinc-400">Debug — API payload</p>
+          <pre className="max-h-64 overflow-auto px-3 py-2 text-slate-700 dark:text-zinc-300">
             {JSON.stringify(payload, null, 2)}
           </pre>
         </div>
@@ -39,7 +39,7 @@ export function DebugPane({ state }) {
       <button
         onClick={() => setOpen(o => !o)}
         aria-label="Toggle debug pane"
-        className="flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 bg-white text-base shadow-lg hover:bg-slate-50"
+        className="flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 bg-white text-base shadow-lg hover:bg-slate-50 dark:border-zinc-700 dark:bg-zinc-900 dark:hover:bg-zinc-700"
       >
         🐛
       </button>

@@ -3,11 +3,11 @@ import { WordListItem } from './WordListItem'
 function WordList({ title, items, keyProp }) {
   return (
     <div className="flex flex-col gap-2">
-      <h3 className="text-xs font-semibold uppercase tracking-widest text-slate-400">
+      <h3 className="whitespace-nowrap text-xs font-semibold uppercase tracking-widest text-slate-400 dark:text-zinc-500">
         {title}
       </h3>
       {items.length === 0 ? (
-        <p className="text-xs text-slate-300">—</p>
+        <p className="text-xs text-slate-300 dark:text-zinc-600">—</p>
       ) : (
         <ol className="list-none space-y-0.5">
           {items.map((item, i) => (
@@ -29,16 +29,16 @@ export function WordListPanel({ result, isLoading }) {
   if (isLoading) {
     return (
       <div className="flex flex-col gap-4">
-        <div className="h-4 w-32 animate-pulse rounded bg-slate-200" />
+        <div className="h-4 w-32 animate-pulse rounded bg-slate-200 dark:bg-zinc-700" />
         <div className="flex gap-8">
           {[0, 1].map(col => (
             <div key={col} className="flex flex-col gap-2">
-              <div className="h-3 w-20 animate-pulse rounded bg-slate-200" />
+              <div className="h-3 w-20 animate-pulse rounded bg-slate-200 dark:bg-zinc-700" />
               {Array.from({ length: 10 }, (_, i) => (
                 <div
                   key={i}
-                  className="h-4 animate-pulse rounded bg-slate-100"
-                  style={{ width: `${70 - i * 4}%`, opacity: 1 - (i / 9) * 0.75 }}
+                  className="h-4 w-16 animate-pulse rounded bg-slate-100 dark:bg-zinc-800"
+                  style={{ opacity: 1 - (i / 9) * 0.75 }}
                 />
               ))}
             </div>
@@ -50,8 +50,8 @@ export function WordListPanel({ result, isLoading }) {
 
   return (
     <div className="flex flex-col gap-4">
-      <p className="text-sm text-slate-500">
-        <span className="font-semibold text-slate-900">{total ?? '—'}</span>
+      <p className="text-sm text-slate-500 dark:text-zinc-400">
+        <span className="font-semibold text-slate-900 dark:text-zinc-100">{total ?? '—'}</span>
         {' '}possible {total === 1 ? 'word' : 'words'} remaining
       </p>
       <div className="flex gap-8">
