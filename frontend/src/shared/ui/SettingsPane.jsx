@@ -30,12 +30,24 @@ export function SettingsPane({ language, dispatch, showDebug, onToggleDebug }) {
             </label>
             <label className="flex items-center justify-between gap-3 text-sm text-slate-600 dark:text-zinc-400">
               Debug panel
-              <input
-                type="checkbox"
-                checked={showDebug}
-                onChange={onToggleDebug}
-                className="h-4 w-4 accent-emerald-600"
-              />
+              <button
+                role="switch"
+                aria-checked={showDebug}
+                onClick={onToggleDebug}
+                className={[
+                  'relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent',
+                  'transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-1',
+                  showDebug ? 'bg-emerald-500' : 'bg-slate-200 dark:bg-zinc-600',
+                ].join(' ')}
+              >
+                <span
+                  className={[
+                    'pointer-events-none inline-block h-4 w-4 rounded-full bg-white shadow',
+                    'transition-transform duration-200',
+                    showDebug ? 'translate-x-4' : 'translate-x-0',
+                  ].join(' ')}
+                />
+              </button>
             </label>
           </div>
         </div>
