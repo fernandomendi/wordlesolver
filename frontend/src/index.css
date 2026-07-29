@@ -3,29 +3,38 @@
 /* Enable class-based dark mode: add .dark to <html> to activate */
 @custom-variant dark (&:where(.dark, .dark *));
 
+/* ── Shared across themes ───────────────────────────────────────────────── */
 :root {
   --color-correct: #6aaa64;
   --color-misplaced: #c9b458;
   --color-absent: #787c7e;
-  --color-tile-border: #d3d6da;
-  --color-tile-border-active: #878a8c;
   --color-tile-border-focus: #3b82f6;
 }
 
+/* ── Light theme ────────────────────────────────────────────────────────── */
+.light {
+  --color-tile-border: #d3d6da;
+  --color-tile-border-active: #878a8c;
+}
+
+.light body {
+  background-color: #f8fafc;
+  color: #0f172a;
+}
+
+/* ── Dark theme ─────────────────────────────────────────────────────────── */
 .dark {
-  --color-tile-border: #565758;
-  --color-tile-border-active: #999a9b;
+  --color-tile-border: #3f3f46;
+  --color-tile-border-active: #71717a;
+}
+
+.dark body {
+  background-color: #111111;
+  color: #f4f4f5;
 }
 
 body {
   margin: 0;
   min-height: 100vh;
-  background-color: #f8fafc;
-  color: #0f172a;
   font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-}
-
-.dark body {
-  background-color: #0f172a;
-  color: #f1f5f9;
 }

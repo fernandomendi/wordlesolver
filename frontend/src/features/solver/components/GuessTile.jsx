@@ -3,7 +3,7 @@
 // No state lives here.
 
 const FEEDBACK_CLASSES = {
-  unset:     'bg-white text-slate-900 dark:bg-slate-700 dark:text-slate-100',
+  unset:     'bg-white text-slate-900 dark:bg-zinc-800 dark:text-zinc-100',
   correct:   'bg-[var(--color-correct)] text-white',
   misplaced: 'bg-[var(--color-misplaced)] text-white',
   absent:    'bg-[var(--color-absent)] text-white',

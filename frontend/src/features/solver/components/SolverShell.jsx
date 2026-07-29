@@ -18,11 +18,11 @@ export function SolverShell() {
       <div className="flex w-full flex-col gap-8 md:flex-row md:items-start md:gap-12">
 
         {/* Left column: grid + controls */}
-        <section className="w-full rounded-2xl border border-slate-200 bg-white p-8 shadow-sm dark:border-slate-700 dark:bg-slate-800 md:max-w-sm md:shrink-0">
+        <section className="w-full rounded-2xl border border-slate-200 bg-white p-8 shadow-sm dark:border-zinc-700 dark:bg-zinc-900 md:max-w-sm md:shrink-0">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium uppercase tracking-wide text-emerald-700 dark:text-emerald-400">Wordle Solver</p>
-              <h1 className="mt-1 text-2xl font-semibold tracking-tight text-slate-900 dark:text-slate-100">Guess a word</h1>
+              <h1 className="mt-1 text-2xl font-semibold tracking-tight text-slate-900 dark:text-zinc-100">Guess a word</h1>
             </div>
             <div className="flex items-center gap-2">
               <LanguageSelector language={state.language} dispatch={dispatch} />
@@ -30,7 +30,7 @@ export function SolverShell() {
                 onClick={() => dispatch({ type: 'RESET_ALL' })}
                 aria-label="Restart game"
                 title="Restart"
-                className="rounded-lg border border-slate-200 px-3 py-1.5 text-sm font-medium text-slate-500 hover:bg-slate-50 hover:text-slate-800 dark:border-slate-600 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-slate-200"
+                className="rounded-lg border border-slate-200 px-3 py-1.5 text-sm font-medium text-slate-500 hover:bg-slate-50 hover:text-slate-800 dark:border-zinc-600 dark:text-zinc-400 dark:hover:bg-zinc-700 dark:hover:text-zinc-200"
               >
                 ↺
               </button>
@@ -38,7 +38,7 @@ export function SolverShell() {
                 onClick={toggleDark}
                 aria-label="Toggle dark mode"
                 title={isDark ? 'Light mode' : 'Dark mode'}
-                className="rounded-lg border border-slate-200 px-3 py-1.5 text-sm hover:bg-slate-50 dark:border-slate-600 dark:hover:bg-slate-700"
+                className="rounded-lg border border-slate-200 px-3 py-1.5 text-sm hover:bg-slate-50 dark:border-zinc-600 dark:hover:bg-zinc-700"
               >
                 {isDark ? '☀️' : '🌙'}
               </button>
@@ -59,14 +59,14 @@ export function SolverShell() {
           <BestGuessPanel result={state.result} isSubmitting={state.isSubmitting} />
 
           {state.gameOver && (
-            <p className="mt-4 text-center text-sm font-bold text-slate-900 dark:text-slate-100">
+            <p className="mt-4 text-center text-sm font-bold text-slate-900 dark:text-zinc-100">
               {state.isWin ? '🎉 Solved!' : '😵 Better luck next time!'}
             </p>
           )}
         </section>
 
         {/* Right column: word lists, sized to content */}
-        <section className="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm dark:border-slate-700 dark:bg-slate-800 md:shrink-0">
+        <section className="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm dark:border-zinc-700 dark:bg-zinc-900 md:shrink-0">
           <WordListPanel result={state.result} isLoading={state.isSubmitting} />
         </section>
 
