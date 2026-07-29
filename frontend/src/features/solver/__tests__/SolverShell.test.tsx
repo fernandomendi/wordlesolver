@@ -1,8 +1,8 @@
-import React from 'react'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { SolverShell } from '@/features/solver/components/SolverShell'
+import type { SolverResult } from '@/types'
 
 // Mock the API client — tests must not make real network calls
 vi.mock('@/api/client', () => ({
@@ -11,12 +11,12 @@ vi.mock('@/api/client', () => ({
 
 import { solveWordle } from '@/api/client'
 
-const MOCK_RESULT = { best_guess: 'crane', total_possible: 100 }
+const MOCK_RESULT: SolverResult = { best_guess: 'crane', total_possible: 100, possible_words: [], suggestions: [] }
 
 beforeEach(() => {
   vi.clearAllMocks()
   // Default: opening fetch succeeds
-  solveWordle.mockResolvedValue(MOCK_RESULT)
+  vi.mocked(solveWordle).mockResolvedValue(MOCK_RESULT)
 })
 
 // ── Helper ─────────────────────────────────────────────────────────────────────
@@ -129,7 +129,7 @@ describe('Enter on invalid row', () => {
 
 describe('Enter on valid row', () => {
   it('submits, locks the row, and advances to the next', async () => {
-    solveWordle.mockResolvedValue(MOCK_RESULT)
+    vi.mocked(solveWordle).mockResolvedValue(MOCK_RESULT)
     const { user } = setup()
     await waitFor(() => expect(solveWordle).toHaveBeenCalledTimes(1))
 
@@ -161,7 +161,7 @@ describe('Enter on valid row', () => {
 // ── Language confirm-reset ─────────────────────────────────────────────────────
 
 // Helper to open the settings pane and return the language combobox
-async function openSettingsAndGetLanguageSelect(user) {
+async function openSettingsAndGetLanguageSelect(user: ReturnType<typeof userEvent.setup>) {
   await user.click(screen.getByRole('button', { name: /settings/i }))
   return screen.getByRole('combobox', { name: /language/i })
 }
@@ -178,7 +178,7 @@ describe('Language change confirm-reset flow', () => {
   })
 
   it('shows confirm dialog when switching with history', async () => {
-    solveWordle.mockResolvedValue(MOCK_RESULT)
+    vi.mocked(solveWordle).mockResolvedValue(MOCK_RESULT)
     const { user } = setup()
     await waitFor(() => expect(solveWordle).toHaveBeenCalledTimes(1))
 
@@ -201,7 +201,7 @@ describe('Language change confirm-reset flow', () => {
   })
 
   it('resets grid on confirm', async () => {
-    solveWordle.mockResolvedValue(MOCK_RESULT)
+    vi.mocked(solveWordle).mockResolvedValue(MOCK_RESULT)
     const { user } = setup()
     await waitFor(() => expect(solveWordle).toHaveBeenCalledTimes(1))
 
@@ -237,7 +237,7 @@ describe('Language change confirm-reset flow', () => {
 
 describe('API error banner', () => {
   it('shows banner with API error message on failed submit', async () => {
-    solveWordle
+    vi.mocked(solveWordle)
       .mockResolvedValueOnce(MOCK_RESULT) // opening fetch
       .mockRejectedValueOnce(new Error('Contradictory feedback'))
     const { user } = setup()
@@ -257,7 +257,7 @@ describe('API error banner', () => {
   })
 
   it('dismisses banner on ✕ click', async () => {
-    solveWordle
+    vi.mocked(solveWordle)
       .mockResolvedValueOnce(MOCK_RESULT)
       .mockRejectedValueOnce(new Error('Contradictory feedback'))
     const { user } = setup()

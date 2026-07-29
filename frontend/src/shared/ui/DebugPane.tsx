@@ -1,15 +1,21 @@
 import { useState, useEffect, useRef } from 'react'
 import { historyToSteps } from '@/features/solver/hooks/solverReducer'
+import type { SolverState } from '@/types'
 
-export function DebugPane({ state, visible }) {
+interface DebugPaneProps {
+  state: SolverState
+  visible: boolean
+}
+
+export function DebugPane({ state, visible }: DebugPaneProps) {
   const [open, setOpen] = useState(false)
-  const containerRef = useRef(null)
+  const containerRef = useRef<HTMLDivElement>(null)
 
   // Close when clicking outside the container
   useEffect(() => {
     if (!open) return
-    function handleClick(e) {
-      if (!containerRef.current?.contains(e.target)) setOpen(false)
+    function handleClick(e: MouseEvent) {
+      if (!containerRef.current?.contains(e.target as Node)) setOpen(false)
     }
     document.addEventListener('mousedown', handleClick)
     return () => document.removeEventListener('mousedown', handleClick)

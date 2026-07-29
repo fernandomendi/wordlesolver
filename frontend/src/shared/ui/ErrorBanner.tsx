@@ -1,6 +1,13 @@
+import type { Dispatch } from 'react'
 import { ACTIONS } from '@/features/solver/hooks/solverReducer'
+import type { SolverAction } from '@/types'
 
-export function DismissButton({ onClick, colorClass = 'text-slate-300 hover:text-slate-500' }) {
+interface DismissButtonProps {
+  onClick: () => void
+  colorClass?: string
+}
+
+export function DismissButton({ onClick, colorClass = 'text-slate-300 hover:text-slate-500' }: DismissButtonProps) {
   return (
     <button
       onClick={onClick}
@@ -12,14 +19,19 @@ export function DismissButton({ onClick, colorClass = 'text-slate-300 hover:text
   )
 }
 
-export function ErrorBanner({ message, dispatch }) {
+interface ErrorBannerProps {
+  message: string
+  dispatch: Dispatch<SolverAction>
+}
+
+export function ErrorBanner({ message, dispatch }: ErrorBannerProps) {
   if (!message) return null
 
   function dismiss() {
     dispatch({ type: ACTIONS.DISMISS_ERROR })
   }
 
-  function handleKeyDown(e) {
+  function handleKeyDown(e: React.KeyboardEvent<HTMLDivElement>) {
     if (e.key === 'Escape') dismiss()
   }
 

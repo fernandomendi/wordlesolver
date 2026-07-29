@@ -1,13 +1,25 @@
 import { GuessRow } from './GuessRow'
 import { FEEDBACK } from '../hooks/solverReducer'
+import type { Dispatch } from 'react'
+import type { FeedbackValue, HistoryRow, SolverAction } from '@/types'
 
 const TOTAL_ROWS = 6
 const EMPTY_CELLS = ['', '', '', '', '']
-const EMPTY_FEEDBACK = Array(5).fill(FEEDBACK.UNSET)
+const EMPTY_FEEDBACK: FeedbackValue[] = Array(5).fill(FEEDBACK.UNSET)
+
+interface GuessGridProps {
+  history: HistoryRow[]
+  draftCells: string[]
+  draftFeedback: FeedbackValue[]
+  gameOver: boolean
+  dispatch: Dispatch<SolverAction>
+  onSubmit: () => void
+  errorKey: number
+}
 
 // GuessGrid renders all 6 rows and decides which one is active.
 // It derives this purely from state — no extra state needed here.
-export function GuessGrid({ history, draftCells, draftFeedback, gameOver, dispatch, onSubmit, errorKey }) {
+export function GuessGrid({ history, draftCells, draftFeedback, gameOver, dispatch, onSubmit, errorKey }: GuessGridProps) {
   // The active row index is always the number of submitted rows.
   const activeRow = history.length
 

@@ -1,9 +1,11 @@
 import { useReducer, useEffect } from 'react'
+import type { Dispatch } from 'react'
 import { solverReducer, INITIAL_STATE, ACTIONS, historyToSteps, isDraftValid, FEEDBACK } from './solverReducer'
+import type { SolverAction, SolverState } from '@/types'
 import { solveWordle } from '@/api/client'
 import { useConfetti } from './useConfetti'
 
-export function useSolver() {
+export function useSolver(): { state: SolverState; dispatch: Dispatch<SolverAction>; submitGuesses: () => Promise<void> } {
   const [state, dispatch] = useReducer(solverReducer, INITIAL_STATE)
   const { fire: fireConfetti } = useConfetti()
 
@@ -48,8 +50,8 @@ export function useSolver() {
           dispatch({ type: ACTIONS.SET_GUESS_CHAR, index: i, char })
         })
       }
-    } catch (err) {
-      dispatch({ type: ACTIONS.SUBMIT_ERROR, message: err.message })
+    } catch (err: unknown) {
+      dispatch({ type: ACTIONS.SUBMIT_ERROR, message: err instanceof Error ? err.message : null })
     }
   }
 

@@ -1,4 +1,11 @@
-export function BestGuessPanel({ result, isSubmitting }) {
+import type { SolverResult } from '@/types'
+
+interface BestGuessPanelProps {
+  result: SolverResult | null
+  isSubmitting: boolean
+}
+
+export function BestGuessPanel({ result, isSubmitting }: BestGuessPanelProps) {
   return (
     <div className="mt-6 rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700 dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-300">
       <div className="flex items-center justify-between">
