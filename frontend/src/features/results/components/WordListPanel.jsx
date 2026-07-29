@@ -24,30 +24,40 @@ function WordList({ title, items, keyProp }) {
 export function WordListPanel({ result, isLoading }) {
   const possibleWords = result?.possible_words ?? []
   const suggestions = result?.suggestions ?? []
+  const total = result?.total_possible ?? null
 
   if (isLoading) {
     return (
-      <div className="flex gap-8">
-        {[0, 1].map(col => (
-          <div key={col} className="flex flex-col gap-2">
-            <div className="h-3 w-20 animate-pulse rounded bg-slate-200" />
-            {Array.from({ length: 10 }, (_, i) => (
-              <div
-                key={i}
-                className="h-4 animate-pulse rounded bg-slate-100"
-                style={{ width: `${70 - i * 4}%`, opacity: 1 - (i / 9) * 0.75 }}
-              />
-            ))}
-          </div>
-        ))}
+      <div className="flex flex-col gap-4">
+        <div className="h-4 w-32 animate-pulse rounded bg-slate-200" />
+        <div className="flex gap-8">
+          {[0, 1].map(col => (
+            <div key={col} className="flex flex-col gap-2">
+              <div className="h-3 w-20 animate-pulse rounded bg-slate-200" />
+              {Array.from({ length: 10 }, (_, i) => (
+                <div
+                  key={i}
+                  className="h-4 animate-pulse rounded bg-slate-100"
+                  style={{ width: `${70 - i * 4}%`, opacity: 1 - (i / 9) * 0.75 }}
+                />
+              ))}
+            </div>
+          ))}
+        </div>
       </div>
     )
   }
 
   return (
-    <div className="flex gap-8">
-      <WordList title="Possible words" items={possibleWords} keyProp="word" />
-      <WordList title="Suggestions" items={suggestions} keyProp="word" />
+    <div className="flex flex-col gap-4">
+      <p className="text-sm text-slate-500">
+        <span className="font-semibold text-slate-900">{total ?? '—'}</span>
+        {' '}possible {total === 1 ? 'word' : 'words'} remaining
+      </p>
+      <div className="flex gap-8">
+        <WordList title="Possible words" items={possibleWords} keyProp="word" />
+        <WordList title="Suggestions" items={suggestions} keyProp="word" />
+      </div>
     </div>
   )
 }

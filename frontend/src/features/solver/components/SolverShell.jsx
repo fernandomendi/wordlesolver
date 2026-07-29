@@ -1,7 +1,7 @@
 import { useSolver } from '../hooks/useSolver'
 import { GuessGrid } from './GuessGrid'
 import { ErrorBanner } from '@/shared/ui/ErrorBanner'
-import { ResultPanel } from '@/features/results/components/ResultPanel'
+import { BestGuessPanel } from '@/features/results/components/BestGuessPanel'
 import { WordListPanel } from '@/features/results/components/WordListPanel'
 import { LanguageSelector } from './LanguageSelector'
 import { LanguageResetConfirm } from './LanguageResetConfirm'
@@ -47,7 +47,7 @@ export function SolverShell() {
             />
           </div>
 
-          <ResultPanel result={state.result} isSubmitting={state.isSubmitting} />
+          <BestGuessPanel result={state.result} isSubmitting={state.isSubmitting} />
 
           {state.gameOver && (
             <p className="mt-4 text-center text-sm font-bold text-slate-900">
