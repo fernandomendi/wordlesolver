@@ -160,12 +160,18 @@ describe('Enter on valid row', () => {
 
 // ── Language confirm-reset ─────────────────────────────────────────────────────
 
+// Helper to open the settings pane and return the language combobox
+async function openSettingsAndGetLanguageSelect(user) {
+  await user.click(screen.getByRole('button', { name: /settings/i }))
+  return screen.getByRole('combobox', { name: /language/i })
+}
+
 describe('Language change confirm-reset flow', () => {
   it('switches language immediately when grid is empty', async () => {
     const { user } = setup()
     await waitFor(() => expect(solveWordle).toHaveBeenCalledTimes(1))
 
-    const select = screen.getByRole('combobox', { name: /language/i })
+    const select = await openSettingsAndGetLanguageSelect(user)
     await user.selectOptions(select, 'en')
     // No confirm dialog should appear
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
@@ -188,8 +194,8 @@ describe('Language change confirm-reset flow', () => {
     await user.keyboard('[Enter]')
     await waitFor(() => expect(solveWordle).toHaveBeenCalledTimes(2))
 
-    // Now switch language
-    const select = screen.getByRole('combobox', { name: /language/i })
+    // Now switch language via settings pane
+    const select = await openSettingsAndGetLanguageSelect(user)
     await user.selectOptions(select, 'en')
     expect(screen.getByRole('dialog')).toBeInTheDocument()
   })
@@ -211,8 +217,8 @@ describe('Language change confirm-reset flow', () => {
     await user.keyboard('[Enter]')
     await waitFor(() => expect(solveWordle).toHaveBeenCalledTimes(2))
 
-    // Switch language and confirm
-    const select = screen.getByRole('combobox', { name: /language/i })
+    // Switch language via settings pane and confirm
+    const select = await openSettingsAndGetLanguageSelect(user)
     await user.selectOptions(select, 'en')
     await user.click(screen.getByText(/reset and switch/i))
 

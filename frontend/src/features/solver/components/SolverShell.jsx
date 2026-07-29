@@ -3,11 +3,10 @@ import { GuessGrid } from './GuessGrid'
 import { ErrorBanner } from '@/shared/ui/ErrorBanner'
 import { BestGuessPanel } from '@/features/results/components/BestGuessPanel'
 import { WordListPanel } from '@/features/results/components/WordListPanel'
-import { LanguageSelector } from './LanguageSelector'
 import { LanguageResetConfirm } from './LanguageResetConfirm'
 import { DebugPane } from '@/shared/ui/DebugPane'
+import { SettingsPane } from '@/shared/ui/SettingsPane'
 import { NotificationStack } from '@/shared/ui/NotificationStack'
-import { ThemeSelector } from '@/shared/ui/ThemeSelector'
 
 export function SolverShell() {
   const { state, dispatch, submitGuesses } = useSolver()
@@ -23,18 +22,14 @@ export function SolverShell() {
               <p className="text-sm font-medium uppercase tracking-wide text-emerald-700 dark:text-emerald-400">Wordle Solver</p>
               <h1 className="mt-1 text-2xl font-semibold tracking-tight text-slate-900 dark:text-zinc-100">Guess a word</h1>
             </div>
-            <div className="flex items-center gap-2">
-              <ThemeSelector />
-              <LanguageSelector language={state.language} dispatch={dispatch} />
-              <button
-                onClick={() => dispatch({ type: 'RESET_ALL' })}
-                aria-label="Restart game"
-                title="Restart"
-                className="rounded-lg border border-slate-200 px-3 py-1.5 text-sm font-medium text-slate-500 hover:bg-slate-50 hover:text-slate-800 dark:border-zinc-600 dark:text-zinc-400 dark:hover:bg-zinc-700 dark:hover:text-zinc-200"
-              >
-                ↺
-              </button>
-            </div>
+            <button
+              onClick={() => dispatch({ type: 'RESET_ALL' })}
+              aria-label="Restart game"
+              title="Restart"
+              className="rounded-lg border border-slate-200 px-3 py-1.5 text-sm font-medium text-slate-500 hover:bg-slate-50 hover:text-slate-800 dark:border-zinc-600 dark:text-zinc-400 dark:hover:bg-zinc-700 dark:hover:text-zinc-200"
+            >
+              ↺
+            </button>
           </div>
 
           <div className="mt-6 flex justify-center">
@@ -68,6 +63,7 @@ export function SolverShell() {
         {state.error && <ErrorBanner message={state.error} dispatch={dispatch} />}
       </NotificationStack>
 
+      <SettingsPane language={state.language} dispatch={dispatch} />
       <DebugPane state={state} />
 
       <LanguageResetConfirm
