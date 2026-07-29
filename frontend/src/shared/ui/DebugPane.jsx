@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { historyToSteps } from '@/features/solver/hooks/solverReducer'
 
-export function DebugPane({ state }) {
+export function DebugPane({ state, visible }) {
   const [open, setOpen] = useState(false)
   const containerRef = useRef(null)
 
@@ -15,7 +15,7 @@ export function DebugPane({ state }) {
     return () => document.removeEventListener('mousedown', handleClick)
   }, [open])
 
-  if (import.meta.env.PROD) return null
+  if (import.meta.env.PROD || !visible) return null
 
   const payload = {
     language: state.language,

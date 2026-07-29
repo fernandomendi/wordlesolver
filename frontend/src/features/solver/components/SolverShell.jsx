@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { useSolver } from '../hooks/useSolver'
 import { GuessGrid } from './GuessGrid'
 import { ErrorBanner } from '@/shared/ui/ErrorBanner'
@@ -8,8 +9,20 @@ import { DebugPane } from '@/shared/ui/DebugPane'
 import { SettingsPane } from '@/shared/ui/SettingsPane'
 import { NotificationStack } from '@/shared/ui/NotificationStack'
 
+const DEBUG_KEY = 'wordle-solver-debug'
+
 export function SolverShell() {
   const { state, dispatch, submitGuesses } = useSolver()
+  const [showDebug, setShowDebug] = useState(
+    () => localStorage.getItem(DEBUG_KEY) === 'true'
+  )
+
+  function toggleDebug() {
+    setShowDebug(v => {
+      localStorage.setItem(DEBUG_KEY, !v)
+      return !v
+    })
+  }
 
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-fit items-center justify-center px-6 py-16">
@@ -63,8 +76,13 @@ export function SolverShell() {
         {state.error && <ErrorBanner message={state.error} dispatch={dispatch} />}
       </NotificationStack>
 
-      <SettingsPane language={state.language} dispatch={dispatch} />
-      <DebugPane state={state} />
+      <SettingsPane
+        language={state.language}
+        dispatch={dispatch}
+        showDebug={showDebug}
+        onToggleDebug={toggleDebug}
+      />
+      <DebugPane state={state} visible={showDebug} />
 
       <LanguageResetConfirm
         pendingLanguage={state.showLanguageResetConfirm ? state.pendingLanguage : null}

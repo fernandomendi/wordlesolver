@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { ThemeSelector } from './ThemeSelector'
 import { LanguageSelector } from '@/features/solver/components/LanguageSelector'
 
-export function SettingsPane({ language, dispatch }) {
+export function SettingsPane({ language, dispatch, showDebug, onToggleDebug }) {
   const [open, setOpen] = useState(false)
   const containerRef = useRef(null)
 
@@ -27,6 +27,15 @@ export function SettingsPane({ language, dispatch }) {
             <label className="flex items-center justify-between gap-3 text-sm text-slate-600 dark:text-zinc-400">
               Language
               <LanguageSelector language={language} dispatch={dispatch} />
+            </label>
+            <label className="flex items-center justify-between gap-3 text-sm text-slate-600 dark:text-zinc-400">
+              Debug panel
+              <input
+                type="checkbox"
+                checked={showDebug}
+                onChange={onToggleDebug}
+                className="h-4 w-4 accent-emerald-600"
+              />
             </label>
           </div>
         </div>
