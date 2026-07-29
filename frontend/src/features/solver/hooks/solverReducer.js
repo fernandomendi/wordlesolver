@@ -58,6 +58,7 @@ export const INITIAL_STATE = {
   isSubmitting: false,
   result: null,   // { best_guess, total_possible, … } from the API
   error: null,    // string | null — surfaces as the dismissible banner
+  errorKey: 0,    // increments each error to trigger row shake
 
   gameOver: false,
   isWin: false,
@@ -146,7 +147,12 @@ export function solverReducer(state, action) {
       }
 
     case ACTIONS.SUBMIT_ERROR:
-      return { ...state, isSubmitting: false, error: action.message || null }
+      return {
+        ...state,
+        isSubmitting: false,
+        error: action.message || null,
+        errorKey: action.message ? state.errorKey + 1 : state.errorKey,
+      }
 
     case ACTIONS.DISMISS_ERROR:
       return { ...state, error: null }

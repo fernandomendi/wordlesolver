@@ -3,7 +3,7 @@ import { WordListItem } from './WordListItem'
 function WordList({ title, items, keyProp }) {
   return (
     <div className="flex flex-col gap-2">
-      <h3 className="text-xs font-semibold uppercase tracking-widest text-slate-400 dark:text-zinc-500">
+      <h3 className="whitespace-nowrap text-xs font-semibold uppercase tracking-widest text-slate-400 dark:text-zinc-500">
         {title}
       </h3>
       {items.length === 0 ? (
@@ -37,8 +37,8 @@ export function WordListPanel({ result, isLoading }) {
               {Array.from({ length: 10 }, (_, i) => (
                 <div
                   key={i}
-                  className="h-4 animate-pulse rounded bg-slate-100 dark:bg-zinc-800"
-                  style={{ width: `${70 - i * 4}%`, opacity: 1 - (i / 9) * 0.75 }}
+                  className="h-4 w-16 animate-pulse rounded bg-slate-100 dark:bg-zinc-800"
+                  style={{ opacity: 1 - (i / 9) * 0.75 }}
                 />
               ))}
             </div>

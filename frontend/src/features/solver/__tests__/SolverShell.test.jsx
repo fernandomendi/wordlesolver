@@ -120,7 +120,7 @@ describe('Enter on invalid row', () => {
     cells[0].focus()
     // Only type one letter — row is invalid
     await user.keyboard('A[Enter]')
-    expect(await screen.findByRole('alert')).toBeInTheDocument()
+    expect(await screen.findByText(/fill all 5 letters/i)).toBeInTheDocument()
     expect(solveWordle).toHaveBeenCalledTimes(1) // only opening call, no submit
   })
 })

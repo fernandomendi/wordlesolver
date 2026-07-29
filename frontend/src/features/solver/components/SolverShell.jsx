@@ -51,6 +51,7 @@ export function SolverShell() {
               draftCells={state.draftCells}
               draftFeedback={state.draftFeedback}
               gameOver={state.gameOver}
+              errorKey={state.errorKey}
               dispatch={dispatch}
               onSubmit={submitGuesses}
             />
@@ -65,8 +66,8 @@ export function SolverShell() {
           )}
         </section>
 
-        {/* Right column: word lists, sized to content */}
-        <section className="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm dark:border-zinc-700 dark:bg-zinc-900 md:shrink-0">
+        {/* Right column: fixed width so skeleton↔content swap doesn't reflow layout */}
+        <section className="mx-auto w-80 rounded-2xl border border-slate-200 bg-white p-8 shadow-sm dark:border-zinc-700 dark:bg-zinc-900 md:mx-0 md:shrink-0">
           <WordListPanel result={state.result} isLoading={state.isSubmitting} />
         </section>
 

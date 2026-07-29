@@ -17,6 +17,15 @@ body {
   font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
+/* ── Shake animation for active row on error ────────────────────────────── */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  15%       { transform: translateX(-6px); }
+  40%       { transform: translateX(6px); }
+  65%       { transform: translateX(-4px); }
+  85%       { transform: translateX(4px); }
+}
+
 /* ── Light theme ────────────────────────────────────────────────────────── */
 .light {
   --color-tile-border: #d3d6da;

@@ -2,15 +2,26 @@ import { useRef, useState, useEffect } from 'react'
 import { GuessTile } from './GuessTile'
 import { ACTIONS, isDraftValid } from '../hooks/solverReducer'
 
-export function GuessRow({ cells, feedback, isActive, dispatch, onSubmit }) {
+export function GuessRow({ cells, feedback, isActive, dispatch, onSubmit, errorKey }) {
   const [focusedCell, setFocusedCell] = useState(0)
+  const [isShaking, setIsShaking] = useState(false)
   const cellRefs = useRef([])
 
   function focusCell(index) {
     const clamped = Math.max(0, Math.min(4, index))
     setFocusedCell(clamped)
-    cellRefs.current[clamped]?.focus()
+    cellRefs.current[clamped]?.focus({ preventScroll: true })
   }
+
+  function shake() {
+    setIsShaking(true)
+    setTimeout(() => setIsShaking(false), 400)
+  }
+
+  // Shake when an external error lands on this (active) row
+  useEffect(() => {
+    if (errorKey) shake()
+  }, [errorKey]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (isActive) focusCell(0)
@@ -60,7 +71,7 @@ export function GuessRow({ cells, feedback, isActive, dispatch, onSubmit }) {
         if (isDraftValid(cells, feedback)) {
           onSubmit()
         } else {
-          // Surface validation error in the global error banner
+          shake()
           dispatch({
             type: ACTIONS.SUBMIT_ERROR,
             message: 'Fill all 5 letters and set each tile colour first',
@@ -89,7 +100,10 @@ export function GuessRow({ cells, feedback, isActive, dispatch, onSubmit }) {
   }
 
   return (
-    <div className="flex gap-1.5">
+    <div
+      className="flex gap-1.5"
+      style={isShaking ? { animation: 'shake 0.4s ease' } : undefined}
+    >
       {cells.map((letter, i) => (
         <GuessTile
           key={i}

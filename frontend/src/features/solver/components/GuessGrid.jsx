@@ -7,7 +7,7 @@ const EMPTY_FEEDBACK = Array(5).fill(FEEDBACK.UNSET)
 
 // GuessGrid renders all 6 rows and decides which one is active.
 // It derives this purely from state — no extra state needed here.
-export function GuessGrid({ history, draftCells, draftFeedback, gameOver, dispatch, onSubmit }) {
+export function GuessGrid({ history, draftCells, draftFeedback, gameOver, dispatch, onSubmit, errorKey }) {
   // The active row index is always the number of submitted rows.
   const activeRow = history.length
 
@@ -36,6 +36,7 @@ export function GuessGrid({ history, draftCells, draftFeedback, gameOver, dispat
               cells={draftCells}
               feedback={draftFeedback}
               isActive={true}
+              errorKey={errorKey}
               dispatch={dispatch}
               onSubmit={onSubmit}
             />
