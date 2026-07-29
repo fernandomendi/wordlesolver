@@ -7,7 +7,7 @@ import {
   cycleFeedback,
   isDraftValid,
   historyToSteps,
-} from '@/hooks/solverReducer'
+} from '../hooks/solverReducer'
 
 // ── cycleFeedback ──────────────────────────────────────────────────────────────
 

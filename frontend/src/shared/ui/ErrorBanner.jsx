@@ -1,4 +1,4 @@
-import { ACTIONS } from '@/hooks/solverReducer'
+import { ACTIONS } from '@/features/solver/hooks/solverReducer'
 
 export function DismissButton({ onClick, colorClass = 'text-slate-300 hover:text-slate-500' }) {
   return (

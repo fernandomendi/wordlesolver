@@ -1,11 +1,11 @@
-import { useSolver } from '@/hooks/useSolver'
-import { GuessGrid } from '@/components/GuessGrid'
-import { ErrorBanner } from '@/components/ErrorBanner'
-import { ResultPanel } from '@/components/ResultPanel'
-import { LanguageSelector } from '@/components/LanguageSelector'
-import { LanguageResetConfirm } from '@/components/LanguageResetConfirm'
-import { DebugPane } from '@/components/DebugPane'
-import { NotificationStack } from '@/components/NotificationStack'
+import { useSolver } from '../hooks/useSolver'
+import { GuessGrid } from './GuessGrid'
+import { ErrorBanner } from '@/shared/ui/ErrorBanner'
+import { ResultPanel } from '@/features/results/components/ResultPanel'
+import { LanguageSelector } from './LanguageSelector'
+import { LanguageResetConfirm } from './LanguageResetConfirm'
+import { DebugPane } from '@/shared/ui/DebugPane'
+import { NotificationStack } from '@/shared/ui/NotificationStack'
 
 export function SolverShell() {
   const { state, dispatch, submitGuesses } = useSolver()

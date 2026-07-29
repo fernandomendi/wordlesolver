@@ -1,4 +1,4 @@
-import { ACTIONS } from '@/hooks/solverReducer'
+import { ACTIONS } from '../hooks/solverReducer'
 
 export function LanguageSelector({ language, dispatch }) {
   function handleChange(e) {

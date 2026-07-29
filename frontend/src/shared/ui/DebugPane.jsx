@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { historyToSteps } from '@/hooks/solverReducer'
+import { historyToSteps } from '@/features/solver/hooks/solverReducer'
 
 export function DebugPane({ state }) {
   const [open, setOpen] = useState(false)

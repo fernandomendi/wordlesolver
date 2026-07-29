@@ -1,4 +1,4 @@
-import { SolverShell } from '@/components/SolverShell'
+import { SolverShell } from '@/features/solver/components/SolverShell'
 
 function App() {
   return <SolverShell />
