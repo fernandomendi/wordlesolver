@@ -12,7 +12,7 @@ export function SolverShell() {
   const { state, dispatch, submitGuesses } = useSolver()
 
   return (
-    <main className="mx-auto flex min-h-screen w-full max-w-5xl items-center justify-center px-6 py-16">
+    <main className="mx-auto flex min-h-screen w-full max-w-fit items-center justify-center px-6 py-16">
       {/* Responsive: stacked on mobile, side-by-side on md+ */}
       <div className="flex w-full flex-col gap-8 md:flex-row md:items-start md:gap-12">
 
@@ -56,8 +56,8 @@ export function SolverShell() {
           )}
         </section>
 
-        {/* Right column: word lists */}
-        <section className="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm md:flex-1">
+        {/* Right column: word lists, sized to content */}
+        <section className="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm md:shrink-0">
           <WordListPanel result={state.result} isLoading={state.isSubmitting} />
         </section>
 
