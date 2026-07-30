@@ -1,13 +1,11 @@
 import { useState, useEffect, useRef } from 'react'
-import { historyToSteps } from '@/features/solver/hooks/solverReducer'
-import type { SolverState } from '@/types'
+import { historyToSteps } from '@/state/solverReducer'
+import { useSolver } from '@/state/SolverContext'
+import { useApp } from '@/state/AppContext'
 
-interface DebugPaneProps {
-  state: SolverState
-  visible: boolean
-}
-
-export function DebugPane({ state, visible }: DebugPaneProps) {
+export function DebugPane() {
+  const { state } = useSolver()
+  const { language, showDebug } = useApp()
   const [open, setOpen] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
 
@@ -21,10 +19,10 @@ export function DebugPane({ state, visible }: DebugPaneProps) {
     return () => document.removeEventListener('mousedown', handleClick)
   }, [open])
 
-  if (import.meta.env.PROD || !visible) return null
+  if (import.meta.env.PROD || !showDebug) return null
 
   const payload = {
-    language: state.language,
+    language,
     steps: historyToSteps(state.history),
     draft: {
       cells: state.draftCells,

@@ -7,7 +7,7 @@ import {
   cycleFeedback,
   isDraftValid,
   historyToSteps,
-} from '../hooks/solverReducer'
+} from '@/state/solverReducer'
 
 // ── cycleFeedback ──────────────────────────────────────────────────────────────
 
@@ -123,41 +123,30 @@ describe('solverReducer', () => {
     expect(state.error).toBeNull()
   })
 
-  it('RESET_ALL resets to initial state but keeps language', () => {
-    const dirty = { ...INITIAL_STATE, language: 'es' as const, history: [{ cells: ['a', 'b', 'c', 'd', 'e'], feedback: [] as [] }], error: 'oops' }
+  it('RESET_ALL resets to initial state and increments sessionId', () => {
+    const dirty = { ...INITIAL_STATE, history: [{ cells: ['a', 'b', 'c', 'd', 'e'], feedback: [] as [] }], error: 'oops' }
     const state = solverReducer(dirty, { type: ACTIONS.RESET_ALL })
-    expect(state.language).toBe('es')
     expect(state.history).toHaveLength(0)
     expect(state.error).toBeNull()
     expect(state.sessionId).toBe(1)
   })
 
-  it('REQUEST_LANGUAGE_CHANGE switches immediately when no data', () => {
-    const state = solverReducer(INITIAL_STATE, { type: ACTIONS.REQUEST_LANGUAGE_CHANGE, language: 'es' })
-    expect(state.language).toBe('es')
+  it('SHOW_LANGUAGE_CONFIRM is ignored when history is empty', () => {
+    const state = solverReducer(INITIAL_STATE, { type: ACTIONS.SHOW_LANGUAGE_CONFIRM, language: 'en' })
     expect(state.showLanguageResetConfirm).toBe(false)
   })
 
-  it('REQUEST_LANGUAGE_CHANGE shows confirm when history exists', () => {
+  it('SHOW_LANGUAGE_CONFIRM sets confirm state when history exists', () => {
     const withHistory = { ...INITIAL_STATE, history: [{ cells: ['a','b','c','d','e'], feedback: [] as [] }] }
-    const state = solverReducer(withHistory, { type: ACTIONS.REQUEST_LANGUAGE_CHANGE, language: 'es' })
+    const state = solverReducer(withHistory, { type: ACTIONS.SHOW_LANGUAGE_CONFIRM, language: 'en' })
     expect(state.showLanguageResetConfirm).toBe(true)
-    expect(state.pendingLanguage).toBe('es')
+    expect(state.pendingLanguage).toBe('en')
   })
 
-  it('CONFIRM_LANGUAGE_CHANGE resets all and switches language', () => {
-    const s = { ...INITIAL_STATE, pendingLanguage: 'es' as const, showLanguageResetConfirm: true, history: [] as [] }
-    const state = solverReducer(s, { type: ACTIONS.CONFIRM_LANGUAGE_CHANGE })
-    expect(state.language).toBe('es')
-    expect(state.history).toHaveLength(0)
-    expect(state.showLanguageResetConfirm).toBe(false)
-  })
-
-  it('CANCEL_LANGUAGE_CHANGE closes confirm without switching', () => {
-    const s = { ...INITIAL_STATE, pendingLanguage: 'es' as const, showLanguageResetConfirm: true }
-    const state = solverReducer(s, { type: ACTIONS.CANCEL_LANGUAGE_CHANGE })
+  it('HIDE_LANGUAGE_CONFIRM clears the confirm dialog', () => {
+    const s = { ...INITIAL_STATE, pendingLanguage: 'en' as const, showLanguageResetConfirm: true }
+    const state = solverReducer(s, { type: ACTIONS.HIDE_LANGUAGE_CONFIRM })
     expect(state.showLanguageResetConfirm).toBe(false)
     expect(state.pendingLanguage).toBeNull()
-    expect(state.language).toBe(INITIAL_STATE.language)
   })
 })

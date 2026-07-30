@@ -37,9 +37,9 @@ export const ACTIONS = Object.freeze({
   SUBMIT_SUCCESS: 'SUBMIT_SUCCESS',
   SUBMIT_ERROR: 'SUBMIT_ERROR',
   DISMISS_ERROR: 'DISMISS_ERROR',
-  REQUEST_LANGUAGE_CHANGE: 'REQUEST_LANGUAGE_CHANGE',
-  CONFIRM_LANGUAGE_CHANGE: 'CONFIRM_LANGUAGE_CHANGE',
-  CANCEL_LANGUAGE_CHANGE: 'CANCEL_LANGUAGE_CHANGE',
+  // Used by SolverContext to manage the language-switch confirm dialog
+  SHOW_LANGUAGE_CONFIRM: 'SHOW_LANGUAGE_CONFIRM',
+  HIDE_LANGUAGE_CONFIRM: 'HIDE_LANGUAGE_CONFIRM',
   RESET_ALL: 'RESET_ALL',
 } as const)
 
@@ -47,7 +47,6 @@ export const ACTIONS = Object.freeze({
 // Exporting INITIAL_STATE lets RESET_ALL return a clean copy without
 // duplicating the object literal, and makes testing trivial.
 export const INITIAL_STATE: SolverState = {
-  language: 'es',
   sessionId: 0,  // increments on reset to re-trigger the opening fetch
 
   // The row the user is currently typing into — 5 cells + 5 feedback slots.
@@ -159,31 +158,15 @@ export function solverReducer(state: SolverState, action: SolverAction): SolverS
     case ACTIONS.DISMISS_ERROR:
       return { ...state, error: null }
 
-    case ACTIONS.REQUEST_LANGUAGE_CHANGE: {
-      // action: { language: 'en' | 'es' }
-      // Only count submitted rows as "user progress" — the pre-filled draft
-      // suggestion is automatic and shouldn't trigger a confirm dialog.
-      const hasData = state.history.length > 0
-      if (hasData) {
-        // User has unsaved progress → show the confirm dialog
-        return {
-          ...state,
-          showLanguageResetConfirm: true,
-          pendingLanguage: action.language,
-        }
-      }
-      // No progress → switch immediately
-      return { ...state, language: action.language }
-    }
+    case ACTIONS.SHOW_LANGUAGE_CONFIRM:
+      if (state.history.length === 0) return state
+      return { ...state, showLanguageResetConfirm: true, pendingLanguage: action.language }
 
-    case ACTIONS.CONFIRM_LANGUAGE_CHANGE:
-      return { ...INITIAL_STATE, language: state.pendingLanguage!, sessionId: state.sessionId + 1 }
-
-    case ACTIONS.CANCEL_LANGUAGE_CHANGE:
+    case ACTIONS.HIDE_LANGUAGE_CONFIRM:
       return { ...state, showLanguageResetConfirm: false, pendingLanguage: null }
 
     case ACTIONS.RESET_ALL:
-      return { ...INITIAL_STATE, language: state.language, sessionId: state.sessionId + 1 }
+      return { ...INITIAL_STATE, sessionId: state.sessionId + 1 }
 
     default:
       return state

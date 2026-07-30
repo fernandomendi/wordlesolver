@@ -1,17 +1,13 @@
-import type { Dispatch } from 'react'
-import { ACTIONS } from '../hooks/solverReducer'
-import type { Language, SolverAction } from '@/types'
+import { useSolver } from '@/state/SolverContext'
+import { useApp } from '@/state/AppContext'
 
-interface LanguageSelectorProps {
-  language: Language
-  dispatch: Dispatch<SolverAction>
-}
+export function LanguageSelector() {
+  const { language } = useApp()
+  const { requestLanguageChange } = useSolver()
 
-export function LanguageSelector({ language, dispatch }: LanguageSelectorProps) {
   function handleChange(e: React.ChangeEvent<HTMLSelectElement>) {
-    const lang = e.target.value as Language
-    if (lang === language) return
-    dispatch({ type: ACTIONS.REQUEST_LANGUAGE_CHANGE, language: lang })
+    const lang = e.target.value as import('@/types').Language
+    requestLanguageChange(lang)
   }
 
   return (
