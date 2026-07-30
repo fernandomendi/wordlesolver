@@ -1,27 +1,15 @@
-import type { Dispatch } from 'react'
-import { ACTIONS } from '../hooks/solverReducer'
-import type { Language, SolverAction } from '@/types'
-
-interface LanguageResetConfirmProps {
-  pendingLanguage: Language | null
-  dispatch: Dispatch<SolverAction>
-}
+import { useSolver } from '@/state/SolverContext'
 
 // Modal-style confirm dialog for language switch with unsaved progress.
 // Rendered as a fixed overlay — same CSS technique as ErrorBanner.
-export function LanguageResetConfirm({ pendingLanguage, dispatch }: LanguageResetConfirmProps) {
-  if (!pendingLanguage) return null
+export function LanguageResetConfirm() {
+  const { state, confirmLanguageChange, cancelLanguageChange } = useSolver()
+  const { pendingLanguage, showLanguageResetConfirm } = state
 
-  function confirm() {
-    dispatch({ type: ACTIONS.CONFIRM_LANGUAGE_CHANGE })
-  }
-
-  function cancel() {
-    dispatch({ type: ACTIONS.CANCEL_LANGUAGE_CHANGE })
-  }
+  if (!showLanguageResetConfirm || !pendingLanguage) return null
 
   function handleKeyDown(e: React.KeyboardEvent<HTMLDivElement>) {
-    if (e.key === 'Escape') cancel()
+    if (e.key === 'Escape') cancelLanguageChange()
   }
 
   return (
@@ -42,14 +30,14 @@ export function LanguageResetConfirm({ pendingLanguage, dispatch }: LanguageRese
         </p>
         <div className="mt-5 flex justify-end gap-2">
           <button
-            onClick={cancel}
+            onClick={cancelLanguageChange}
             className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50 dark:border-zinc-600 dark:text-zinc-400 dark:hover:bg-zinc-700"
           >
             Cancel
           </button>
           <button
             autoFocus
-            onClick={confirm}
+            onClick={confirmLanguageChange}
             className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700"
           >
             Reset and switch

@@ -35,7 +35,8 @@ export interface HistoryRow {
 }
 
 export interface SolverState {
-  language: Language
+  // app-wide — candidate for AppContext when a second feature needs it
+  // language is now owned by AppContext; SolverState holds only solver concerns
   sessionId: number
   draftCells: string[]
   draftFeedback: FeedbackValue[]
@@ -62,7 +63,6 @@ export type SolverAction =
   | { type: 'SUBMIT_SUCCESS';        result: SolverResult; isWin: boolean }
   | { type: 'SUBMIT_ERROR';          message: string | null }
   | { type: 'DISMISS_ERROR' }
-  | { type: 'REQUEST_LANGUAGE_CHANGE'; language: Language }
-  | { type: 'CONFIRM_LANGUAGE_CHANGE' }
-  | { type: 'CANCEL_LANGUAGE_CHANGE' }
+  | { type: 'SHOW_LANGUAGE_CONFIRM';   language: Language }
+  | { type: 'HIDE_LANGUAGE_CONFIRM' }
   | { type: 'RESET_ALL' }

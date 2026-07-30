@@ -1,17 +1,10 @@
 import { useState, useEffect, useRef } from 'react'
-import type { Dispatch } from 'react'
 import { ThemeSelector } from './ThemeSelector'
 import { LanguageSelector } from '@/features/solver/components/LanguageSelector'
-import type { Language, SolverAction } from '@/types'
+import { useApp } from '@/state/AppContext'
 
-interface SettingsPaneProps {
-  language: Language
-  dispatch: Dispatch<SolverAction>
-  showDebug: boolean
-  onToggleDebug: () => void
-}
-
-export function SettingsPane({ language, dispatch, showDebug, onToggleDebug }: SettingsPaneProps) {
+export function SettingsPane() {
+  const { showDebug, toggleDebug } = useApp()
   const [open, setOpen] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
 
@@ -35,14 +28,14 @@ export function SettingsPane({ language, dispatch, showDebug, onToggleDebug }: S
             </label>
             <label className="flex items-center justify-between gap-3 text-sm text-slate-600 dark:text-zinc-400">
               Language
-              <LanguageSelector language={language} dispatch={dispatch} />
+              <LanguageSelector />
             </label>
             <label className="flex items-center justify-between gap-3 text-sm text-slate-600 dark:text-zinc-400">
               Debug panel
               <button
                 role="switch"
                 aria-checked={showDebug}
-                onClick={onToggleDebug}
+                onClick={toggleDebug}
                 className={[
                   'relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent',
                   'transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-1',

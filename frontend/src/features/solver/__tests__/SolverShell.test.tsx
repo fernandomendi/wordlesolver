@@ -1,7 +1,9 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { SolverShell } from '@/features/solver/components/SolverShell'
+import App from '@/App'
+import { AppProvider } from '@/state/AppContext'
+import { SolverProvider } from '@/state/SolverContext'
 import type { SolverResult } from '@/types'
 
 // Mock the API client — tests must not make real network calls
@@ -15,6 +17,7 @@ const MOCK_RESULT: SolverResult = { best_guess: 'crane', total_possible: 100, po
 
 beforeEach(() => {
   vi.clearAllMocks()
+  localStorage.clear()
   // Default: opening fetch succeeds
   vi.mocked(solveWordle).mockResolvedValue(MOCK_RESULT)
 })
@@ -23,7 +26,13 @@ beforeEach(() => {
 
 function setup() {
   const user = userEvent.setup()
-  render(<SolverShell />)
+  render(
+    <AppProvider>
+      <SolverProvider>
+        <App />
+      </SolverProvider>
+    </AppProvider>
+  )
   return { user }
 }
 

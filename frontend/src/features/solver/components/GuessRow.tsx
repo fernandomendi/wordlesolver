@@ -1,7 +1,7 @@
 import { useRef, useState, useEffect } from 'react'
 import type { Dispatch } from 'react'
 import { GuessTile } from './GuessTile'
-import { ACTIONS, isDraftValid } from '../hooks/solverReducer'
+import { ACTIONS, isDraftValid } from '@/state/solverReducer'
 import type { FeedbackValue, SolverAction } from '@/types'
 
 interface GuessRowProps {

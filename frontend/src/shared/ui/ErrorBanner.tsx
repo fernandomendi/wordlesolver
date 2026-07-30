@@ -1,6 +1,5 @@
-import type { Dispatch } from 'react'
-import { ACTIONS } from '@/features/solver/hooks/solverReducer'
-import type { SolverAction } from '@/types'
+import { useSolver } from '@/state/SolverContext'
+import { ACTIONS } from '@/state/solverReducer'
 
 interface DismissButtonProps {
   onClick: () => void
@@ -19,12 +18,10 @@ export function DismissButton({ onClick, colorClass = 'text-slate-300 hover:text
   )
 }
 
-interface ErrorBannerProps {
-  message: string
-  dispatch: Dispatch<SolverAction>
-}
+export function ErrorBanner() {
+  const { state, dispatch } = useSolver()
+  const { error: message } = state
 
-export function ErrorBanner({ message, dispatch }: ErrorBannerProps) {
   if (!message) return null
 
   function dismiss() {

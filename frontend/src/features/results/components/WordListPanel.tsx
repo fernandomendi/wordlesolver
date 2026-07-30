@@ -1,5 +1,6 @@
 import { WordListItem } from './WordListItem'
-import type { SolverResult, WordEntry } from '@/types'
+import { useSolver } from '@/state/SolverContext'
+import type { WordEntry } from '@/types'
 
 interface WordListProps {
   title: string
@@ -25,14 +26,11 @@ function WordList({ title, items }: WordListProps) {
   )
 }
 
-interface WordListPanelProps {
-  result: SolverResult | null
-  isLoading: boolean
-}
-
 // Displays top-10 possible words and top-10 suggestions side by side.
 // Both lists fade from full opacity (rank 0) to ~25% (rank 9).
-export function WordListPanel({ result, isLoading }: WordListPanelProps) {
+export function WordListPanel() {
+  const { state } = useSolver()
+  const { result, isSubmitting: isLoading } = state
   const possibleWords = result?.possible_words ?? []
   const suggestions = result?.suggestions ?? []
   const total = result?.total_possible ?? null
